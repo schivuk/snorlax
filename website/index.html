@@ -46,8 +46,8 @@
 					<section id="banner">
 						<div class="inner">
 							<div class="logo"><span class="icon fa-diamond"></span></div>
-							<h2>This is Solid State</h2>
-							<p>Another free + fully responsive site template by <a href="http://html5up.net">HTML5 UP</a></p>
+							<h2>We are Team Snorlax</h2>
+							<p>A real legit smart bed.</p>
 						</div>
 					</section>
 
@@ -59,9 +59,8 @@
 								<div class="inner">
 									<a href="#" class="image"><img src="images/pic01.jpg" alt="" /></a>
 									<div class="content">
-										<h2 class="major">Magna arcu feugiat</h2>
-										<p>Lorem ipsum dolor sit amet, etiam lorem adipiscing elit. Cras turpis ante, nullam sit amet turpis non, sollicitudin posuere urna. Mauris id tellus arcu. Nunc vehicula id nulla dignissim dapibus. Nullam ultrices, neque et faucibus viverra, ex nulla cursus.</p>
-										<a href="#" class="special">Learn more</a>
+										<h2 class="major">Concept</h2>
+										<p>Snorlax is a smart mattress pad aimed at allowing people to measure their sleeping patterns. The mattress pad consists of a network of pressure sensors inside the mattress and a couple of accelerometers to measure the position and movements of the user, a WiFi module to communicate this information to a web server, and a web application that allows users to login, register their device, and view their sleep patterns when they wake up. Users can set an alarm time via the web application, and the smart mattress will wake the user up at an optimal time based on estimated sleep cycle detection.</p>
 									</div>
 								</div>
 							</section>
@@ -71,9 +70,14 @@
 								<div class="inner">
 									<a href="#" class="image"><img src="images/pic02.jpg" alt="" /></a>
 									<div class="content">
-										<h2 class="major">Tempus adipiscing</h2>
-										<p>Lorem ipsum dolor sit amet, etiam lorem adipiscing elit. Cras turpis ante, nullam sit amet turpis non, sollicitudin posuere urna. Mauris id tellus arcu. Nunc vehicula id nulla dignissim dapibus. Nullam ultrices, neque et faucibus viverra, ex nulla cursus.</p>
-										<a href="#" class="special">Learn more</a>
+										<h2 class="major">Competitive Analysis</h2>
+										<p>Our primary competitor is Eight Sleep. Eight is a smart mattress pad that does all of the sleep tracking without the need of a wearable device. However, according to their website, Eight has the following features:
+											Heating pads to pre-warm the mattress pad
+											Ability to communicate with Nest to cool the room
+											Ability to monitor heart rate, breathing rate and noise levels
+											Ability to control bedroom lighting</p>
+
+										<p>Sleep as Android is a sleep tracking android app that determines the user’s optimal waking point through the use of accelerometers. The problem with Sleep as Android is you need to put your phone on your bed in order to get any readings. You run the risk of dropping the phone off the bed while sleeping, or receiving extra exposure to EMF radiation by keeping your phone next to your head. Regardless, it is amazing how they are able to get accurate data just through the phone’s accelerometer data. Our goal is leverage their experience and technology into our own smart bed design.</p>
 									</div>
 								</div>
 							</section>
@@ -83,17 +87,67 @@
 								<div class="inner">
 									<a href="#" class="image"><img src="images/pic03.jpg" alt="" /></a>
 									<div class="content">
-										<h2 class="major">Nullam dignissim</h2>
-										<p>Lorem ipsum dolor sit amet, etiam lorem adipiscing elit. Cras turpis ante, nullam sit amet turpis non, sollicitudin posuere urna. Mauris id tellus arcu. Nunc vehicula id nulla dignissim dapibus. Nullam ultrices, neque et faucibus viverra, ex nulla cursus.</p>
-										<a href="#" class="special">Learn more</a>
+										<h2 class="major">Motivation</h2>
+										<p>The incentive for this project was to have an entirely non-intrusive system (including wearables), that augments the functionality of current mobile phone applications. By spanning the entire mattress with sensor coverage and having multiple accelerometers at different parts of the mattress, our goal is to broaden the sensor data that phones can collect and have more accurate sleep information.</p>
 									</div>
 								</div>
 							</section>
 
 						<!-- Four -->
+							<section id="four" class="wrapper alt spotlight style2">
+								<div class="inner">
+									<a href="#" class="image"><img src="images/pic02.jpg" alt="" /></a>
+									<div class="content">
+										<h2 class="major">Design Requirements</h2>
+										<p>
+										<ul>
+											<li>General: The system shall consist of a network of sensors that are embedded into a mattress pad, so the product can be used by placing it on top of any mattress. The product shall be used to track body positions/movements during sleep, to control an alarm, and to allow users to view sleep data over the internet.</li>
+											<li>Hardware components: The main hardware components shall involve a network of pressure sensors, at least 2 accelerometers, a microphone, an MCU to measure sensor data, a WiFi module to transmit the data to a web server, an amplifier-speaker system to sound alarms, and a computer to store and analyse the data.</li>
+											<li>Non-invasiveness: The Snorlax mattress pad shall be entirely non-invasive by having a design such that the sensor network shall be located on the bottom of the mattress pad, conductive thread shall be used for wiring the sensor network and the user will have no wearable component.</li>
+											<li>Application interfacing: The user shall be able to register their smart mattress pad to their preferred WiFi network using their phone (by entering in the network name and password). The mattress pad will then connect to the specified WiFi network and communicate / log data to the web server over the internet.</li>
+											<li>Authentication: The web server should check for authentication when receiving data from the smart mattress pad, to ensure that arbitrary external requests do not modify logging data.</li>
+											<li>Memory footprint: Logging sensor data at very frequent intervals can lead to an arbitrarily large memory load for the server. Measures must be taken to log only important information such as position changes, reading spikes from the accelerometer or microphone.</li>
+											<li>Alarm: The smart mattress pad shall have an alarm feature, whereby users can set an alarm time through the web application. The smart mattress pad shall find an optimal time for the user to wake up based on estimated sleep cycle detection, and sound the alarm at the optimal time within a 30 minute window of the specified time. The smart mattress pad shall detect if the user is still on the bed, and only turn off the alarm after the user gets off the bed.</li>
+											<li>THERE ARE SUB-BULLET POINTS FOR THIS ONE - LEAVING IT FOR HARSHA</li>
+											<li>A poll/survey on the users of the product should yield that at least 95% users do not feel anything out of the ordinary when sleeping on the mattress pad.</li>
+										</ul>
+										</p>
+										<a href="#" class="special">Learn more</a>
+									</div>
+								</div>
+							</section>
+
+						<!-- Five -->
+							<section id="three" class="wrapper spotlight style3">
+								<div class="inner">
+									<a href="#" class="image"><img src="images/pic03.jpg" alt="" /></a>
+									<div class="content">
+										<h2 class="major">Components (Technical Specifications)</h2>
+										<p>
+										<ul>
+										<li>3x ATMEGA328P Microcontroller</li>
+										<li>2x ESP8266 Wifi Module</li>
+										<li>10x Velostat Pressure Sensor</li>
+										<li>4x SEN-09269 Accelerometer</li>
+										<li>1x Mattress Pad</li>
+										<li>1x Fitbit</li>
+										<li>2x BOB-09964 Microphone</li>
+										<li>5x 16-Channel Multiplexer</li>
+										<li>3x COM-07950 Speaker</li>
+										<li>1x Power Adapter</li>
+										<li>2x Barrel Jack</li>
+										<li>5x Conductive Thread</li>
+										</ul>
+										</p>
+										<a href="#" class="special">Learn more</a>
+									</div>
+								</div>
+							</section>
+
+						<!-- Six -->
 							<section id="four" class="wrapper alt style1">
 								<div class="inner">
-									<h2 class="major">Vitae phasellus</h2>
+									<h2 class="major">Team Members</h2>
 									<p>Cras mattis ante fermentum, malesuada neque vitae, eleifend erat. Phasellus non pulvinar erat. Fusce tincidunt, nisl eget mattis egestas, purus ipsum consequat orci, sit amet lobortis lorem lacus in tellus. Sed ac elementum arcu. Quisque placerat auctor laoreet.</p>
 									<section class="features">
 										<article>
