@@ -6,7 +6,7 @@
 -->
 <html>
 	<head>
-		<title>Solid State by HTML5 UP</title>
+		<title>Snorlax</title>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<!--[if lte IE 8]><script src="assets/js/ie/html5shiv.js"></script><![endif]-->
@@ -21,7 +21,7 @@
 
 				<!-- Header -->
 					<header id="header" class="alt">
-						<h1><a href="index.html">Solid State</a></h1>
+						<h1><a href="index.html">Snorlax</a></h1>
 						<nav>
 							<a href="#menu">Menu</a>
 						</nav>
@@ -33,10 +33,12 @@
 							<h2>Menu</h2>
 							<ul class="links">
 								<li><a href="index.html">Home</a></li>
-								<li><a href="generic.html">Generic</a></li>
-								<li><a href="elements.html">Elements</a></li>
-								<li><a href="#">Log In</a></li>
-								<li><a href="#">Sign Up</a></li>
+								<li><a href="#concept">Concept</a></li>
+								<li><a href="#motivation">Motivation</a></li>
+								<li><a href="#analysis">Competitive Analysis</a></li>
+								<li><a href="#requirements">Design Requirements</a></li>
+								<li><a href="#specs">Technical Specifications</a></li>
+								<li><a href="#team">Team Members</a></li>
 							</ul>
 							<a href="#" class="close">Close</a>
 						</div>
@@ -46,8 +48,8 @@
 					<section id="banner">
 						<div class="inner">
 							<div class="logo"><span class="icon fa-diamond"></span></div>
-							<h2>We are Team Snorlax</h2>
-							<p>A real legit smart bed.</p>
+							<h2>18-549 Team 1: Snorlax</h2>
+							<p>A smart bed.</p>
 						</div>
 					</section>
 
@@ -55,85 +57,50 @@
 					<section id="wrapper">
 
 						<!-- One -->
-							<section id="one" class="wrapper spotlight style1">
+							<section id="concept" class="wrapper spotlight style1">
 								<div class="inner">
-									<a href="#" class="image"><img src="images/pic01.jpg" alt="" /></a>
+									<a href="#" class="image"><img src="images/sleep.png" alt="" /></a>
 									<div class="content">
-										<h2 class="major">Concept</h2>
-										<p>Fill this section out before your 1st in-class team presentation
-• 1-2 sentences that represent an “elevator pitch” for your project
-– How would you describe your project to a layman?
-– Avoid hyperbole – this is not a marketing exercise
-• Avoid terms like “highly efficient”, “extremely reliable”, “incredibly effective”, …
-– 1st sentence – description that is accessible to the layman that is more or less
-free of technical terminology, but conveys the impact of your project
-– 2nd sentence – more technical description that is still accessible to the layman,
-but that articulates the way in which your project accomplishes its goals</p>
-										<p>Snorlax is a smart mattress pad aimed at allowing people to measure their sleeping patterns. The mattress pad consists of a network of pressure sensors inside the mattress and a couple of accelerometers to measure the position and movements of the user, a WiFi module to communicate this information to a web server, and a web application that allows users to login, register their device, and view their sleep patterns when they wake up. Users can set an alarm time via the web application, and the smart mattress will wake the user up at an optimal time based on estimated sleep cycle detection.</p>
+										<h2 class="major" style="text-align:left">Concept</h2>
+										<p style="text-align:left">Snorlax is a smart mattress pad aimed at allowing people to measure their sleeping patterns. The mattress pad consists of a network of pressure sensors and accelerometers inside the mattress to measure the position and movements of the user, calculate the user's sleeping patterns and communicate this information to a web application, that end-users can use to control the system. </p>
 									</div>
 								</div>
 							</section>
 
 						<!-- Two -->
-							<section id="two" class="wrapper alt spotlight style2">
+							<section id="motivation" class="wrapper alt spotlight style2">
 								<div class="inner">
-									<a href="#" class="image"><img src="images/pic02.jpg" alt="" /></a>
+									<a href="#" class="image"><img src="images/snorlax.gif" alt="" /></a>
 									<div class="content">
-										<h2 class="major">Competitive Analysis</h2>
-										<p>Series of bullets, each describing a product or feature that competes with
-yours
-• These can be off-the-shelf products or academic projects
-• For each bullet, provide
-– Name of project, with link to URL
-– 1 sentence about the competing product or project
-– 1 sentence about how your project differs from this competitor
-• Differentiators: Cost, portability, features, …..
-– If there is a picture of the product, by all means, provide it (if it helps) </p>
-										<p>Our primary competitor is Eight Sleep. Eight is a smart mattress pad that does all of the sleep tracking without the need of a wearable device. However, according to their website, Eight has the following features:
-											Heating pads to pre-warm the mattress pad
-											Ability to communicate with Nest to cool the room
-											Ability to monitor heart rate, breathing rate and noise levels
-											Ability to control bedroom lighting</p>
-
-										<p>Sleep as Android is a sleep tracking android app that determines the user’s optimal waking point through the use of accelerometers. The problem with Sleep as Android is you need to put your phone on your bed in order to get any readings. You run the risk of dropping the phone off the bed while sleeping, or receiving extra exposure to EMF radiation by keeping your phone next to your head. Regardless, it is amazing how they are able to get accurate data just through the phone’s accelerometer data. Our goal is leverage their experience and technology into our own smart bed design.</p>
+										<h2 class="major">Motivation</h2>
+										<p>Currently, sleeping patterns can be monitored by the average user through various phone apps and wearable devices such as Fitbit, which are all intrusive and use primarily the user's movement to calculate sleeping patterns. The incentive for this project was to have an entirely non-intrusive system (including wearables), that augments the functionality of current mobile phone applications. By spanning the entire mattress with sensor coverage and having multiple accelerometers at different parts of the mattress, our goal is to broaden the sensor data that phones can collect and have more accurate sleep information.</p>
 									</div>
 								</div>
 							</section>
 
 						<!-- Three -->
-							<section id="three" class="wrapper spotlight style3">
+							<section id="analysis" class="wrapper spotlight style3">
 								<div class="inner">
-									<a href="#" class="image"><img src="images/pic03.jpg" alt="" /></a>
+									<a href="#" class="image"><img src="images/eightSleep.png" alt="" /></a>
 									<div class="content">
-										<h2 class="major">Motivation</h2>
-										<p>2-3 sentences that represent the need for your project
-• Often also viewed as the “market differentiator” for your project
-• What does your project fundamentally make possible that is
-• Not available today?
-• Far too expensive today?
-• Difficult to use today?
-– 1st sentence – how are things done today that is inadequate in some way that drives the
-need for your project? (the “before” scenario)
-– 2nd sentence – how will things be different after your project? (the “after” scenario)</p>
-										<p>The incentive for this project was to have an entirely non-intrusive system (including wearables), that augments the functionality of current mobile phone applications. By spanning the entire mattress with sensor coverage and having multiple accelerometers at different parts of the mattress, our goal is to broaden the sensor data that phones can collect and have more accurate sleep information.</p>
+										<h2 class="major" style="text-align:left">Competitive Analysis</h2>
+										<p style="text-align:left">
+											<ul>
+											  <li style="text-align:left"><a href="https://www.eightsleep.com/" target="_blank"><b>Eight Sleep</b></a>: This is our primary competitor, and is a smart mattress pad that does all of the sleep tracking without the need of a wearable device. It has features to heat the mattress pad to desired temperature, communicate with Nest thermostat, control lighting and monitor heart rate and noise levels. This product is still in development and it is unclear if it will have all the features suggested. </li>
+											  <li style="text-align:left"><a href="https://play.google.com/store/apps/details?id=com.urbandroid.sleep&hl=en" target="_blank"><b>Sleep as Android</b></a>: A sleep tracking Android app that determines the user’s optimal waking point through the use of accelerometers. The main differentiation of our product from this app is that the app requires the phone to be put on the bed in order to get any readings, while our product does not require any conscious effort to do anything different to your normal sleep routine. </li>
+											  <li style="text-align:left"><a href="http://www.restperformance.com/" target="_blank"><b>RestBed</b></a>: A smart, actuated bed that tracks sleep data and responds to your sleep. While RestBed provides more comprehensive data on the way someone sleeps, it is very expensive, costing over $200. Our product tracks users' movements, sleeping positions and any noise to determine the sleep data at a smaller cost. </li>
+											</ul>
+										</p>
 									</div>
 								</div>
 							</section>
 
 						<!-- Four -->
-							<section id="four" class="wrapper alt spotlight style2">
+							<section id="requirements" class="wrapper alt spotlight style2">
 								<div class="inner">
-									<a href="#" class="image"><img src="images/pic02.jpg" alt="" /></a>
+									<a href="#" class="image"><img src="images/requirements.png" alt="" /></a>
 									<div class="content">
 										<h2 class="major">Design Requirements</h2>
-										<p>Series of bullets, each describing a key non-functional characteristic of your system
-• Functional requirements (4-5 bullets at least)
-– Logical characteristics or operations of your system
-• Non-functional characteristics include
-– Reliability, safety, security, portability, timeliness, performance
-• For each bullet, state the requirement that you expect/want your project to meet
-– Clearly, we might not reach that goal – that’s okay as long as we understand why and
-what the new reality of the requirement is</p>
 										<p>
 										<ul>
 											<li>General: The system shall consist of a network of sensors that are embedded into a mattress pad, so the product can be used by placing it on top of any mattress. The product shall be used to track body positions/movements during sleep, to control an alarm, and to allow users to view sleep data over the internet.</li>
@@ -142,94 +109,86 @@ what the new reality of the requirement is</p>
 											<li>Application interfacing: The user shall be able to register their smart mattress pad to their preferred WiFi network using their phone (by entering in the network name and password). The mattress pad will then connect to the specified WiFi network and communicate / log data to the web server over the internet.</li>
 											<li>Authentication: The web server should check for authentication when receiving data from the smart mattress pad, to ensure that arbitrary external requests do not modify logging data.</li>
 											<li>Memory footprint: Logging sensor data at very frequent intervals can lead to an arbitrarily large memory load for the server. Measures must be taken to log only important information such as position changes, reading spikes from the accelerometer or microphone.</li>
-											<li>Alarm: The smart mattress pad shall have an alarm feature, whereby users can set an alarm time through the web application. The smart mattress pad shall find an optimal time for the user to wake up based on estimated sleep cycle detection, and sound the alarm at the optimal time within a 30 minute window of the specified time. The smart mattress pad shall detect if the user is still on the bed, and only turn off the alarm after the user gets off the bed.</li>
-											<li>THERE ARE SUB-BULLET POINTS FOR THIS ONE - LEAVING IT FOR HARSHA</li>
-											<li>A poll/survey on the users of the product should yield that at least 95% users do not feel anything out of the ordinary when sleeping on the mattress pad.</li>
+											<li>Alarm: The smart mattress pad shall have an alarm feature, whereby users can set an alarm time through the web application. The smart mattress pad shall find an optimal time for the user to wake up based on estimated sleep cycle detection, and sound the alarm at the optimal time within a 30 minute window of the specified time. The smart mattress pad shall detect if the user is still on the bed, and only turn off the alarm after the user gets off the bed. </li>
+											<li>User interface: Users will have access to a web application that they can log into and view reports of their sleep activity over the night. Users will be able to setup an account and link their mattress pad with the account. The user’s data will be sourced from the mattress pad that had been registered with their account. Users will be able to view a graph showing them occurences of the following events: 
+												<ul>
+													<li type="circle">Getting	out	of	the	bed	sometime at	night</li>
+													<li type="circle">Switching from lying on	back to	stomach</li>
+													<li type="circle">Change in body position</li>
+													<li type="circle">Still periods with little or no movement</li>
+												</ul></li>
+											<li>Performance & Comfort: A poll/survey on the users of the product should yield that at least 95% users do not feel anything out of the ordinary when sleeping on the mattress pad.</li>
 										</ul>
 										</p>
-										<a href="#" class="special">Learn more</a>
 									</div>
 								</div>
 							</section>
 
 						<!-- Five -->
-							<section id="three" class="wrapper spotlight style3">
+							<section id="specs" class="wrapper spotlight style3">
 								<div class="inner">
-									<a href="#" class="image"><img src="images/pic03.jpg" alt="" /></a>
+									<a href="#" class="image"><img src="images/esp8266.jpg" alt="" /></a>
 									<div class="content">
-										<h2 class="major">Components (Technical Specifications)</h2>
-										<p>All of the components used to build your prototype
-• Think of this section as the “technical specs” section of your product,
-if someone were to purchase it
-– Have three subsections – hardware, software, protocols
-• List all your hardware components
-– For each component, provide technical specifications (vendor,
-processor speed, memory, storage, etc.) – does not hurt to be detailed
-– For each component, provide a link to the vendor that we will purchase
-this from (if that is the case)
-– For each component, provide an estimated cost, if you have the number
-• List all your software components
-– For each component, provide technical specifications (vendor,
-programming language, compliance to standards) – does not hurt to be
-detailed
-– For each component, provide a link to where the software can be
-downloaded
-• List all protocols used</p>
-										<p>
-										<ul>
-										<li>3x ATMEGA328P Microcontroller</li>
-										<li>2x ESP8266 Wifi Module</li>
-										<li>10x Velostat Pressure Sensor</li>
-										<li>4x SEN-09269 Accelerometer</li>
-										<li>1x Mattress Pad</li>
-										<li>1x Fitbit</li>
-										<li>2x BOB-09964 Microphone</li>
-										<li>5x 16-Channel Multiplexer</li>
-										<li>3x COM-07950 Speaker</li>
-										<li>1x Power Adapter</li>
-										<li>2x Barrel Jack</li>
-										<li>5x Conductive Thread</li>
-										</ul>
+										<h2 class="major" style="text-align:left">Technical Specifications</h2>
+										<p style="text-align:left"> <h4 style="text-align:left">Hardware Components: </h4>
+											<ul style="text-align:left">
+												<li>ATMEGA328P Microcontroller - <a href="http://www.digikey.com/product-search/en/integrated-circuits-ics/embedded-microcontrollers/2556109?k=atmega328p&pv1291=2455&FV=fff40027%2Cfff800cd&mnonly=0&newproducts=0&ColumnSort=0&page=1&quantity=0&ptm=0&fid=0&pageSize=25" target="_blank">Digikey </a>  - $2.50</li>
+												<li>ESP8266 Wifi Module - <a href="https://www.adafruit.com/products/2471" target="_blank">Adafruit</a> - $9.95</li>
+												<li>Velostat Pressure Sensor - <a href="https://www.adafruit.com/products/1361" target="_blank">Adafruit</a> - $3.95</li>
+												<li>SEN-09269 Accelerometer - <a href="https://www.sparkfun.com/products/9269" target="_blank">Sparkfun</a> - $14.95</li>
+												<li>BOB-09964 Microphone - <a href="https://www.sparkfun.com/products/9964" target="_blank">Sparkfun</a> - $7.95</li>
+												<li>16-Channel Multiplexer - <a href="https://www.sparkfun.com/products/299" target="_blank">Sparkfun</a> - $0.95</li>
+												<li>COM-07950 Speaker - <a href="https://www.sparkfun.com/products/7950" target="_blank">Sparkfun</a> - $1.95</li>
+												<li>Power Adapter - <a href="https://www.sparkfun.com/products/12889" target="_blank">Sparkfun</a> - $5.95</li>
+												<li>Barrel Jack - <a href="https://www.sparkfun.com/products/10811" target="_blank">Sparkfun</a> - $0.95</li>
+												<li>Conductive Thread - <a href="https://www.sparkfun.com/products/10867" target="_blank">Sparkfun</a> - $2.95</li>
+											</ul>
 										</p>
-										<a href="#" class="special">Learn more</a>
+
+										<p style="text-align:left"> <h4 style="text-align:left">Software Components: </h4>
+											<ul style="text-align:left">
+												<li>Web Application - <a href="https://www.djangoproject.com/" target="_blank">Django</a> (View)</li>
+												<li>Web Server - <a href="https://www.djangoproject.com/" target="_blank">Django</a> (Controller)</li>
+												<li>Database - <a href="https://www.djangoproject.com/" target="_blank">Django</a> (Model)</li>
+											</ul>
+										</p>
+
+										<p style="text-align:left"> <h4 style="text-align:left">Protocols: </h4>
+											<ul style="text-align:left">
+												<li>Wifi</li>
+												<li>HTTP</li>
+											</ul>
+										</p>
 									</div>
 								</div>
 							</section>
 
 						<!-- Six -->
-							<section id="four" class="wrapper alt style1">
+							<section id="team" class="wrapper alt style1">
 								<div class="inner">
 									<h2 class="major">Team Members</h2>
-									<p>Cras mattis ante fermentum, malesuada neque vitae, eleifend erat. Phasellus non pulvinar erat. Fusce tincidunt, nisl eget mattis egestas, purus ipsum consequat orci, sit amet lobortis lorem lacus in tellus. Sed ac elementum arcu. Quisque placerat auctor laoreet.</p>
 									<section class="features">
 										<article>
 											<a href="#" class="image"><img src="images/pic04.jpg" alt="" /></a>
-											<h3 class="major">Sed feugiat lorem</h3>
-											<p>Lorem ipsum dolor sit amet, consectetur adipiscing vehicula id nulla dignissim dapibus ultrices.</p>
-											<a href="#" class="special">Learn more</a>
+											<h3 class="major">Ameya Kamat</h3>
+											<p>akkamat</p>
 										</article>
 										<article>
 											<a href="#" class="image"><img src="images/pic05.jpg" alt="" /></a>
-											<h3 class="major">Nisl placerat</h3>
-											<p>Lorem ipsum dolor sit amet, consectetur adipiscing vehicula id nulla dignissim dapibus ultrices.</p>
-											<a href="#" class="special">Learn more</a>
+											<h3 class="major">Benson Qiu</h3>
+											<p>bqiu</p>
 										</article>
 										<article>
 											<a href="#" class="image"><img src="images/pic06.jpg" alt="" /></a>
-											<h3 class="major">Ante fermentum</h3>
-											<p>Lorem ipsum dolor sit amet, consectetur adipiscing vehicula id nulla dignissim dapibus ultrices.</p>
-											<a href="#" class="special">Learn more</a>
+											<h3 class="major">Harsha Chivukula</h3>
+											<p>hchivuku</p>
 										</article>
 										<article>
 											<a href="#" class="image"><img src="images/pic07.jpg" alt="" /></a>
-											<h3 class="major">Fusce consequat</h3>
-											<p>Lorem ipsum dolor sit amet, consectetur adipiscing vehicula id nulla dignissim dapibus ultrices.</p>
-											<a href="#" class="special">Learn more</a>
+											<h3 class="major">Pratik Prakash</h3>
+											<p>pratikpr</p>
 										</article>
 									</section>
-									<ul class="actions">
-										<li><a href="#" class="button">Browse All</a></li>
-									</ul>
 								</div>
 							</section>
 
@@ -238,39 +197,8 @@ downloaded
 				<!-- Footer -->
 					<section id="footer">
 						<div class="inner">
-							<h2 class="major">Get in touch</h2>
-							<p>Cras mattis ante fermentum, malesuada neque vitae, eleifend erat. Phasellus non pulvinar erat. Fusce tincidunt, nisl eget mattis egestas, purus ipsum consequat orci, sit amet lobortis lorem lacus in tellus. Sed ac elementum arcu. Quisque placerat auctor laoreet.</p>
-							<form method="post" action="#">
-								<div class="field">
-									<label for="name">Name</label>
-									<input type="text" name="name" id="name" />
-								</div>
-								<div class="field">
-									<label for="email">Email</label>
-									<input type="email" name="email" id="email" />
-								</div>
-								<div class="field">
-									<label for="message">Message</label>
-									<textarea name="message" id="message" rows="4"></textarea>
-								</div>
-								<ul class="actions">
-									<li><input type="submit" value="Send Message" /></li>
-								</ul>
-							</form>
-							<ul class="contact">
-								<li class="fa-home">
-									Untitled Inc<br />
-									1234 Somewhere Road Suite #2894<br />
-									Nashville, TN 00000-0000
-								</li>
-								<li class="fa-phone">(000) 000-0000</li>
-								<li class="fa-envelope"><a href="#">information@untitled.tld</a></li>
-								<li class="fa-twitter"><a href="#">twitter.com/untitled-tld</a></li>
-								<li class="fa-facebook"><a href="#">facebook.com/untitled-tld</a></li>
-								<li class="fa-instagram"><a href="#">instagram.com/untitled-tld</a></li>
-							</ul>
 							<ul class="copyright">
-								<li>&copy; Untitled Inc. All rights reserved.</li><li>Design: <a href="http://html5up.net">HTML5 UP</a></li>
+								<li>&copy; 2016. Snorlax. </li>
 							</ul>
 						</div>
 					</section>
