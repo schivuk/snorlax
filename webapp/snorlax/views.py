@@ -18,13 +18,35 @@ def storeData(request):
     if request.method != 'POST':
         raise Http404
 
-    val = float(request.POST['value'])
-    valType = request.POST['dataType']
-    currTime = datetime.datetime.utcnow().replace(tzinfo=utc)
+    velostatVals = str(request.POST['velostatVals']).split(',')
+    velostatIDs = str(request.POST['velostatIDs']).split(',')
+    accelerometerVals = str(request.POST['accelerometerVals']).split(',')
+    accelerometerIDs = str(request.POST['accelerometerIDs']).split(',')
+    microphoneVals = str(request.POST['microphoneVals']).split(',')
+    microphoneIDs = str(request.POST['microphoneIDs']).split(',')
+    time = float(request.POST['time'])
 
-    sensorData = SensorData(value=val, dataType=valType, time=currTime)
+    timestamp = Time(time=datetime.datetime.fromtimestamp(time))
+    timestamp.save()
 
-    sensorData.save()
+    for i in xrange(len(velostatIDs)):
+        velostatData = VelostatData(sensorId=velostatIDs[i], value=velostatVals[i])
+        velostatData.save()
+        timestamp.velostats.add(velostatData)
+
+    for i in xrange(len(accelerometerIDs)):
+        accelerometerData = AccelerometerData(sensorId=accelerometerIDs[i],
+                                              xValue=accelerometerVals[3*i],
+                                              yValue=accelerometerVals[3*i+1],
+                                              zValue=accelerometerVals[3*i+2])
+        accelerometerData.save()
+        timestamp.accelerometers.add(accelerometerData)
+
+    for i in xrange(len(microphoneIDs)):
+        microphoneData = MicrophoneData(sensorId=microphoneIDs[i], value=microphoneVals[i])
+        microphoneData.save()
+        timestamp.microphones.add(microphoneData)
+
+    timestamp.save()
 
     return HttpResponse("Success", status=200)
-
