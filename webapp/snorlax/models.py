@@ -8,6 +8,10 @@ class SensorData(models.Model):
 	dataType = models.CharField(max_length=50)
 	time = models.DateTimeField()
 
+
+#####  Next 2 classes for ML Data storage  ######
+
+
 #multiple sensor readings per group (one-to-many)
 class ReadingGroup(models.Model):
 	time = models.DateTimeField(auto_now=True)
@@ -16,7 +20,31 @@ class ReadingGroup(models.Model):
 	label = models.CharField(max_length=50, null=True, default=None)
 
 class SensorReading(models.Model):
-	value = models.FloatField()
+	value = models.IntegerField()
 	rgroup = models.ForeignKey(ReadingGroup, null=True, default=None)
 	index = models.IntegerField()
 	sensorType = models.CharField(max_length=30, null=True, default=None)
+
+###############################################
+
+
+class Time(models.Model):
+	time = models.DateTimeField(auto_now=True)
+
+class AccelerometerData(models.Model):
+	sensorId = models.IntegerField()
+	xValue = models.IntegerField()
+	yValue = models.IntegerField()
+	zValue = models.IntegerField()
+	time = models.ForeignKey(Time)
+
+class VelostatData(models.Model):
+	sensorId = models.IntegerField()
+	value = models.IntegerField()
+	time = models.ForeignKey(Time)
+
+class MicrophoneData(models.Model):
+	sensorId = models.IntegerField()
+	value = models.IntegerField()
+	time = models.ForeignKey(Time)
+
