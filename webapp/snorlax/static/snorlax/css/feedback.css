@@ -1,0 +1,26 @@
+
+h1.title {
+	text-align: center;
+	font-size: 40px;
+}
+
+div.feedback {
+	max-width: 500px;
+	margin: 0 auto;
+}
+
+form#feedback-form {
+	margin: 20px;
+	padding: 20px;
+}
+
+.form-group {
+	padding-top: 10px;
+	padding-bottom: 10px; 
+}
+
+label.form-label {
+	font-size: 14px;
+	margin-top: 10px;
+	margin-bottom: 10px;
+}

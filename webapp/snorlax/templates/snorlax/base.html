@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+		<meta name="keyword" content="Dashboard, Bootstrap, Sleep, Snorlax">
+		<meta name="author" content="Team 1">
+		<title>Snorlax</title>
+		<!-- LOAD STATIC FILES -->
+		<!-- Bootstrap core CSS -->
+		<link href="{% static 'snorlax/css/bootstrap.css' %}" rel="stylesheet" type="text/css">
+		<!--external css-->
+		<link href="{% static 'snorlax/css/font-awesome/css/font-awesome.css' %}" rel="stylesheet" type="text/css">
+		
+		<!-- Custom styles for this template -->
+		<link href="{% static 'snorlax/css/style.css' %}" rel="stylesheet" type="text/css">
+		<link href="{% static 'snorlax/css/style-responsive.css' %}" rel="stylesheet" type="text/css">
+		
+	</head>
+	<body>
+		<section id="container" >
+			<!-- **********************************************************************************************************************************************************
+			TOP BAR CONTENT & NOTIFICATIONS
+			*********************************************************************************************************************************************************** -->
+			<!--header start-->
+			<header class="header black-bg">
+				<div class="logo">
+					<div class="sidebar-toggle-box">
+						<div class="fa fa-bars tooltips" data-placement="right" data-original-title="Toggle Navigation"></div>
+					</div>
+					<!--logo start-->
+					<a href="index.html" class="logo"><b>Snorlax</b></a>
+					<!--logo end-->
+				</div>
+				<div class="top-menu">
+					<ul class="nav pull-right top-menu">
+						<li>
+							<!-- INSERT PERSON'S PROFILE IMG HERE -->
+							<p><a href="profile.html"><img src="assets/img/ui-sam.jpg" class="img-circle" width="40"></a></p>
+						</li>
+					</ul>
+				</div>
+			</header>
+			<!--header end-->
+			
+			<!-- **********************************************************************************************************************************************************
+			MAIN SIDEBAR MENU
+			*********************************************************************************************************************************************************** -->
+			<!--sidebar start-->
+			<aside>
+				<div id="sidebar"  class="nav-collapse ">
+					<!-- sidebar menu start-->
+					<ul class="sidebar-menu" id="nav-accordion">
+						
+						<p class="centered"><a href="profile.html"><img src="{% static 'snorlax/img/ui-sam.jpg' %}" class="img-circle" width="60"></a></p>
+						<h5 class="centered">Snorlax</h5>
+						
+						<li class="mt">
+							<a class="active" href="dashboard.html">
+								<i class="fa fa-dashboard"></i>
+								<span>Dashboard</span>
+							</a>
+						</li>
+						<li class="mt">
+							<a class="inactive" href="alarm.html">
+								<i class="fa fa-dashboard"></i>
+								<span>Alarm</span>
+							</a>
+						</li>
+						<li class="mt">
+							<a class="inactive" href="feedback.html">
+								<i class="fa fa-dashboard"></i>
+								<span>Log Sleep</span>
+							</a>
+						</li>
+						<li class="mt">
+							<a class="inactive" href="profile.html">
+								<i class="fa fa-dashboard"></i>
+								<span>Profile</span>
+							</a>
+						</li>
+					</ul>
+					<!-- sidebar menu end-->
+				</div>
+			</aside>
+			<!--sidebar end-->
+			
+			<!-- **********************************************************************************************************************************************************
+			MAIN CONTENT
+			*********************************************************************************************************************************************************** -->
+			<!--main content start-->
+			<section id="main-content">
+				<section class="wrapper">
+				</section>
+			</section>
+			<!--main content end-->
+			<!-- </section> -->
+			<!-- js placed at the end of the document so the pages load faster -->
+			<script src="{% static 'snorlax/js/jquery.js' %}"></script>
+			<script src="{% static 'snorlax/js/jquery-1.8.3.min.js' %}"></script>
+			<script src="{% static 'snorlax/js/bootstrap.min.js' %}"></script>
+			<script src="{% static 'snorlax/js/jquery.dcjqaccordion.2.7.js' %}"></script>
+			<!--common script for all pages-->
+			<script src="{% static 'snorlax/js/common-scripts.js' %}"></script>
+		</body>
+	</html>
