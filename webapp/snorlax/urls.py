@@ -8,6 +8,7 @@ urlpatterns = patterns('',
     url(r'^getPosition$', 'snorlax.views.getPosition', name='getPosition'),
    	url(r'^clearAll$', 'snorlax.views.clearAll', name='clearAll'),
    	url(r'^showRawData$', 'snorlax.views.showRawData', name='showRawData'),
+   	url(r'^base$', 'snorlax.views.base', name='base'),
    
     #url(r'^getData$', 'snorlax.views.getData', name='getData'),
 )

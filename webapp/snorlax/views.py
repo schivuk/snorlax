@@ -15,12 +15,16 @@ import numpy as np
 from sklearn.svm import SVC
 
 clf = SVC(C=10, kernel='poly', degree=1, probability=True)
-    
+
+#latestDataJson =     
 
 MAX_VALUES = 50
 
 def home(request):
     return render(request, 'snorlax/index.html')
+
+def base(request):
+    return render(request, 'snorlax/base.html')
 
 @transaction.atomic
 def storeData(request):
@@ -79,7 +83,7 @@ def trainPosition(request):
     for veloVal in veloVals:
         index += 1 
         reading = SensorReading(value=veloVal, rgroup=rgroup,\
-                            	index=index)
+                                index=index)
         reading.save()
         
 
@@ -124,13 +128,21 @@ def getPosition(request):
 
 #delete all training data (to start a new session)
 def clearAll(request):
-	SensorReading.objects.all().delete()
-	ReadingGroup.objects.all().delete()
-	print "All objects deleted"
-	return redirect('home')
+    SensorReading.objects.all().delete()
+    ReadingGroup.objects.all().delete()
+    print "All objects deleted"
+    return redirect('home')
 
 #show a template with a chart with data
 def showRawData(request):
-	#orderedGroups = ReadingGroup.objects.all().order_by('-time')
+    orderedGroups = ReadingGroup.objects.all().order_by('-time')
+    if len(orderedGroups) < 1:
+        return  HttpResponse("No readings present", content_type='text/plain')
 
-	return render(request, 'snorlax/rawdata.html', {})
+    firstGroup = orderedGroups[0]
+
+    return render(request, 'snorlax/rawdata.html', {})
+
+
+#def getLastReading(request):
+
