@@ -122,9 +122,15 @@ def getPosition(request):
 
     return render(request, 'snorlax/position.html', {'position': estimateArr[0]} )
 
-
+#delete all training data (to start a new session)
 def clearAll(request):
 	SensorReading.objects.all().delete()
 	ReadingGroup.objects.all().delete()
 	print "All objects deleted"
 	return redirect('home')
+
+#show a template with a chart with data
+def showRawData(request):
+	#orderedGroups = ReadingGroup.objects.all().order_by('-time')
+
+	return render(request, 'snorlax/rawdata.html', {})
