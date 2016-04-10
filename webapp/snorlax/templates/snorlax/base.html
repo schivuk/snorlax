@@ -13,7 +13,7 @@
 		<!-- Bootstrap core CSS -->
 		<link href="{% static 'snorlax/css/bootstrap.css' %}" rel="stylesheet" type="text/css">
 		<!--external css-->
-		<link href="{% static 'snorlax/css/font-awesome/css/font-awesome.css' %}" rel="stylesheet" type="text/css">
+		<link href="{% static 'snorlax/font-awesome/css/font-awesome.css' %}" rel="stylesheet" type="text/css">
 		
 		<!-- Custom styles for this template -->
 		<link href="{% static 'snorlax/css/style.css' %}" rel="stylesheet" type="text/css">
@@ -39,7 +39,7 @@
 					<ul class="nav pull-right top-menu">
 						<li>
 							<!-- INSERT PERSON'S PROFILE IMG HERE -->
-							<p><a href="profile.html"><img src="assets/img/ui-sam.jpg" class="img-circle" width="40"></a></p>
+							<p><a href="profile.html"><img src="{% static 'snorlax/img/ui-sam.jpg' %}" class="img-circle" width="40"></a></p>
 						</li>
 					</ul>
 				</div>
@@ -94,6 +94,8 @@
 			<!--main content start-->
 			<section id="main-content">
 				<section class="wrapper">
+				    {% block content %}
+				    {% endblock %}
 				</section>
 			</section>
 			<!--main content end-->

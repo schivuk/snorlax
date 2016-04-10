@@ -21,7 +21,7 @@ clf = SVC(C=10, kernel='poly', degree=1, probability=True)
 MAX_VALUES = 50
 
 def home(request):
-    return render(request, 'snorlax/index.html')
+    return render(request, 'snorlax/dashboard.html')
 
 def base(request):
     return render(request, 'snorlax/base.html')
