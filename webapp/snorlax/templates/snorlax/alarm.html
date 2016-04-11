@@ -1,0 +1,57 @@
+{% extends "snorlax/base.html" %}
+{% load staticfiles %}
+<!-- Custom styles for this template -->
+<link href="{% static 'snorlax/css/alarm.css' %}" rel="stylesheet" type="text/css">
+{% block content %}
+  <!--- ALARM TIME -->
+  <div class="time">
+    <h1>Alarm Set</h1>
+
+    <!-- Make this dynamic -->
+    <p>Tomorrow, April 1st, 2016</p>
+    <h1 class="numbers">5:30 PM</h1>
+    <input type="checkbox" id="toggle-two">
+  </div>
+  
+  <hr>
+  <!-- EDIT ALARM -->
+  <div class="time">
+    <h1>Edit Alarm</h1>
+    <form id="edit">
+      <div class="form-group">
+        <table>
+          <tr>
+            <td class="hour">
+              <div class="input-group">
+                <input type="text" class="form-control number" maxlength="2"  id="hour">
+                <div class="input-group-addon"><span class="glyphicon glyphicon-chevron-up"></span></div>
+                <div class="input-group-addon"><span class="glyphicon glyphicon-chevron-down"></span></div>
+              </div>
+            </td>
+            <td class="separator">:</td>
+            <td class="minute">
+              <div class="input-group">
+                <input type="text" class="form-control number" maxlength="2" id="minute">
+                <div class="input-group-addon"><span class="glyphicon glyphicon-chevron-up"></span></div>
+                <div class="input-group-addon"><span class="glyphicon glyphicon-chevron-down"></span></div>
+              </div>
+            </td>
+            <td>
+              <div class="dropdown">
+                <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                AM
+                <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                  <li><a href="#">AM</a></li>
+                  <li><a href="#">PM</a></li>
+                </ul>
+              </div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <button type="submit" class="btn btn-primary btn-block">Save Alarm</button>
+    </form>
+  </div>
+{% endblock %}
