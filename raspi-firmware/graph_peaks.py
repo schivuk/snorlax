@@ -5,6 +5,7 @@ from scipy.signal import find_peaks_cwt
 import random
 
 peak_threshold = 4
+
 def acc_algorithm(vals, threshold):
     num_vals = len(vals)
     peaks = set()
@@ -72,12 +73,6 @@ with open(filename) as f:
     y_peaks = acc_algorithm(y_vals,4)
     z_peaks = acc_algorithm(z_vals,4)
     mic_peaks = mic_algorithm(mic_vals,100)
-
-    # cb = np.array([random.random() for _ in xrange(10)])
-    # indexes = find_peaks_cwt(cb, np.asarray([1,2,3,4,5,6,7,8,9,10]))
-    # x_peaks = find_peaks_cwt(np.asarray(x_vals), np.asarray(timestamps))
-    # x_peaks = find_peaks_cwt(np.asarray(x), np.asarray(y))
-    # print x_peaks
 
     plt.subplot(4,1,1)
     plt.title('x vs. Time')
