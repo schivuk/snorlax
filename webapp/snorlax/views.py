@@ -26,6 +26,18 @@ def home(request):
 def base(request):
     return render(request, 'snorlax/base.html')
 
+def alarm(request):
+    if request.method == 'GET':
+        return render(request, 'snorlax/alarm.html')
+
+def feedback(request):
+    if request.method == 'GET':
+        return render(request, 'snorlax/feedback.html')
+
+def profile(request):
+    if request.method == 'GET':
+        return render(request, 'snorlax/profile.html')
+
 @transaction.atomic
 def storeData(request):
     if request.method != 'POST':

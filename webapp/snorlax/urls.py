@@ -9,6 +9,9 @@ urlpatterns = patterns('',
    	url(r'^clearAll$', 'snorlax.views.clearAll', name='clearAll'),
    	url(r'^showRawData$', 'snorlax.views.showRawData', name='showRawData'),
    	url(r'^base$', 'snorlax.views.base', name='base'),
+   	url(r'^alarm$', 'snorlax.views.alarm', name='alarm'),
+   	url(r'^feedback$', 'snorlax.views.feedback', name='feedback'),
+   	url(r'^profile$', 'snorlax.views.profile', name='profile'),
    
     #url(r'^getData$', 'snorlax.views.getData', name='getData'),
 )
