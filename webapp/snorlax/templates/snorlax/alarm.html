@@ -1,7 +1,13 @@
 {% extends "snorlax/base.html" %}
+
+{% block static-files %}
 {% load staticfiles %}
 <!-- Custom styles for this template -->
 <link href="{% static 'snorlax/css/alarm.css' %}" rel="stylesheet" type="text/css">
+<link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
+{% endblock %}
+
+
 {% block content %}
   <!--- ALARM TIME -->
   <div class="time">
@@ -54,4 +60,9 @@
       <button type="submit" class="btn btn-primary btn-block">Save Alarm</button>
     </form>
   </div>
+{% endblock %}
+
+{% block loadJS %}
+    <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
+    <script src="{% static 'snorlax/js/alarm.js' %}"></script>
 {% endblock %}

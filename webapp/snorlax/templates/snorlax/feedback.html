@@ -1,7 +1,11 @@
 {% extends "snorlax/base.html" %}
+
+{% block static-files %}
 {% load staticfiles %}
 <!-- Custom styles for this template -->
 <link href="{% static 'snorlax/css/feedback.css' %}" rel="stylesheet" type="text/css">
+{% endblock %}
+
 {% block content %}
   <!-- FEEDBACK FORM -->
   <div class="feedback">

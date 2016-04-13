@@ -18,6 +18,8 @@
 		<!-- Custom styles for this template -->
 		<link href="{% static 'snorlax/css/style.css' %}" rel="stylesheet" type="text/css">
 		<link href="{% static 'snorlax/css/style-responsive.css' %}" rel="stylesheet" type="text/css">
+		{% block static-files%}
+		{% endblock %}
 		
 	</head>
 	<body>
@@ -107,5 +109,8 @@
 			<script src="{% static 'snorlax/js/jquery.dcjqaccordion.2.7.js' %}"></script>
 			<!--common script for all pages-->
 			<script src="{% static 'snorlax/js/common-scripts.js' %}"></script>
+			{% block loadJS %}
+			{% endblock %}
+
 		</body>
 	</html>
