@@ -48,3 +48,6 @@ class MicrophoneData(models.Model):
 	value = models.IntegerField()
 	time = models.ForeignKey(Time)
 
+class Alarm(models.Model):
+	time = models.DateTimeField()
+	switch = models.BooleanField(default=True)

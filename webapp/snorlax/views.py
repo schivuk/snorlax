@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 
 from django.http import HttpResponse, Http404
 
@@ -9,6 +9,7 @@ from snorlax.models import *
 
 import datetime
 from django.utils.timezone import utc
+from django.utils import timezone
 
 #for classification
 import numpy as np
@@ -26,9 +27,31 @@ def home(request):
 def base(request):
     return render(request, 'snorlax/base.html')
 
+@transaction.atomic
 def alarm(request):
     if request.method == 'GET':
-        return render(request, 'snorlax/alarm.html')
+        context = {}
+        
+        #Get the last alarm set
+        alarms =Alarm.objects.all()
+        if len(alarms) > 0:
+            context['alarm'] = alarms[0]
+        
+        return render(request, 'snorlax/alarm.html', context)
+
+    if request.method == 'POST':
+        context = {}
+
+        #Get the last alarm set
+        alarms =Alarm.objects.all()
+        if len(alarms) > 0:
+            alarm = alarms[0]
+            alarm.switch = not alarm.switch
+            print alarm.switch
+            alarm.save()
+            context['alarm'] = alarm
+
+        return render(request, 'snorlax/alarm.html', context)
 
 def feedback(request):
     if request.method == 'GET':
@@ -37,6 +60,41 @@ def feedback(request):
 def profile(request):
     if request.method == 'GET':
         return render(request, 'snorlax/profile.html')
+
+@transaction.atomic
+def editAlarm(request):
+    if request.method != 'POST':
+        raise Http404
+
+    context = {}
+
+    ampm = request.POST['ampm']
+    hour = int(request.POST['hour'])
+    minute = int(request.POST['min'])
+
+
+    print request.POST['ampm']
+    print request.POST['hour']
+    print request.POST['min']
+
+    time = timezone.now()
+    #Try time.date
+    #Try time.time
+    time = time.replace(hour=hour, minute=minute)
+
+    #Check whether alarm has been set previously
+    alarms = Alarm.objects.all()
+    if len(alarms) > 0:
+        alarm = alarms[0]
+        alarm.time = time
+        alarm.save()
+    else:
+        alarm = Alarm(time=time)
+        alarm.save()    
+
+    context['alarm'] = alarm
+
+    return render(request, 'snorlax/alarm.html', context)
 
 @transaction.atomic
 def storeData(request):

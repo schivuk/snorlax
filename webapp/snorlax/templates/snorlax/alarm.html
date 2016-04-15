@@ -11,13 +11,14 @@
 {% block content %}
   <!--- ALARM TIME -->
   <div class="time">
-    <h1>Alarm Set</h1>
-
+    <h1>Set Alarm</h1>
     <!-- Make this dynamic -->
-    <form id="set" method="post" action="">
-      <p>Tomorrow, April 1st, 2016</p>
-      <h1 class="numbers">5:30 PM</h1>
+    <h4 class="numbers">{{alarm.time.date}}</h4>
+    <h1 class="numbers">{{alarm.time.time}}</h1>
+
+    <form id="set" method="post" action="{% url 'alarm' %}">
       <input type="checkbox" id="toggle-two" name="setAlarm" onchange="$('#set').submit();">
+    {% csrf_token %}
     </form>
   </div>
   
@@ -25,13 +26,13 @@
   <!-- EDIT ALARM -->
   <div class="time">
     <h1>Edit Alarm</h1>
-    <form id="edit">
+    <form enctype="multipart/form-data" class="form col-md-12 center-block" method="post" action="{% url 'editAlarm' %}">
       <div class="form-group">
         <table>
           <tr>
             <td class="hour">
               <div class="input-group">
-                <input type="text" class="form-control number" maxlength="2"  id="hour">
+                <input type="text" class="form-control number" maxlength="2"  id="hour" name="hour">
                 <div class="input-group-addon"><span class="glyphicon glyphicon-chevron-up"></span></div>
                 <div class="input-group-addon"><span class="glyphicon glyphicon-chevron-down"></span></div>
               </div>
@@ -39,27 +40,26 @@
             <td class="separator">:</td>
             <td class="minute">
               <div class="input-group">
-                <input type="text" class="form-control number" maxlength="2" id="minute">
+                <input type="text" class="form-control number" maxlength="2" id="minute" name="min">
                 <div class="input-group-addon"><span class="glyphicon glyphicon-chevron-up"></span></div>
                 <div class="input-group-addon"><span class="glyphicon glyphicon-chevron-down"></span></div>
               </div>
             </td>
             <td>
               <div class="dropdown">
-                <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                AM
-                <span class="caret"></span>
-                </button>
-                <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-                  <li><a href="#">AM</a></li>
-                  <li><a href="#">PM</a></li>
-                </ul>
+                <select class="form-control" id="ampm" name="ampm">
+                    <option>  AM   </option>
+                    <option>  PM   </option>
+                </select>
               </div>
             </td>
           </tr>
         </table>
       </div>
-      <button type="submit" class="btn btn-primary btn-block">Save Alarm</button>
+      <div class="form-group">
+        <button type="submit" class="btn btn-primary btn-block">Save Alarm</button>
+      </div>
+      {% csrf_token %}
     </form>
   </div>
 {% endblock %}
