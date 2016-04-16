@@ -300,6 +300,13 @@ def analyzeSleepCycle(request):
             elif curr_state == 'deep':
                 total_deep_time += 1
 
+        # No transition at the end of the sleep cycle but we still need to graph it
+        all_transitions.append(len(x_vals)-1)
+        if curr_state == 'light':
+            x_axis.append(1)
+        else:
+            x_axis.append(2)
+
 
     context = {}
     # context['data'] = x_vals

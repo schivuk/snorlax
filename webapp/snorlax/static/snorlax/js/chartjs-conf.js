@@ -223,15 +223,14 @@ $.ajax({
             label: 'REM Sleep'
         }
         ]
-
     }
 });
 
 var doughnut = new Chart(document.getElementById("doughnut").getContext("2d")).Doughnut(doughnutData);
 document.getElementById('js-legend').innerHTML = doughnut.generateLegend();
 new Chart(document.getElementById("line").getContext("2d")).Line(lineChartData, lineChartOptions);
-// new Chart(document.getElementById("radar").getContext("2d")).Radar(radarChartData);
-// new Chart(document.getElementById("polarArea").getContext("2d")).PolarArea(chartData);
-// new Chart(document.getElementById("bar").getContext("2d")).Bar(barChartData);
-// new Chart(document.getElementById("pie").getContext("2d")).Pie(pieData, pieOptions);
+new Chart(document.getElementById("radar").getContext("2d")).Radar(radarChartData);
+new Chart(document.getElementById("polarArea").getContext("2d")).PolarArea(chartData);
+new Chart(document.getElementById("bar").getContext("2d")).Bar(barChartData);
+new Chart(document.getElementById("pie").getContext("2d")).Pie(pieData, pieOptions);
 }();
