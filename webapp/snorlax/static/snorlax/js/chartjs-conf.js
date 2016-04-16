@@ -24,26 +24,17 @@ color : "#34495e"
 var lineChartData = {
 labels: ["January", "February", "March", "April", "May", "June", "July"],
 datasets: [
-{
-label: "My First dataset",
-fillColor: "rgba(220,220,220,0.2)",
-strokeColor: "rgba(220,220,220,1)",
-pointColor: "rgba(220,220,220,1)",
-pointStrokeColor: "#fff",
-pointHighlightFill: "#fff",
-pointHighlightStroke: "rgba(220,220,220,1)",
-data: [65, 59, 80, 81, 56, 55, 40]
-},
-{
-label: "My Second dataset",
-fillColor: "rgba(151,187,205,0.2)",
-strokeColor: "rgba(151,187,205,1)",
-pointColor: "rgba(151,187,205,1)",
-pointStrokeColor: "#fff",
-pointHighlightFill: "#fff",
-pointHighlightStroke: "rgba(151,187,205,1)",
-data: [28, 48, 40, 19, 86, 27, 90]
-}
+    {
+        label: "My First dataset",
+        fillColor: "rgba(220,220,220,0.2)",
+        strokeColor: "rgba(220,220,220,1)",
+        pointColor: "rgba(220,220,220,1)",
+        pointStrokeColor: "#fff",
+        pointHighlightFill: "#fff",
+        pointHighlightStroke: "rgba(220,220,220,1)",
+        scaleStartValue: -5,
+        data: [65, 59, 80, 81, 56, 55, 40]
+    }
 ]
 };
 
@@ -65,7 +56,7 @@ var lineChartOptions = {
     scaleShowVerticalLines: true,
 
     //Boolean - Whether the line is curved between points
-    bezierCurve : true,
+    bezierCurve : false,
 
     //Number - Tension of the bezier curve between points
     bezierCurveTension : 0.4,
@@ -92,8 +83,24 @@ var lineChartOptions = {
     datasetFill : true,
 
     //String - A legend template
-    legendTemplate : "<ul class=\"<%=name.toLowerCase()%>-legend\"><% for (var i=0; i<datasets.length; i++){%><li><span style=\"background-color:<%=datasets[i].strokeColor%>\"></span><%if(datasets[i].label){%><%=datasets[i].label%><%}%></li><%}%></ul>"
+    legendTemplate : "<ul class=\"<%=name.toLowerCase()%>-legend\"><% for (var i=0; i<datasets.length; i++){%><li><span style=\"background-color:<%=datasets[i].strokeColor%>\"></span><%if(datasets[i].label){%><%=datasets[i].label%><%}%></li><%}%></ul>",
 
+    scaleOverride: true,
+    scaleSteps: 3,
+    scaleStepWidth: 1,
+    scaleStartValue: 0,
+
+    // scaleLabel : "<%= value = ' + foo %>"
+    scaleLabel: function (valuePayload) {
+        if(Number(valuePayload.value)===0)
+            return '';
+        if(Number(valuePayload.value)===1)
+            return 'light sleep';
+        if(Number(valuePayload.value)===2)
+            return 'deep sleep';
+        if(Number(valuePayload.value)===3)
+            return 'rem sleep';
+    }
 };
 
 var pieData = [
@@ -170,6 +177,19 @@ data : [28,48,40,19,96,27,100]
 }
 ]
 };
+
+$.ajax({
+    url: "/analyzeSleepCycle",
+    dataType : "json",
+    async: false,
+    success: function(response) {
+        console.log(response['data']);
+        lineChartData.datasets[0].data = response['data'];
+        lineChartData.labels = response['labels'];
+        console.log('ajax done');
+    }
+});
+
 new Chart(document.getElementById("doughnut").getContext("2d")).Doughnut(doughnutData);
 new Chart(document.getElementById("line").getContext("2d")).Line(lineChartData, lineChartOptions);
 new Chart(document.getElementById("radar").getContext("2d")).Radar(radarChartData);

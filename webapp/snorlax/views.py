@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404
 
-from django.http import HttpResponse, Http404
+from django.http import HttpResponse, Http404, JsonResponse
 
 # Django transaction system so we can use @transaction.atomic
 from django.db import transaction
@@ -15,9 +15,12 @@ from django.utils import timezone
 import numpy as np
 from sklearn.svm import SVC
 
+from algorithm import *
+import time
+
 clf = SVC(C=10, kernel='poly', degree=1, probability=True)
 
-#latestDataJson =     
+#latestDataJson =
 
 MAX_VALUES = 50
 
@@ -31,12 +34,12 @@ def base(request):
 def alarm(request):
     if request.method == 'GET':
         context = {}
-        
+
         #Get the last alarm set
         alarms =Alarm.objects.all()
         if len(alarms) > 0:
             context['alarm'] = alarms[0]
-        
+
         return render(request, 'snorlax/alarm.html', context)
 
     if request.method == 'POST':
@@ -90,7 +93,7 @@ def editAlarm(request):
         alarm.save()
     else:
         alarm = Alarm(time=time)
-        alarm.save()    
+        alarm.save()
 
     context['alarm'] = alarm
 
@@ -110,27 +113,29 @@ def storeData(request):
     time = float(request.POST['time'])
 
     timestamp = Time(time=datetime.datetime.fromtimestamp(time))
-    timestamp.save()
 
-    for i in xrange(len(velostatIDs)):
-        velostatData = VelostatData(sensorId=velostatIDs[i], value=velostatVals[i])
-        velostatData.save()
-        timestamp.velostats.add(velostatData)
 
-    for i in xrange(len(accelerometerIDs)):
-        accelerometerData = AccelerometerData(sensorId=accelerometerIDs[i],
-                                              xValue=accelerometerVals[3*i],
-                                              yValue=accelerometerVals[3*i+1],
-                                              zValue=accelerometerVals[3*i+2])
-        accelerometerData.save()
-        timestamp.accelerometers.add(accelerometerData)
+    # timestamp.save()
 
-    for i in xrange(len(microphoneIDs)):
-        microphoneData = MicrophoneData(sensorId=microphoneIDs[i], value=microphoneVals[i])
-        microphoneData.save()
-        timestamp.microphones.add(microphoneData)
+    # for i in xrange(len(velostatIDs)):
+    #     velostatData = VelostatData(sensorId=velostatIDs[i], value=velostatVals[i])
+    #     velostatData.save()
+    #     timestamp.velostats.add(velostatData)
 
-    timestamp.save()
+    # for i in xrange(len(accelerometerIDs)):
+    #     accelerometerData = AccelerometerData(sensorId=accelerometerIDs[i],
+    #                                           xValue=accelerometerVals[3*i],
+    #                                           yValue=accelerometerVals[3*i+1],
+    #                                           zValue=accelerometerVals[3*i+2])
+    #     accelerometerData.save()
+    #     timestamp.accelerometers.add(accelerometerData)
+
+    # for i in xrange(len(microphoneIDs)):
+    #     microphoneData = MicrophoneData(sensorId=microphoneIDs[i], value=microphoneVals[i])
+    #     microphoneData.save()
+    #     timestamp.microphones.add(microphoneData)
+
+    # timestamp.save()
 
     return HttpResponse("Success", status=200)
 
@@ -142,7 +147,7 @@ def trainPosition(request):
 
 
     velostatValsStr = request.POST['velostatVals'].split(',')
-    
+
     print "velo values: " + str(velostatValsStr)
     veloVals = map(int, velostatValsStr)
 
@@ -151,13 +156,13 @@ def trainPosition(request):
 
     index=0
     for veloVal in veloVals:
-        index += 1 
+        index += 1
         reading = SensorReading(value=veloVal, rgroup=rgroup,\
                                 index=index)
         reading.save()
-        
 
-    return HttpResponse("Success", status=200)    
+
+    return HttpResponse("Success", status=200)
 
 
 #train classifier based on all data
@@ -178,18 +183,18 @@ def learnPositions(request):
     #learn
     clf.fit(np.array(xVector), np.array(labelVector))
     print "done."
-    return HttpResponse("Success", status=200)    
+    return HttpResponse("Success", status=200)
 
 
 def getPosition(request):
     if request.method != 'POST':
         raise Http404
 
-    velostatValsStr = request.POST['velostatVals'].split(',')    
-    
+    velostatValsStr = request.POST['velostatVals'].split(',')
+
     veloVals = map(int, velostatValsStr)
     print "velo values: " + str(veloVals)
-   
+
     print "estimating values..."
     estimateArr = clf.predict([veloVals])
     print "Estimate: " + str(estimateArr[0])
@@ -213,6 +218,60 @@ def showRawData(request):
 
     return render(request, 'snorlax/rawdata.html', {})
 
+
+def analyzeSleepCycle(request):
+
+    with open('accOutputSmall.txt') as f:
+        x_vals = []
+        y_vals = []
+        z_vals = []
+        timestamps = []
+
+        for line in f.readlines():
+
+            x,y,z,timestamp = line.strip('\n').split(',')
+
+            x_vals.append(int(x))
+            # y_vals.append(int(y))
+            # z_vals.append(int(z))
+            timestamps.append(float(timestamp))
+
+        int_timestamps = range(1,len(x_vals)+1)
+        x_peaks, x_deep_times = acc_algorithm(x_vals,int_timestamps)
+        # y_peaks, y_deep_times = acc_algorithm(y_vals,int_timestamps)
+        # z_peaks, z_deep_times = acc_algorithm(z_vals,int_timestamps)
+
+
+        # to_plot_x_deep_times = set_to_list(x_deep_times)
+        # to_plot_x_deep_vals = [x_vals[i] for i in to_plot_x_deep_times]
+
+        # to_plot_x_light_times = set(int_timestamps).difference(x_deep_times)
+        # to_plot_x_light_times.remove(len(x_vals))
+        # to_plot_x_light_times = set_to_list(to_plot_x_light_times)
+
+        # to_plot_x_light_vals = [x_vals[i] for i in to_plot_x_light_times]
+        light_to_deep_transitions = []
+        deep_to_light_transitions = []
+        all_transitions = [1]
+        x_axis = [1]
+        for i in xrange(2,len(x_vals)):
+            if i in x_deep_times and not i-1 in x_deep_times:
+                light_to_deep_transitions.append(i)
+                all_transitions.append(i)
+                x_axis.append(1)
+            elif i-1 in x_deep_times and not i in x_deep_times:
+                deep_to_light_transitions.append(i)
+                all_transitions.append(i)
+                x_axis.append(2)
+
+    context = {}
+    # context['data'] = x_vals
+    # context['labels'] = int_timestamps
+
+    context['data'] = x_axis
+    context['labels'] = all_transitions
+
+    return JsonResponse(context)
 
 #def getLastReading(request):
 

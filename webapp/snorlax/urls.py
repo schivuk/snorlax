@@ -13,6 +13,6 @@ urlpatterns = patterns('',
    	url(r'^feedback$', 'snorlax.views.feedback', name='feedback'),
    	url(r'^profile$', 'snorlax.views.profile', name='profile'),
     url(r'^editAlarm$', 'snorlax.views.editAlarm', name='editAlarm'),
-    
+    url(r'^analyzeSleepCycle$', 'snorlax.views.analyzeSleepCycle', name='analyzeSleepCycle'),
     #url(r'^getData$', 'snorlax.views.getData', name='getData'),
 )
