@@ -21,6 +21,8 @@ value : 120,
 color : "#34495e"
 }
 ];
+
+
 var lineChartData = {
 labels: ["January", "February", "March", "April", "May", "June", "July"],
 datasets: [
@@ -103,20 +105,38 @@ var lineChartOptions = {
     }
 };
 
-var pieData = [
-{
-value: 30,
-color:"#1abc9c"
-},
-{
-value : 50,
-color : "#16a085"
-},
-{
-value : 100,
-color : "#27ae60"
-}
-];
+var pieData = [{
+        value : 30,
+        color : "#F38630",
+        label : 'Sleep',
+        labelColor : 'white',
+        labelFontSize : '16'
+    },
+    {
+        value : 30,
+        color : "#F34353",
+        label : 'Sleep',
+        labelColor : 'white',
+        labelFontSize : '16'
+    }];
+
+var pieOptions = {
+    toolTipTemplate : "wtf is wron with this shit",
+        segmentShowStroke : true,
+            segmentStrokeColor : "#fff",
+            segmentStrokeWidth : 2,
+            animation : true,
+            animationSteps : 100,
+            animationEasing : "easeOutBounce",
+            animateRotate : true,
+            animateScale : false,
+            onAnimationComplete : null,
+            labelFontFamily : "'Arial'",
+            labelFontStyle : "normal",
+            labelFontSize : 12,
+            labelFontColor : "#666",
+};
+
 var barChartData = {
 labels : ["January","February","March","April","May","June","July"],
 datasets : [
@@ -183,17 +203,35 @@ $.ajax({
     dataType : "json",
     async: false,
     success: function(response) {
-        console.log(response['data']);
         lineChartData.datasets[0].data = response['data'];
         lineChartData.labels = response['labels'];
-        console.log('ajax done');
+
+        doughnutData = [
+        {
+            value: response['total_light_time'],
+            color: '#0000FF',
+            label: 'Light Sleep'
+        },
+        {
+            value: response['total_deep_time'],
+            color: '#00FF00',
+            label: 'Deep Sleep'
+        },
+        {
+            value: response['total_rem_time'],
+            color: '#FF0000',
+            label: 'REM Sleep'
+        }
+        ]
+
     }
 });
 
-new Chart(document.getElementById("doughnut").getContext("2d")).Doughnut(doughnutData);
+var doughnut = new Chart(document.getElementById("doughnut").getContext("2d")).Doughnut(doughnutData);
+document.getElementById('js-legend').innerHTML = doughnut.generateLegend();
 new Chart(document.getElementById("line").getContext("2d")).Line(lineChartData, lineChartOptions);
-new Chart(document.getElementById("radar").getContext("2d")).Radar(radarChartData);
-new Chart(document.getElementById("polarArea").getContext("2d")).PolarArea(chartData);
-new Chart(document.getElementById("bar").getContext("2d")).Bar(barChartData);
-new Chart(document.getElementById("pie").getContext("2d")).Pie(pieData);
+// new Chart(document.getElementById("radar").getContext("2d")).Radar(radarChartData);
+// new Chart(document.getElementById("polarArea").getContext("2d")).PolarArea(chartData);
+// new Chart(document.getElementById("bar").getContext("2d")).Bar(barChartData);
+// new Chart(document.getElementById("pie").getContext("2d")).Pie(pieData, pieOptions);
 }();

@@ -273,19 +273,33 @@ def analyzeSleepCycle(request):
         # to_plot_x_light_times = set_to_list(to_plot_x_light_times)
 
         # to_plot_x_light_vals = [x_vals[i] for i in to_plot_x_light_times]
+
+        total_light_time = 0
+        total_deep_time = 0
+
         light_to_deep_transitions = []
         deep_to_light_transitions = []
         all_transitions = [1]
         x_axis = [1]
+        curr_state = 'light'
         for i in xrange(2,len(x_vals)):
             if i in x_deep_times and not i-1 in x_deep_times:
                 light_to_deep_transitions.append(i)
                 all_transitions.append(i)
                 x_axis.append(1)
+                curr_state = 'deep'
+
             elif i-1 in x_deep_times and not i in x_deep_times:
                 deep_to_light_transitions.append(i)
                 all_transitions.append(i)
                 x_axis.append(2)
+                curr_state = 'light'
+
+            if curr_state == 'light':
+                total_light_time += 1
+            elif curr_state == 'deep':
+                total_deep_time += 1
+
 
     context = {}
     # context['data'] = x_vals
@@ -293,6 +307,9 @@ def analyzeSleepCycle(request):
 
     context['data'] = x_axis
     context['labels'] = all_transitions
+    context['total_light_time'] = total_light_time
+    context['total_deep_time'] = total_deep_time
+    context['total_rem_time'] = 0
 
     return JsonResponse(context)
 

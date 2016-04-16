@@ -1,0 +1,6 @@
+.chart-legend li span{
+    display: inline-block;
+    width: 50px;
+    height: 20px;
+    margin-right: 20;
+}

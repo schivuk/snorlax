@@ -14,13 +14,15 @@
 		<link href="{% static 'snorlax/css/bootstrap.css' %}" rel="stylesheet" type="text/css">
 		<!--external css-->
 		<link href="{% static 'snorlax/font-awesome/css/font-awesome.css' %}" rel="stylesheet" type="text/css">
-		
+
 		<!-- Custom styles for this template -->
 		<link href="{% static 'snorlax/css/style.css' %}" rel="stylesheet" type="text/css">
 		<link href="{% static 'snorlax/css/style-responsive.css' %}" rel="stylesheet" type="text/css">
+
+		<link href="{% static 'snorlax/css/chart.css' %}" rel="stylesheet" type="text/css">
 		{% block static-files%}
 		{% endblock %}
-		
+
 	</head>
 	<body>
 		<section id="container" >
@@ -47,7 +49,7 @@
 				</div>
 			</header>
 			<!--header end-->
-			
+
 			<!-- **********************************************************************************************************************************************************
 			MAIN SIDEBAR MENU
 			*********************************************************************************************************************************************************** -->
@@ -56,10 +58,10 @@
 				<div id="sidebar"  class="nav-collapse ">
 					<!-- sidebar menu start-->
 					<ul class="sidebar-menu" id="nav-accordion">
-						
+
 						<p class="centered"><a href="{% url 'profile' %}"><img src="{% static 'snorlax/img/ui-sam.jpg' %}" class="img-circle" width="60"></a></p>
 						<h5 class="centered">Snorlax</h5>
-						
+
 						<li class="mt">
 							<a class="active" href="{% url 'home' %}">
 								<i class="fa fa-dashboard"></i>
@@ -89,7 +91,7 @@
 				</div>
 			</aside>
 			<!--sidebar end-->
-			
+
 			<!-- **********************************************************************************************************************************************************
 			MAIN CONTENT
 			*********************************************************************************************************************************************************** -->
