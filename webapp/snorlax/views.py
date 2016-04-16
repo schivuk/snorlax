@@ -60,6 +60,29 @@ def feedback(request):
     if request.method == 'GET':
         return render(request, 'snorlax/feedback.html')
 
+    if request.method == 'POST':
+        context = {}
+
+        print request.POST
+
+        quality = request.POST['quality']
+        dreams = bool(request.POST['dreams'])
+        description = request.POST['description']
+
+        #Log the sleep for the input date
+        #Check if a log for that date already exists
+        #LogSleep.objects.filter(day=)
+        time = timezone.now()   #Change to take input from the form calendar
+        logSleep = LogSleep(day=time, quality=quality, dreams=dreams, description=description)
+        logSleep.save()
+
+        #Update context with the data
+        #Populate the html page with the data
+        context['log'] = logSleep
+
+        return render(request, 'snorlax/feedback.html', context)
+
+
 def profile(request):
     if request.method == 'GET':
         return render(request, 'snorlax/profile.html')

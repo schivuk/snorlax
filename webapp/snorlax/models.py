@@ -51,3 +51,9 @@ class MicrophoneData(models.Model):
 class Alarm(models.Model):
 	time = models.DateTimeField()
 	switch = models.BooleanField(default=True)
+
+class LogSleep(models.Model):
+	day = models.DateField()
+	quality = models.CharField(max_length=15)
+	description = models.CharField(max_length=500)
+	dreams = models.BooleanField(default=False)
