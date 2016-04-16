@@ -87,24 +87,24 @@
   </div>
   <div class="details">
     <div class="details-title">Log Sleep</div>
-    <form id="feedback-form" class="form-vertical">
+    <form id="feedback-form" class="form-vertical" method="post" action="{% url 'feedback' %}">
       <div class="form-group">
         <label class="form-label">Rate your sleep last night</label>
         <div class="radio-group">
           <label class="radio-inline">
-            <input type="radio" name="inlineRadioOptions" id="rating1" value="option1"> Terrible
+            <input type="radio" name="quality" id="rating1" value="Terrible"> Terrible
           </label>
           <label class="radio-inline">
-            <input type="radio" name="inlineRadioOptions" id="rating2" value="option2"> Bad
+            <input type="radio" name="quality" id="rating2" value="Bad"> Bad
           </label>
           <label class="radio-inline">
-            <input type="radio" name="inlineRadioOptions" id="rating3" value="option3"> OK
+            <input type="radio" name="quality" id="rating3" value="Ok"> Ok
           </label>
           <label class="radio-inline">
-            <input type="radio" name="inlineRadioOptions" id="rating4" value="option4"> Good
+            <input type="radio" name="quality" id="rating4" value="Good"> Good
           </label>
           <label class="radio-inline">
-            <input type="radio" name="inlineRadioOptions" id="rating5" value="option5"> Awesome
+            <input type="radio" name="quality" id="rating5" value="Awesome"> Awesome
           </label>
         </div>
       </div>
@@ -112,10 +112,10 @@
         <label class="form-label">Did you have any dreams?</label>
         <div class="radio-group">
           <label class="radio-inline">
-            <input type="radio" name="inlineRadioOptions2" id="inlineRadio1" value="yes"> Yes
+            <input type="radio" name="dreams" id="inlineRadio1" value="True"> Yes
           </label>
           <label class="radio-inline">
-            <input type="radio" name="inlineRadioOptions2" id="inlineRadio2" value="no"> No
+            <input type="radio" name="dreams" id="inlineRadio2" value="False"> No
           </label>
         </div>
       </div>
