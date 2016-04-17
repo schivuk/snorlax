@@ -5,7 +5,7 @@ from scipy.signal import find_peaks_cwt
 import random
 
 peak_threshold = 2
-deep_sleep_threshold = 3600
+deep_sleep_threshold = 3000
 rem_sleep_threshold = 6400
 
 def set_to_list(vals):
@@ -121,10 +121,13 @@ with open(filename) as f:
 
 
 
+    to_plot_y_rem_times = set_to_list(y_rem_times)
+    to_plot_y_rem_vals = [y_vals[i] for i in to_plot_y_rem_times]
+
     to_plot_y_deep_times = set_to_list(y_deep_times)
     to_plot_y_deep_vals = [y_vals[i] for i in to_plot_y_deep_times]
 
-    to_plot_y_light_times = set(int_timestamps).difference(y_deep_times)
+    to_plot_y_light_times = set(int_timestamps).difference(y_deep_times).difference(y_rem_times)
     to_plot_y_light_times.remove(len(y_vals))
     to_plot_y_light_times = set_to_list(to_plot_y_light_times)
 
@@ -132,6 +135,7 @@ with open(filename) as f:
 
     plt.subplot(3,1,2)
     plt.title('y vs. Time')
+    plt.scatter(to_plot_y_rem_times, to_plot_y_rem_vals, color='blue', s=2)
     plt.scatter(to_plot_y_deep_times, to_plot_y_deep_vals, color='red', s=2)
     plt.scatter(to_plot_y_light_times, to_plot_y_light_vals, color='green', s=2)
 
@@ -139,10 +143,13 @@ with open(filename) as f:
 
 
 
+    to_plot_z_rem_times = set_to_list(z_rem_times)
+    to_plot_z_rem_vals = [z_vals[i] for i in to_plot_z_rem_times]
+
     to_plot_z_deep_times = set_to_list(z_deep_times)
     to_plot_z_deep_vals = [z_vals[i] for i in to_plot_z_deep_times]
 
-    to_plot_z_light_times = set(int_timestamps).difference(z_deep_times)
+    to_plot_z_light_times = set(int_timestamps).difference(z_deep_times).difference(z_rem_times)
     to_plot_z_light_times.remove(len(z_vals))
     to_plot_z_light_times = set_to_list(to_plot_z_light_times)
 
@@ -150,6 +157,7 @@ with open(filename) as f:
 
     plt.subplot(3,1,3)
     plt.title('z vs. Time')
+    plt.scatter(to_plot_z_rem_times, to_plot_z_rem_vals, color='blue', s=2)
     plt.scatter(to_plot_z_deep_times, to_plot_z_deep_vals, color='red', s=2)
     plt.scatter(to_plot_z_light_times, to_plot_z_light_vals, color='green', s=2)
 
