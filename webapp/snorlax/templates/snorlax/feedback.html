@@ -45,19 +45,39 @@
         <label class="form-label">Rate your sleep last night</label>
         <div class="radio-group">
           <label class="radio-inline">
+            {% if log.quality == 'Terrible' %}
+            <input type="radio" name="quality" id="rating1" value="Terrible" checked> Terrible
+            {% else %}
             <input type="radio" name="quality" id="rating1" value="Terrible"> Terrible
+            {% endif %}
           </label>
           <label class="radio-inline">
+            {% if log.quality == 'Bad' %}
+            <input type="radio" name="quality" id="rating2" value="Bad" checked> Bad
+            {% else %}
             <input type="radio" name="quality" id="rating2" value="Bad"> Bad
+            {% endif %}
           </label>
           <label class="radio-inline">
-            <input type="radio" name="quality" id="rating3" value="Ok" checked="checked"> Ok
+            {% if log.quality == 'Ok' %}
+            <input type="radio" name="quality" id="rating3" value="Ok" checked> Ok
+            {% else %}
+            <input type="radio" name="quality" id="rating3" value="Ok"> Ok
+            {% endif %}
           </label>
           <label class="radio-inline">
+            {% if log.quality == 'Good' %}
+            <input type="radio" name="quality" id="rating4" value="Good" checked> Good
+            {% else %}
             <input type="radio" name="quality" id="rating4" value="Good"> Good
+            {% endif %}
           </label>
           <label class="radio-inline">
+            {% if log.quality == 'Awesome' %}
+            <input type="radio" name="quality" id="rating5" value="Awesome" checked> Awesome
+            {% else %}
             <input type="radio" name="quality" id="rating5" value="Awesome"> Awesome
+            {% endif %}
           </label>
         </div>
       </div>
@@ -65,16 +85,24 @@
         <label class="form-label">Did you have any dreams?</label>
         <div class="radio-group">
           <label class="radio-inline">
-            <input type="radio" name="dreams" id="inlineRadio1" value="True" checked="checked"> Yes
+            {% if log and log.dreams %}
+            <input type="radio" name="dreams" id="inlineRadio1" value="True" checked> Yes
+            {% else %}
+            <input type="radio" name="dreams" id="inlineRadio1" value="True"> Yes
+            {% endif %}
           </label>
           <label class="radio-inline">
+            {% if log and not log.dreams %}
+            <input type="radio" name="dreams" id="inlineRadio2" value="False" checked> No
+            {% else %}
             <input type="radio" name="dreams" id="inlineRadio2" value="False"> No
+            {% endif %}
           </label>
         </div>
       </div>
       <div class="form-group">
         <label class="form-label" for="description">If yes, briefly describe what you remember</label>
-        <textarea name="description" class="form-control" rows="4" placeholder="My dream was..."></textarea>
+        <textarea name="description" class="form-control" rows="4" placeholder="My dream was...">{{log.description}}</textarea>
       </div>
       <div class="form-group">
         <div class="col-sm-12">
@@ -90,12 +118,17 @@
     adjacentDaysChangeMonth: false,
     clickEvents: {
     click: function(target) {
+      //if prev != null {
+      //  prev.css('color', 'black');
+      //}
       console.log(target);
+      console.log(target.date._i);
       //CLICK HANDLER 
       //Target contains the object that holds the date, element and all the events attached to it.
       var div = $(target['element']);
       console.log(div);
       div.css('color','red');
+      //prev = div;
     }
   },
     doneRendering: function() {
