@@ -53,7 +53,10 @@ class Alarm(models.Model):
 	switch = models.BooleanField(default=True)
 
 class LogSleep(models.Model):
-	day = models.DateField()
+	#day = models.DateField()
+	day = models.IntegerField(max_length=2)
+	year = models.IntegerField(max_length=4)
+	month = models.IntegerField(max_length=2)
 	quality = models.CharField(max_length=15)
 	description = models.CharField(max_length=500)
 	dreams = models.BooleanField(default=False)

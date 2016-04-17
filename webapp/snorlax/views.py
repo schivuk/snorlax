@@ -20,8 +20,6 @@ import time
 
 clf = SVC(C=10, kernel='poly', degree=1, probability=True)
 
-#latestDataJson =
-
 MAX_VALUES = 50
 
 def home(request):
@@ -56,32 +54,90 @@ def alarm(request):
 
         return render(request, 'snorlax/alarm.html', context)
 
+def logSleepForm(request):
+    if request.method == 'GET':
+        print request.GET
+        if request.GET['date'] == 'test':
+            time = timezone.now()
+            day = time.day
+            month = time.month
+            year = time.year
+        else:
+            date = request.GET['date'].split('-')
+            year = int(date[0])
+            month = int(date[1])
+            day = int(date[2])
+        try:
+            logSleep = LogSleep.objects.get(day__exact=day, month__exact=month, year__exact=year)
+            context = {}
+            context['quality'] = logSleep.quality
+            context['dreams'] = logSleep.dreams
+            context['description'] = logSleep.description
+            context['day'] = logSleep.day
+            context['month'] = logSleep.month
+            context['year'] = logSleep.year
+            return JsonResponse(context)
+        except LogSleep.DoesNotExist:
+            context = {}
+            return JsonResponse(context)
+
+@transaction.atomic
 def feedback(request):
     if request.method == 'GET':
-        return render(request, 'snorlax/feedback.html')
+        if 'date' not in request.GET or request.GET['date'] == 'test':
+            time = timezone.now()
+            day = time.day
+            month = time.month
+            year = time.year
+        else:
+            date = request.GET['date'].split('-')
+            year = int(date[0])
+            month = int(date[1])
+            day = int(date[2])
+        try:
+            logSleep = LogSleep.objects.get(day__exact=day, month__exact=month, year__exact=year)
+            context = {}
+            context['log'] = logSleep
+            return render(request, 'snorlax/feedback.html', context)
+        except LogSleep.DoesNotExist:
+            return render(request, 'snorlax/feedback.html')
 
     if request.method == 'POST':
         context = {}
 
-        print request.POST
-
         quality = request.POST['quality']
         dreams = bool(request.POST['dreams'])
         description = request.POST['description']
+        if request.POST['date'] == 'test':
+            time = timezone.now()
+            day = time.day
+            month = time.month
+            year = time.year
+        else:
+            date = request.POST['date'].split('-')
+            year = int(date[0])
+            month = int(date[1])
+            day = int(date[2])
 
         #Log the sleep for the input date
         #Check if a log for that date already exists
-        #LogSleep.objects.filter(day=)
-        time = timezone.now()   #Change to take input from the form calendar
-        logSleep = LogSleep(day=time, quality=quality, dreams=dreams, description=description)
-        logSleep.save()
-
-        #Update context with the data
-        #Populate the html page with the data
-        context['log'] = logSleep
-
-        return render(request, 'snorlax/feedback.html', context)
-
+        try:
+            logSleep = LogSleep.objects.get(day__exact=day, month__exact=month, year__exact=year)
+            logSleep.quality = quality;
+            logSleep.dreams = dreams;
+            logSleep.description = description;
+            logSleep.save()
+            #Update context with the data
+            #Populate the html page with the data
+            context['log'] = logSleep
+            return render(request, 'snorlax/feedback.html', context)
+        except LogSleep.DoesNotExist:
+            logSleep = LogSleep(day=day, year=year, month=month, quality=quality, dreams=dreams, description=description)
+            logSleep.save()
+            #Update context with the data
+            #Populate the html page with the data
+            context['log'] = logSleep
+            return render(request, 'snorlax/feedback.html', context)
 
 def profile(request):
     if request.method == 'GET':
@@ -98,14 +154,7 @@ def editAlarm(request):
     hour = int(request.POST['hour'])
     minute = int(request.POST['min'])
 
-
-    print request.POST['ampm']
-    print request.POST['hour']
-    print request.POST['min']
-
     time = timezone.now()
-    #Try time.date
-    #Try time.time
     time = time.replace(hour=hour, minute=minute)
 
     #Check whether alarm has been set previously

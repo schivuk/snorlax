@@ -133,6 +133,44 @@
       div.css('color','red');
       //prev = div;
       $('#dateHidden').val(target.date._i);
+
+      $.ajax({
+        url : '/logSleepForm',
+        type: 'GET',
+        dataType : "json",
+        data : {
+          date: target.date._i
+        },
+
+        success: function( log ) {
+            // Populate the log sleep form with log data if available
+            if (log.quality == null) {
+              //Populate the blank form
+              console.log('No Log Info');
+              //Pradik:: TODO
+              //Populate the form inputs blank; no need default values
+            } else {
+              console.log('Logging the data received');
+              console.log(log);
+              var month = parseInt(log.month);  //int
+              var year = parseInt(log.year);  //int
+              var day = parseInt(log.day);  //int
+              var quality = log.quality;  //string
+              var dreams = Boolean(log.dreams);  //Boolean value
+              var description = log.description;  //string
+              //Pradik:: TODO!! 
+              //Add ids to the html elements, and do the innerHTML stuff
+            }
+        },
+
+        //If an error occurred, we alert user, and log errors
+        error: function(xhr, status, errorThrown) {
+            alert("Encountered a Problem.");
+            console.log("Error: " + errorThrown);
+            console.log("Status" + status);
+            console.dir(xhr);
+        }
+      });
     }
   },
     doneRendering: function() {

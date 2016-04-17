@@ -14,5 +14,6 @@ urlpatterns = patterns('',
    	url(r'^profile$', 'snorlax.views.profile', name='profile'),
     url(r'^editAlarm$', 'snorlax.views.editAlarm', name='editAlarm'),
     url(r'^analyzeSleepCycle$', 'snorlax.views.analyzeSleepCycle', name='analyzeSleepCycle'),
+    url(r'^logSleepForm$', 'snorlax.views.logSleepForm', name='logSleepForm'),
     #url(r'^getData$', 'snorlax.views.getData', name='getData'),
 )
