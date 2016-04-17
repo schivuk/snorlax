@@ -42,6 +42,9 @@
     <div class="details-title">Log Sleep</div>
     <form id="feedback-form" class="form-vertical" method="post" action="{% url 'feedback' %}">
       <div class="form-group">
+        <input type="hidden" name="date" id="dateHidden" value="test">
+      </div>
+      <div class="form-group">
         <label class="form-label">Rate your sleep last night</label>
         <div class="radio-group">
           <label class="radio-inline">
