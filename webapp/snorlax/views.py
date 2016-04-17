@@ -308,66 +308,83 @@ def analyzeSleepCycle(request):
             # z_vals.append(int(z))
             timestamps.append(float(timestamp))
 
-        int_timestamps = range(1,len(x_vals)+1)
-        x_peaks, x_deep_times = acc_algorithm(x_vals,int_timestamps)
-        # y_peaks, y_deep_times = acc_algorithm(y_vals,int_timestamps)
-        # z_peaks, z_deep_times = acc_algorithm(z_vals,int_timestamps)
-
-
-        # to_plot_x_deep_times = set_to_list(x_deep_times)
-        # to_plot_x_deep_vals = [x_vals[i] for i in to_plot_x_deep_times]
-
-        # to_plot_x_light_times = set(int_timestamps).difference(x_deep_times)
-        # to_plot_x_light_times.remove(len(x_vals))
-        # to_plot_x_light_times = set_to_list(to_plot_x_light_times)
-
-        # to_plot_x_light_vals = [x_vals[i] for i in to_plot_x_light_times]
+        int_timestamps = range(0,len(x_vals))
+        x_peaks, x_deep_indices, x_rem_indices = acc_algorithm(x_vals,timestamps)
+        x_light_indices = set(int_timestamps).difference(x_deep_indices).difference(x_rem_indices)
 
         total_light_time = 0
         total_deep_time = 0
+        total_rem_time = 0
 
         light_to_deep_transitions = []
+        light_to_rem_transitions = []
         deep_to_light_transitions = []
-        all_transitions = [1]
+        deep_to_rem_transitions = []
+        rem_to_light_transitions = []
+        rem_to_deep_transitions = []
+
+        all_transitions = [timestamps[0]]
         x_axis = [1]
         curr_state = 'light'
-        for i in xrange(2,len(x_vals)):
-            if i in x_deep_times and not i-1 in x_deep_times:
-                light_to_deep_transitions.append(i)
-                all_transitions.append(i)
-                x_axis.append(1)
-                curr_state = 'deep'
 
-            elif i-1 in x_deep_times and not i in x_deep_times:
-                deep_to_light_transitions.append(i)
-                all_transitions.append(i)
+        x_deep_indices = set(x_deep_indices) # Set is faster
+        x_rem_indices = set(x_rem_indices)
+        x_light_indices = set(x_light_indices)
+
+        for i in xrange(2,len(x_vals)):
+            if i-1 in x_light_indices and i in x_deep_indices:
+                light_to_deep_transitions.append(timestamps[i])
+                all_transitions.append(timestamps[i])
                 x_axis.append(2)
+                curr_state = 'deep'
+            elif i-1 in x_light_indices and i in x_deep_indices:
+                light_to_rem_transitions.append(timestamps[i])
+                all_transitions.append(timestamps[i])
+                x_axis.append(3)
+                curr_state = 'rem'
+            elif i-1 in x_deep_indices and i in x_light_indices:
+                deep_to_light_transitions.append(timestamps[i])
+                all_transitions.append(timestamps[i])
+                x_axis.append(1)
                 curr_state = 'light'
+            elif i-1 in x_deep_indices and i in x_rem_indices:
+                deep_to_rem_transitions.append(timestamps[i])
+                all_transitions.append(timestamps[i])
+                x_axis.append(3)
+                curr_state = 'rem'
+            elif i-1 in x_rem_indices and i in x_light_indices:
+                rem_to_light_transitions.append(timestamps[i])
+                all_transitions.append(timestamps[i])
+                x_axis.append(1)
+                curr_state = 'light'
+            elif i-1 in x_rem_indices and i in x_deep_indices:
+                rem_to_deep_transitions.append(timestamps[i])
+                all_transitions.append(timestamps[i])
+                x_axis.append(2)
+                curr_state = 'deep'
 
             if curr_state == 'light':
                 total_light_time += 1
             elif curr_state == 'deep':
                 total_deep_time += 1
+            elif curr_state == 'rem':
+                total_rem_time += 1
 
         # No transition at the end of the sleep cycle but we still need to graph it
-        all_transitions.append(len(x_vals)-1)
+        all_transitions.append(timestamps[-1])
         if curr_state == 'light':
             x_axis.append(1)
-        else:
+        elif curr_state == 'deep':
             x_axis.append(2)
+        else:
+            x_axis.append(3)
 
 
     context = {}
-    # context['data'] = x_vals
-    # context['labels'] = int_timestamps
-
     context['data'] = x_axis
     context['labels'] = all_transitions
     context['total_light_time'] = total_light_time
     context['total_deep_time'] = total_deep_time
-    context['total_rem_time'] = 0
+    context['total_rem_time'] = total_rem_time
 
     return JsonResponse(context)
-
-#def getLastReading(request):
-

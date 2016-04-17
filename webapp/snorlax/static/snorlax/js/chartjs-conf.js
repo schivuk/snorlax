@@ -58,7 +58,7 @@ var lineChartOptions = {
     scaleShowVerticalLines: true,
 
     //Boolean - Whether the line is curved between points
-    bezierCurve : false,
+    bezierCurve : true,
 
     //Number - Tension of the bezier curve between points
     bezierCurveTension : 0.4,
@@ -204,7 +204,16 @@ $.ajax({
     async: false,
     success: function(response) {
         lineChartData.datasets[0].data = response['data'];
-        lineChartData.labels = response['labels'];
+        var epochLabels = response['labels'];
+        var normalLabels = [];
+
+        for (var i = 0; i < epochLabels.length; i++) {
+            var date = new Date(epochLabels[i]*1000);
+            var time_only = date.getHours() + ":" + date.getMinutes();
+            normalLabels.push(time_only);
+        }
+
+        lineChartData.labels = normalLabels;
 
         doughnutData = [
         {
