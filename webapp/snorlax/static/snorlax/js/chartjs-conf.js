@@ -207,9 +207,11 @@ $.ajax({
         var epochLabels = response['labels'];
         var normalLabels = [];
 
+        console.log(epochLabels);
+
         for (var i = 0; i < epochLabels.length; i++) {
             var date = new Date(epochLabels[i]*1000);
-            var time_only = date.getHours() + ":" + date.getMinutes();
+            var time_only = date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
             normalLabels.push(time_only);
         }
 
