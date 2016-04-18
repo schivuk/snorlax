@@ -49,35 +49,35 @@
         <div class="radio-group">
           <label class="radio-inline">
             {% if log.quality == 'Terrible' %}
-            <input type="radio" name="quality" id="rating1" value="Terrible" checked> Terrible
+            <input type="radio" name="quality" id="rating1c" value="Terrible" checked> Terrible
             {% else %}
             <input type="radio" name="quality" id="rating1" value="Terrible"> Terrible
             {% endif %}
           </label>
           <label class="radio-inline">
             {% if log.quality == 'Bad' %}
-            <input type="radio" name="quality" id="rating2" value="Bad" checked> Bad
+            <input type="radio" name="quality" id="rating2c" value="Bad" checked> Bad
             {% else %}
             <input type="radio" name="quality" id="rating2" value="Bad"> Bad
             {% endif %}
           </label>
           <label class="radio-inline">
             {% if log.quality == 'Ok' %}
-            <input type="radio" name="quality" id="rating3" value="Ok" checked> Ok
+            <input type="radio" name="quality" id="rating3c" value="Ok" checked> Ok
             {% else %}
             <input type="radio" name="quality" id="rating3" value="Ok"> Ok
             {% endif %}
           </label>
           <label class="radio-inline">
             {% if log.quality == 'Good' %}
-            <input type="radio" name="quality" id="rating4" value="Good" checked> Good
+            <input type="radio" name="quality" id="rating4c" value="Good" checked> Good
             {% else %}
             <input type="radio" name="quality" id="rating4" value="Good"> Good
             {% endif %}
           </label>
           <label class="radio-inline">
             {% if log.quality == 'Awesome' %}
-            <input type="radio" name="quality" id="rating5" value="Awesome" checked> Awesome
+            <input type="radio" name="quality" id="rating5c" value="Awesome" checked> Awesome
             {% else %}
             <input type="radio" name="quality" id="rating5" value="Awesome"> Awesome
             {% endif %}
@@ -89,14 +89,14 @@
         <div class="radio-group">
           <label class="radio-inline">
             {% if log and log.dreams %}
-            <input type="radio" name="dreams" id="inlineRadio1" value="True" checked> Yes
+            <input type="radio" name="dreams" id="inlineRadio1c" value="True" checked> Yes
             {% else %}
             <input type="radio" name="dreams" id="inlineRadio1" value="True"> Yes
             {% endif %}
           </label>
           <label class="radio-inline">
             {% if log and not log.dreams %}
-            <input type="radio" name="dreams" id="inlineRadio2" value="False" checked> No
+            <input type="radio" name="dreams" id="inlineRadio2c" value="False" checked> No
             {% else %}
             <input type="radio" name="dreams" id="inlineRadio2" value="False"> No
             {% endif %}
@@ -105,33 +105,50 @@
       </div>
       <div class="form-group">
         <label class="form-label" for="description">If yes, briefly describe what you remember</label>
-        <textarea name="description" class="form-control" rows="4" placeholder="My dream was...">{{log.description}}</textarea>
+        <textarea id="description" name="description" class="form-control" rows="4" placeholder="My dream was...">{{log.description}}</textarea>
       </div>
       <div class="form-group">
         <div class="col-sm-12">
-          <button type="submit" class="btn btn-default">Submit</button>
+          <button type="submit" class="btn btn-default" onclick="eventActive()">Submit</button>
         </div>
       </div>
     </form>
   </div>
   </script>
   <script type="text/javascript">
+  $.fn.clearForm = function() {
+  return this.each(function() {
+    var type = this.type, tag = this.tagName.toLowerCase();
+    if (tag == 'form')
+      return $(':input',this).clearForm();
+    if (type == 'text' || tag == 'textarea')
+      this.value = '';
+    else if (type == 'checkbox' || type == 'radio')
+      this.checked = false;
+  });
+};
+
+
+  function eventActive() {
+    console.log('reached active event');
+    var activeDiv = $('.activeDate');
+    activeDiv.addClass('.activeEvent');
+  }
+
   var clndr1 = $('.calendar').clndr({
     template: $('#template-calendar').html(),
     adjacentDaysChangeMonth: false,
     clickEvents: {
     click: function(target) {
-      //if prev != null {
-      //  prev.css('color', 'black');
-      //}
-      console.log(target);
-      console.log(target.date._i);
-      //CLICK HANDLER 
-      //Target contains the object that holds the date, element and all the events attached to it.
+
+      //Set color for active date
+      var prev = $('.activeDate');
+      if(prev !== null) {
+        prev.removeClass('activeDate');
+      }
       var div = $(target['element']);
-      console.log(div);
-      div.css('color','red');
-      //prev = div;
+      div.addClass('activeDate');
+
       $('#dateHidden').val(target.date._i);
 
       $.ajax({
@@ -147,8 +164,10 @@
             if (log.quality == null) {
               //Populate the blank form
               console.log('No Log Info');
-              //Pradik:: TODO
               //Populate the form inputs blank; no need default values
+             $('#feedback-form').clearForm();
+
+
             } else {
               console.log('Logging the data received');
               console.log(log);
@@ -158,8 +177,45 @@
               var quality = log.quality;  //string
               var dreams = Boolean(log.dreams);  //Boolean value
               var description = log.description;  //string
-              //Pradik:: TODO!! 
-              //Add ids to the html elements, and do the innerHTML stuff
+
+              $('#feedback-form').clearForm();
+              //Select the quality of sleep 
+              switch (quality) {
+                case 'Terrible':
+                  $('#rating1').prop('checked', true);
+                   $('#rating1c').prop('checked', true);
+                  break;
+                case 'Bad':
+                 $('#rating2').prop('checked', true);
+                  $('#rating2c').prop('checked', true);
+                  break;
+                case 'Ok':
+                 $('#rating3').prop('checked', true);
+                  $('#rating3c').prop('checked', true);
+                  break;
+                case 'Good':
+                 $('#rating4').prop('checked', true);
+                  $('#rating4c').prop('checked', true);
+                 console.log(quality);
+                  break;
+                case 'Awesome':
+                 $('#rating5').prop('checked', true);
+                  $('#rating5c').prop('checked', true);
+                  break;
+              } 
+
+              //Check the dreams boolean
+              if(dreams) {
+                $('#inlineRadio1').prop('checked', true);
+                $('#inlineRadio1c').prop('checked', true);
+              }
+              else {
+                $('#inlineRadio2').prop('checked', true);
+                $('#inlineRadio2c').prop('checked', true);
+              }
+
+              //Set the textarea
+              $('#description').val(description);
             }
         },
 

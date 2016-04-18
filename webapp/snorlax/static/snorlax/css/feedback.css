@@ -1,6 +1,15 @@
 
 /* CALENDAR */
 @import url(http://fonts.googleapis.com/css?family=Droid+Sans+Mono);
+
+.activeDate {
+  color: red !important;
+}
+
+.activeEvent {
+  background-color: lightblue !important;
+}
+
 .clearfix:after {
   content: ".";
   display: block;
