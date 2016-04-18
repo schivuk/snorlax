@@ -9,6 +9,8 @@ from snorlax.models import *
 
 import datetime
 from django.utils.timezone import utc
+from django.core import serializers
+import json
 
 #for classification
 import numpy as np
@@ -79,11 +81,14 @@ def trainPosition(request):
     rgroup = ReadingGroup(label=request.POST['label'])
     rgroup.save()
 
+    logGroup = LogGroup()
+    logGroup.save()
+
     index=0
     for veloVal in veloVals:
         index += 1 
         reading = SensorReading(value=veloVal, rgroup=rgroup,\
-                                index=index)
+                                logGroup=logGroup, index=index)
         reading.save()
         
 
@@ -119,6 +124,16 @@ def getPosition(request):
     
     veloVals = map(int, velostatValsStr)
     print "velo values: " + str(veloVals)
+
+    #log current position for analysis without ReadingGroup
+    logGroup = LogGroup()
+    logGroup.save()
+    index=0
+    for veloVal in veloVals:
+        index+=1
+        reading = SensorReading(value=veloVal, rgroup=None,\
+                                logGroup=logGroup, index=index)
+        reading.save()
    
     print "estimating values..."
     estimateArr = clf.predict([veloVals])
@@ -128,21 +143,30 @@ def getPosition(request):
 
 #delete all training data (to start a new session)
 def clearAll(request):
-    SensorReading.objects.all().delete()
+
+    #SensorReading.objects.all().delete()
     ReadingGroup.objects.all().delete()
-    print "All objects deleted"
+    print "All objects (not really) deleted"
     return redirect('home')
 
 #show a template with a chart with data
 def showRawData(request):
-    orderedGroups = ReadingGroup.objects.all().order_by('-time')
-    if len(orderedGroups) < 1:
-        return  HttpResponse("No readings present", content_type='text/plain')
-
-    firstGroup = orderedGroups[0]
-
     return render(request, 'snorlax/rawdata.html', {})
 
+#JSON response for AJAX calls
+def getLatestReading(request):
+    orderedGroups = LogGroup.objects.all().order_by('-time')
+    
+    if len(orderedGroups) < 1:
+        print "no data available for reading groups"
+        #no data available
+        return  HttpResponse(serializers.serialize('json', {}),\
+                                        content_type='application/json')
 
-#def getLastReading(request):
+    firstGroup = orderedGroups[0]
+    latestReadings = map(lambda sr : sr.value, \
+        SensorReading.objects.filter(logGroup=firstGroup).order_by('index'))
+    response_text = json.dumps(latestReadings)
+    return HttpResponse(response_text, content_type='application/json')
+
 
