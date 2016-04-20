@@ -189,6 +189,9 @@ def storeData(request):
 
     timestamp = Time(time=datetime.datetime.fromtimestamp(time))
 
+    print velostatVals
+    print microphoneVals
+    print accelerometerVals
 
     # timestamp.save()
 
@@ -336,6 +339,7 @@ def getLatestReading(request):
 
 def analyzeSleepCycle(request):
 
+    # with open('allOutput04-17-2016.txt') as f:
     with open('accOutputSmall.txt') as f:
         x_vals = []
         y_vals = []
@@ -426,8 +430,8 @@ def analyzeSleepCycle(request):
     context = {}
     context['data'] = x_axis
     context['labels'] = all_transitions
-    context['total_light_time'] = total_light_time
-    context['total_deep_time'] = total_deep_time
-    context['total_rem_time'] = total_rem_time
+    context['total_light_time'] = '%.2f'%(float(total_light_time) / len(timestamps))
+    context['total_deep_time'] = '%.2f'%(float(total_deep_time) / len(timestamps))
+    context['total_rem_time'] = '%.2f'%(float(total_rem_time) / len(timestamps))
 
     return JsonResponse(context)

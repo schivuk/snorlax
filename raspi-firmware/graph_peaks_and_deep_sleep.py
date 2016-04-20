@@ -4,6 +4,8 @@ import numpy as np
 from scipy.signal import find_peaks_cwt
 import random
 
+#337, 1859
+# 13,300 weird
 peak_threshold = 4
 deep_sleep_threshold = 550
 rem_sleep_threshold = 1125
@@ -41,7 +43,7 @@ def acc_algorithm(vals, timestamps):
 
     return peaks, set_to_list(deep_sleep_indices), set_to_list(rem_sleep_indices)
 
-filename = 'accOutputSmall.txt'
+filename = 'allOutput04-17-2016.txt'
 
 with open(filename) as f:
     # mic_vals = []
@@ -51,8 +53,12 @@ with open(filename) as f:
     timestamps = []
 
     for line in f.readlines():
-
-        x,y,z,timestamp = line.strip('\n').split(',')
+        data = line.strip('\n').split(',')
+        x = data[21]
+        y = data[22]
+        z = data[23]
+        timestamp = data[24]
+        # x,y,z,timestamp = line.strip('\n').split(',')
         # mic = mic.lstrip('\x00')
         x = x.lstrip('\x00')
         y = y.lstrip('\x00')
@@ -63,6 +69,8 @@ with open(filename) as f:
         y_vals.append(int(y))
         z_vals.append(int(z))
         timestamps.append(float(timestamp))
+
+    print 'number of lines in data:', len(data)
 
     int_timestamps = range(0,len(x_vals))
     x_peaks, x_deep_indices, x_rem_indices = acc_algorithm(x_vals,timestamps)
@@ -81,51 +89,51 @@ with open(filename) as f:
     to_plot_x_light_times = [timestamps[i] for i in x_light_indices]
     to_plot_x_light_vals = [x_vals[i] for i in x_light_indices]
 
-    light_to_deep_transitions = []
-    light_to_rem_transitions = []
-    deep_to_light_transitions = []
-    deep_to_rem_transitions = []
-    rem_to_light_transitions = []
-    rem_to_deep_transitions = []
+    # light_to_deep_transitions = []
+    # light_to_rem_transitions = []
+    # deep_to_light_transitions = []
+    # deep_to_rem_transitions = []
+    # rem_to_light_transitions = []
+    # rem_to_deep_transitions = []
 
-    x_deep_indices = set(x_deep_indices) # Set is faster
-    x_rem_indices = set(x_rem_indices)
-    x_light_indices = set(x_light_indices)
+    # x_deep_indices = set(x_deep_indices) # Set is faster
+    # x_rem_indices = set(x_rem_indices)
+    # x_light_indices = set(x_light_indices)
 
-    for i in xrange(1,len(x_vals)):
-        if i-1 in x_light_indices and i in x_deep_indices:
-            light_to_deep_transitions.append(i)
-        elif i-1 in x_light_indices and i in x_deep_indices:
-            light_to_rem_transitions.append(i)
-        elif i-1 in x_deep_indices and i in x_light_indices:
-            deep_to_light_transitions.append(i)
-        elif i-1 in x_deep_indices and i in x_rem_indices:
-            deep_to_rem_transitions.append(i)
-        elif i-1 in x_rem_indices and i in x_light_indices:
-            rem_to_light_transitions.append(i)
-        elif i-1 in x_rem_indices and i in x_deep_indices:
-            rem_to_deep_transitions.append(i)
+    # for i in xrange(1,len(x_vals)):
+    #     if i-1 in x_light_indices and i in x_deep_indices:
+    #         light_to_deep_transitions.append(i)
+    #     elif i-1 in x_light_indices and i in x_deep_indices:
+    #         light_to_rem_transitions.append(i)
+    #     elif i-1 in x_deep_indices and i in x_light_indices:
+    #         deep_to_light_transitions.append(i)
+    #     elif i-1 in x_deep_indices and i in x_rem_indices:
+    #         deep_to_rem_transitions.append(i)
+    #     elif i-1 in x_rem_indices and i in x_light_indices:
+    #         rem_to_light_transitions.append(i)
+    #     elif i-1 in x_rem_indices and i in x_deep_indices:
+    #         rem_to_deep_transitions.append(i)
 
+    # print light_to_deep_transitions
+    # print light_to_rem_transitions
+    # print deep_to_light_transitions
+    # print deep_to_rem_transitions
+    # print rem_to_light_transitions
+    # print rem_to_deep_transitions
 
-    print light_to_deep_transitions
-    print light_to_rem_transitions
-    print deep_to_light_transitions
-    print deep_to_rem_transitions
-    print rem_to_light_transitions
-    print rem_to_deep_transitions
-
-    print len(x_rem_indices), len(x_deep_indices), len(x_light_indices), len(timestamps)
-    print len(x_rem_indices) + len(x_deep_indices) + len(x_light_indices), len(timestamps)
-    foo = set()
-    foo.update(x_rem_indices)
-    foo.update(x_deep_indices)
-    print len(foo)
+    # print len(x_rem_indices), len(x_deep_indices), len(x_light_indices), len(timestamps)
+    # print len(x_rem_indices) + len(x_deep_indices) + len(x_light_indices), len(timestamps)
+    # foo = set()
+    # foo.update(x_rem_indices)
+    # foo.update(x_deep_indices)
+    # print len(foo)
 
     plt.subplot(3,1,1)
     plt.title('x vs. Time')
-    plt.scatter(to_plot_x_rem_times, to_plot_x_rem_vals, color='blue', s=2)
-    plt.scatter(to_plot_x_deep_times, to_plot_x_deep_vals, color='red', s=2)
-    plt.scatter(to_plot_x_light_times, to_plot_x_light_vals, color='green', s=2)
+    plt.scatter(to_plot_x_rem_times, to_plot_x_rem_vals, color='blue', s=3)
+    plt.scatter(to_plot_x_deep_times, to_plot_x_deep_vals, color='red', s=3)
+    plt.scatter(to_plot_x_light_times, to_plot_x_light_vals, color='green', s=3)
+
 
 
 

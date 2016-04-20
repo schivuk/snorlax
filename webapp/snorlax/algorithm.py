@@ -1,6 +1,6 @@
 peak_threshold = 4
 deep_sleep_threshold = 550
-rem_sleep_threshold = 1125
+rem_sleep_threshold = 2400
 
 def set_to_list(vals):
     return sorted([val for val in vals])

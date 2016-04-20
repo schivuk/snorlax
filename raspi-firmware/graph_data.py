@@ -1,13 +1,13 @@
 import time
 import matplotlib.pyplot as plt
 
-filename = 'accOutput.txt'
+filename = 'allOutput04-17-2016.txt'
 
 # y_min = 400
 # y_max = 600
 
-plt_start = 50000
-plt_end = 55000
+plt_start = 0
+plt_end = 9000000
 
 with open(filename) as f:
     x_vals = []
@@ -20,15 +20,17 @@ with open(filename) as f:
     counter = 0
     for line in f.readlines():
         # Only sample every 100 datapoints
-        counter += 1
-        if counter % 100 == 0:
-            counter = 0
+        data = line.strip('\n').split(',')
+        x = data[21]
+        y = data[22]
+        z = data[23]
+        timestamp = data[24]
 
-            x,y,z,timestamp = line.strip('\n').split(',')
-            x_vals.append(x)
-            y_vals.append(y)
-            z_vals.append(z)
-            timestamps.append(timestamp)
+        # x,y,z,timestamp = line.strip('\n').split(',')
+        x_vals.append(x)
+        y_vals.append(y)
+        z_vals.append(z)
+        timestamps.append(timestamp)
 
     read_end = time.time()
     print("Took {0} seconds to read data".format(read_end-start))
