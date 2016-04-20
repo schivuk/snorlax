@@ -1,0 +1,70 @@
+{% extends "snorlax/base.html" %}
+
+{% block static-files %}
+{% load staticfiles %}
+<!-- Custom styles for this template -->
+<link href="{% static 'snorlax/css/alarm.css' %}" rel="stylesheet" type="text/css">
+<link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
+{% endblock %}
+
+
+{% block content %}
+  <!--- ALARM TIME -->
+  <div class="time">
+    <h1>Set Alarm</h1>
+    <!-- Make this dynamic -->
+    <h4 class="numbers">{{alarm.time.date}}</h4>
+    <h1 class="numbers">{{alarm.time.time}}</h1>
+
+    <form id="set" method="post" action="{% url 'alarm' %}">
+      <input type="checkbox" id="toggle-two" name="setAlarm" onchange="$('#set').submit();">
+    {% csrf_token %}
+    </form>
+  </div>
+  
+  <hr>
+  <!-- EDIT ALARM -->
+  <div class="time">
+    <h1>Edit Alarm</h1>
+    <form enctype="multipart/form-data" class="form col-md-12 center-block" method="post" action="{% url 'editAlarm' %}">
+      <div class="form-group">
+        <table>
+          <tr>
+            <td class="hour">
+              <div class="input-group">
+                <input type="text" class="form-control number" maxlength="2"  id="hour" name="hour">
+                <div class="input-group-addon"><span class="glyphicon glyphicon-chevron-up"></span></div>
+                <div class="input-group-addon"><span class="glyphicon glyphicon-chevron-down"></span></div>
+              </div>
+            </td>
+            <td class="separator">:</td>
+            <td class="minute">
+              <div class="input-group">
+                <input type="text" class="form-control number" maxlength="2" id="minute" name="min">
+                <div class="input-group-addon"><span class="glyphicon glyphicon-chevron-up"></span></div>
+                <div class="input-group-addon"><span class="glyphicon glyphicon-chevron-down"></span></div>
+              </div>
+            </td>
+            <td>
+              <div class="dropdown">
+                <select class="form-control" id="ampm" name="ampm">
+                    <option>  AM   </option>
+                    <option>  PM   </option>
+                </select>
+              </div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="form-group">
+        <button type="submit" class="btn btn-primary btn-block">Save Alarm</button>
+      </div>
+      {% csrf_token %}
+    </form>
+  </div>
+{% endblock %}
+
+{% block loadJS %}
+    <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
+    <script src="{% static 'snorlax/js/alarm.js' %}"></script>
+{% endblock %}

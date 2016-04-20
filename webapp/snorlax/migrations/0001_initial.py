@@ -21,10 +21,30 @@ class Migration(migrations.Migration):
             ],
         ),
         migrations.CreateModel(
+            name='Alarm',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('time', models.DateTimeField()),
+                ('switch', models.BooleanField(default=True)),
+            ],
+        ),
+        migrations.CreateModel(
             name='LogGroup',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('time', models.DateTimeField(auto_now=True)),
+            ],
+        ),
+        migrations.CreateModel(
+            name='LogSleep',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('day', models.IntegerField(max_length=2)),
+                ('year', models.IntegerField(max_length=4)),
+                ('month', models.IntegerField(max_length=2)),
+                ('quality', models.CharField(max_length=15)),
+                ('description', models.CharField(max_length=500)),
+                ('dreams', models.BooleanField(default=False)),
             ],
         ),
         migrations.CreateModel(

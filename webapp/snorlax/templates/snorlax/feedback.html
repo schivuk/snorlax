@@ -1,0 +1,238 @@
+{% extends "snorlax/base.html" %}
+{% block static-files %}
+  {% load staticfiles %}
+  <!-- Custom styles for this template -->
+  <link href="{% static 'snorlax/css/feedback.css' %}" rel="stylesheet" type="text/css">
+{% endblock %}
+{% block content %}
+  <!-- CALENDAR -->
+  <div class="cal-container">
+    <div class="calendar clearfix"></div>
+  </div>
+{% endblock %}
+{% block loadJS %}
+  <!-- <script type="text/javascript" src="{% static 'snorlax/js/moment.js' %}"></script>
+  <script type="text/javascript" src="{% static 'snorlax/js/underscore.js' %}"></script> -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.6/moment.min.js"></script>
+  <script type="text/javascript" src="{% static 'snorlax/js/clndr.min.js' %}"></script>
+  
+  <script type="text/template" id="template-calendar">
+  <div class="clndr-controls">
+    <div class="clndr-previous-button">‹</div>
+    <div class="clndr-next-button">›</div>
+    <div class="month"><%= month %></div>
+  </div>
+  <div class="clndr-grid">
+    <div class="days-of-the-week clearfix">
+      <% _.each(daysOfTheWeek, function(day) { %>
+      <div class="header-day"><%= day %></div>
+      <% }); %>
+    </div>
+    <div class="days clearfix">
+      <% _.each(days, function(day) { %>
+      <div class="<%= day.classes %>" id="<%= day.id %>">
+        <span class="day-number"><%= day.day %></span>
+      </div>
+      <% }); %>
+    </div>
+  </div>
+  <div class="details">
+    <div class="details-title">Log Sleep</div>
+    <form id="feedback-form" class="form-vertical" method="post" action="{% url 'feedback' %}">
+      <div class="form-group">
+        <input type="hidden" name="date" id="dateHidden" value="test">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Rate your sleep last night</label>
+        <div class="radio-group">
+          <label class="radio-inline">
+            {% if log.quality == 'Terrible' %}
+            <input type="radio" name="quality" id="rating1c" value="Terrible" checked> Terrible
+            {% else %}
+            <input type="radio" name="quality" id="rating1" value="Terrible"> Terrible
+            {% endif %}
+          </label>
+          <label class="radio-inline">
+            {% if log.quality == 'Bad' %}
+            <input type="radio" name="quality" id="rating2c" value="Bad" checked> Bad
+            {% else %}
+            <input type="radio" name="quality" id="rating2" value="Bad"> Bad
+            {% endif %}
+          </label>
+          <label class="radio-inline">
+            {% if log.quality == 'Ok' %}
+            <input type="radio" name="quality" id="rating3c" value="Ok" checked> Ok
+            {% else %}
+            <input type="radio" name="quality" id="rating3" value="Ok"> Ok
+            {% endif %}
+          </label>
+          <label class="radio-inline">
+            {% if log.quality == 'Good' %}
+            <input type="radio" name="quality" id="rating4c" value="Good" checked> Good
+            {% else %}
+            <input type="radio" name="quality" id="rating4" value="Good"> Good
+            {% endif %}
+          </label>
+          <label class="radio-inline">
+            {% if log.quality == 'Awesome' %}
+            <input type="radio" name="quality" id="rating5c" value="Awesome" checked> Awesome
+            {% else %}
+            <input type="radio" name="quality" id="rating5" value="Awesome"> Awesome
+            {% endif %}
+          </label>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Did you have any dreams?</label>
+        <div class="radio-group">
+          <label class="radio-inline">
+            {% if log and log.dreams %}
+            <input type="radio" name="dreams" id="inlineRadio1c" value="True" checked> Yes
+            {% else %}
+            <input type="radio" name="dreams" id="inlineRadio1" value="True"> Yes
+            {% endif %}
+          </label>
+          <label class="radio-inline">
+            {% if log and not log.dreams %}
+            <input type="radio" name="dreams" id="inlineRadio2c" value="False" checked> No
+            {% else %}
+            <input type="radio" name="dreams" id="inlineRadio2" value="False"> No
+            {% endif %}
+          </label>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="description">If yes, briefly describe what you remember</label>
+        <textarea id="description" name="description" class="form-control" rows="4" placeholder="My dream was...">{{log.description}}</textarea>
+      </div>
+      <div class="form-group">
+        <div class="col-sm-12">
+          <button type="submit" class="btn btn-default" onclick="eventActive()">Submit</button>
+        </div>
+      </div>
+    </form>
+  </div>
+  </script>
+  <script type="text/javascript">
+  $.fn.clearForm = function() {
+  return this.each(function() {
+    var type = this.type, tag = this.tagName.toLowerCase();
+    if (tag == 'form')
+      return $(':input',this).clearForm();
+    if (type == 'text' || tag == 'textarea')
+      this.value = '';
+    else if (type == 'checkbox' || type == 'radio')
+      this.checked = false;
+  });
+};
+
+
+  function eventActive() {
+    console.log('reached active event');
+    var activeDiv = $('.activeDate');
+    activeDiv.addClass('.activeEvent');
+  }
+
+  var clndr1 = $('.calendar').clndr({
+    template: $('#template-calendar').html(),
+    adjacentDaysChangeMonth: false,
+    clickEvents: {
+    click: function(target) {
+
+      //Set color for active date
+      var prev = $('.activeDate');
+      if(prev !== null) {
+        prev.removeClass('activeDate');
+      }
+      var div = $(target['element']);
+      div.addClass('activeDate');
+
+      $('#dateHidden').val(target.date._i);
+
+      $.ajax({
+        url : '/logSleepForm',
+        type: 'GET',
+        dataType : "json",
+        data : {
+          date: target.date._i
+        },
+
+        success: function( log ) {
+            // Populate the log sleep form with log data if available
+            if (log.quality == null) {
+              //Populate the blank form
+              console.log('No Log Info');
+              //Populate the form inputs blank; no need default values
+             $('#feedback-form').clearForm();
+
+
+            } else {
+              console.log('Logging the data received');
+              console.log(log);
+              var month = parseInt(log.month);  //int
+              var year = parseInt(log.year);  //int
+              var day = parseInt(log.day);  //int
+              var quality = log.quality;  //string
+              var dreams = Boolean(log.dreams);  //Boolean value
+              var description = log.description;  //string
+
+              $('#feedback-form').clearForm();
+              //Select the quality of sleep 
+              switch (quality) {
+                case 'Terrible':
+                  $('#rating1').prop('checked', true);
+                   $('#rating1c').prop('checked', true);
+                  break;
+                case 'Bad':
+                 $('#rating2').prop('checked', true);
+                  $('#rating2c').prop('checked', true);
+                  break;
+                case 'Ok':
+                 $('#rating3').prop('checked', true);
+                  $('#rating3c').prop('checked', true);
+                  break;
+                case 'Good':
+                 $('#rating4').prop('checked', true);
+                  $('#rating4c').prop('checked', true);
+                 console.log(quality);
+                  break;
+                case 'Awesome':
+                 $('#rating5').prop('checked', true);
+                  $('#rating5c').prop('checked', true);
+                  break;
+              } 
+
+              //Check the dreams boolean
+              if(dreams) {
+                $('#inlineRadio1').prop('checked', true);
+                $('#inlineRadio1c').prop('checked', true);
+              }
+              else {
+                $('#inlineRadio2').prop('checked', true);
+                $('#inlineRadio2c').prop('checked', true);
+              }
+
+              //Set the textarea
+              $('#description').val(description);
+            }
+        },
+
+        //If an error occurred, we alert user, and log errors
+        error: function(xhr, status, errorThrown) {
+            alert("Encountered a Problem.");
+            console.log("Error: " + errorThrown);
+            console.log("Status" + status);
+            console.dir(xhr);
+        }
+      });
+    }
+  },
+    doneRendering: function() {
+      //WE CAN INSERT MORE EVENT HANDLERS HERE
+      //console.log('this would be a fine place to attach custom event handlers.');
+    }
+  });
+  </script>
+{% endblock %}

@@ -2,4 +2,4 @@
 *.pyc
 *.pyo
 
-webapps/db.sqlite3
+webapp/db.sqlite3

@@ -13,6 +13,7 @@ class SensorData(models.Model):
 
 class LogGroup(models.Model):
 	time = models.DateTimeField(auto_now=True)
+	estLabel = models.CharField(max_length=30, null=True, default=None)
 
 #multiple sensor readings per group (one-to-many)
 class ReadingGroup(models.Model):
@@ -51,3 +52,15 @@ class MicrophoneData(models.Model):
 	value = models.IntegerField()
 	time = models.ForeignKey(Time)
 
+class Alarm(models.Model):
+	time = models.DateTimeField()
+	switch = models.BooleanField(default=True)
+
+class LogSleep(models.Model):
+	#day = models.DateField()
+	day = models.IntegerField(max_length=2)
+	year = models.IntegerField(max_length=4)
+	month = models.IntegerField(max_length=2)
+	quality = models.CharField(max_length=15)
+	description = models.CharField(max_length=500)
+	dreams = models.BooleanField(default=False)

@@ -1,5 +1,156 @@
 
+/* CALENDAR */
+@import url(http://fonts.googleapis.com/css?family=Droid+Sans+Mono);
+
+.activeDate {
+  color: red !important;
+}
+
+.activeEvent {
+  background-color: lightblue !important;
+}
+
+.clearfix:after {
+  content: ".";
+  display: block;
+  clear: both;
+  visibility: hidden;
+  line-height: 0;
+  height: 0;
+}
+.clearfix {
+  display: inline-block;
+}
+
+.cal-container {
+	margin-top: 20px;
+	text-align: center;
+}
+.calendar {
+	margin: 0 auto;
+    width: 90%;
+    background-color: #ebebeb;
+    font-weight: 700;
+}
+
+/* HEADER */
+.calendar .clndr-controls {
+    padding: 14px;
+    color: white;
+    background-color: #032E46;
+    text-align: center;
+}
+
+.calendar .clndr-controls .clndr-previous-button, .calendar .clndr-controls .clndr-next-button {
+    width: 30px;
+    cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+}
+
+.calendar .clndr-controls .clndr-previous-button {
+    float: left;
+    text-align: left;
+}
+
+.calendar .clndr-controls .clndr-previous-button:hover {
+	color: #000;
+}
+
+.calendar .clndr-controls .clndr-next-button {
+	float: right;
+    text-align: right;
+}
+
+.calendar .clndr-controls .clndr-next-button:hover {
+	color: #000;
+}
+
+/* CALENDAR */
+.calendar .clndr .clndr-grid {
+  float: left;
+  width: 65%;
+}
+
+.calendar .clndr .clndr-grid .days-of-the-week {
+    width: 100%;
+    background-color: #3883a3;
+}
+
+.calendar .clndr .clndr-grid .days-of-the-week .header-day {
+    float: left;
+    width: 14.2857%;
+    padding: 14px;
+    text-align: center;
+    color: white;
+}
+
+.calendar .clndr-grid .days {
+    width: 100%;
+}
+
+.calendar .clndr-grid .days .day, .calendar .clndr-grid .days .empty {
+    float: left;
+    width: 14.2857%;
+    height: 66px;
+    padding: 24px 0;
+    text-align: center;
+    color: #4f4f4f;
+    background-color: #ebebeb;
+    /*background-image: url('http://kylestetz.github.io/CLNDR/css/./triangle.svg');*/
+    background-size: cover;
+    background-position: center;
+}
+
+.calendar .clndr-grid .days .day.adjacent-month .day-number, .calendar .clndr-grid .days .empty.adjacent-month .day-number {
+    opacity: 0.3;
+}
+
+/* DAY HOVER COLOR */
+.calendar .clndr .clndr-grid div .day.complete {
+  color: #16a085;
+}
+
+/* DAY HOVER COLOR */
+.calendar .clndr .clndr-grid div .day:hover {
+  background: #049372;
+}
+
+/* TODAY COLOR */
+.calendar .clndr .clndr-grid div .day.today,
+.calendar .clndr .clndr-grid div .day.my-today {
+  background: #23B684;
+}
+.calendar .clndr .clndr-grid div .day.today:hover,
+.calendar .clndr .clndr-grid div .day.my-today:hover {
+  background: #049372;
+}
+
+
+/* DETAILS */
+.calendar .details {
+    float: left;
+    width: 35%;
+    border-left: 2px solid white;
+}
+
+.calendar .details .details-title {
+    padding: 14px;
+    background-color: #3883a3;
+    text-align: center;
+    color: white;
+    letter-spacing: 1px;
+}
+
+.radio-inline {
+	color: #4f4f4f;
+	font-size: 10px;
+}
+
+/* FEEDBACK FORM */
 h1.title {
+	color: #4f4f4f;
 	text-align: center;
 	font-size: 40px;
 }
@@ -10,8 +161,12 @@ div.feedback {
 }
 
 form#feedback-form {
-	margin: 20px;
-	padding: 20px;
+	margin-right: 20px;
+	margin-left: 20px;
+	margin-bottom: 20px;
+	padding-right: 20px;
+	padding-left: 20px;
+	padding-bottom: 20px;
 }
 
 .form-group {
@@ -20,7 +175,12 @@ form#feedback-form {
 }
 
 label.form-label {
+	color: #4f4f4f;
 	font-size: 14px;
 	margin-top: 10px;
 	margin-bottom: 10px;
+}
+
+textarea {
+	resize: none;
 }
