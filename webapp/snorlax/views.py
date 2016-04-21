@@ -9,6 +9,8 @@ from snorlax.models import *
 
 import datetime
 from django.utils.timezone import utc
+from django.core import serializers
+import json
 from django.utils import timezone
 
 #for classification
@@ -17,9 +19,15 @@ from sklearn.svm import SVC
 
 from algorithm import *
 import time
+import os
 
 clf = SVC(C=10, kernel='poly', degree=1, probability=True)
+onBedClf = SVC(C=10, kernel='poly', degree=1, probability=True)
 
+colors = []
+
+ON_OFF_BED_TRAIN_FILE = 'on-off-train.txt'
+POSITION_TRAIN_FILE = 'train-position-data.txt'
 MAX_VALUES = 50
 
 def home(request):
@@ -161,7 +169,6 @@ def isAlarmReady(request):
         #return HttpResponse("Success", status=200)
         return JsonResponse(context)
 
-
 @transaction.atomic
 def editAlarm(request):
     if request.method != 'POST':
@@ -192,6 +199,29 @@ def editAlarm(request):
 
     return render(request, 'snorlax/alarm.html', context)
 
+
+def storeOnOffData(request):
+    if request.method != 'POST':
+        raise Http404
+
+    velostatValsStr = request.POST['velostatVals']
+    onOffLbl = request.POST['label']
+
+    if not os.path.isfile(ON_OFF_BED_TRAIN_FILE):
+        #create file
+        trainFile = open(ON_OFF_BED_TRAIN_FILE, 'w+')
+    else:
+        #append to file
+        trainFile = open(ON_OFF_BED_TRAIN_FILE, 'a')
+
+    trainDataStr = onOffLbl + ":" + velostatValsStr.strip()
+    trainFile.write(trainDataStr)
+    trainFile.close()
+    print "Wrote to file: " + trainDataStr
+    return HttpResponse("Success", status=200)
+
+
+#Store position data
 @transaction.atomic
 def storeData(request):
     if request.method != 'POST':
@@ -241,7 +271,7 @@ def trainPosition(request):
     if request.method != 'POST':
         raise Http404
 
-
+    velostatValsRaw = request.POST['velostatVals']
     velostatValsStr = request.POST['velostatVals'].split(',')
 
     print "velo values: " + str(velostatValsStr)
@@ -250,14 +280,27 @@ def trainPosition(request):
     rgroup = ReadingGroup(label=request.POST['label'])
     rgroup.save()
 
+    logGroup = LogGroup()
+    logGroup.save()
+
     index=0
     for veloVal in veloVals:
         index += 1
         reading = SensorReading(value=veloVal, rgroup=rgroup,\
-                                index=index)
+                                logGroup=logGroup, index=index)
         reading.save()
 
 
+    #write information to file
+    if not os.path.isfile(ON_OFF_BED_TRAIN_FILE):
+        #create file
+        trainFile = open(POSITION_TRAIN_FILE, 'w+')
+    else:
+        #append to file
+        trainFile = open(POSITION_TRAIN_FILE, 'a')
+
+    trainFile.write(request.POST['label'] + ":" + velostatValsRaw.strip())
+    trainFileclose()
     return HttpResponse("Success", status=200)
 
 
@@ -281,6 +324,21 @@ def learnPositions(request):
     print "done."
     return HttpResponse("Success", status=200)
 
+#for Pi chart showing ratio of sleeping positions
+def getPositionRatios(request):
+    #TODO only get logs from last night
+    lgroups = LogGroup.objects.all()
+    labels = map(lambda lg:lg.estLabel, lgroups)
+    labelCounts = {}
+    for lbl in labels:
+        if lbl in labelCounts:
+            labelCounts[lbl] += 1
+        else:
+            labelCounts[lbl] = 1
+
+    return json.dumps(labelCounts)
+
+
 
 def getPosition(request):
     if request.method != 'POST':
@@ -290,7 +348,16 @@ def getPosition(request):
 
     veloVals = map(int, velostatValsStr)
     print "velo values: " + str(veloVals)
-
+    #log current position for analysis without ReadingGroup
+    logGroup = LogGroup()
+    logGroup.save()
+    index=0
+    for veloVal in veloVals:
+        index+=1
+        reading = SensorReading(value=veloVal, rgroup=None,\
+                                logGroup=logGroup, index=index)
+        reading.save()
+ 
     print "estimating values..."
     estimateArr = clf.predict([veloVals])
     print "Estimate: " + str(estimateArr[0])
@@ -299,18 +366,31 @@ def getPosition(request):
 
 #delete all training data (to start a new session)
 def clearAll(request):
-    SensorReading.objects.all().delete()
+
+    #SensorReading.objects.all().delete()
     ReadingGroup.objects.all().delete()
-    print "All objects deleted"
+    print "All objects (not really) deleted"
     return redirect('home')
 
 #show a template with a chart with data
 def showRawData(request):
-    orderedGroups = ReadingGroup.objects.all().order_by('-time')
+    return render(request, 'snorlax/rawdata.html', {})
+
+#JSON response for AJAX calls
+def getLatestReading(request):
+    orderedGroups = LogGroup.objects.all().order_by('-time')
+    
     if len(orderedGroups) < 1:
-        return  HttpResponse("No readings present", content_type='text/plain')
+        print "no data available for reading groups"
+        #no data available
+        return  HttpResponse(serializers.serialize('json', {}),\
+                                        content_type='application/json')
 
     firstGroup = orderedGroups[0]
+    latestReadings = map(lambda sr : sr.value, \
+        SensorReading.objects.filter(logGroup=firstGroup).order_by('index'))
+    response_text = json.dumps(latestReadings)
+    return HttpResponse(response_text, content_type='application/json')
 
     return render(request, 'snorlax/rawdata.html', {})
 
