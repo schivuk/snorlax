@@ -19,10 +19,15 @@ from sklearn.svm import SVC
 
 from algorithm import *
 import time
+import os
 
 clf = SVC(C=10, kernel='poly', degree=1, probability=True)
+onBedClf = SVC(C=10, kernel='poly', degree=1, probability=True)
+
 colors = []
 
+ON_OFF_BED_TRAIN_FILE = 'on-off-train.txt'
+POSITION_TRAIN_FILE = 'train-position-data.txt'
 MAX_VALUES = 50
 
 def home(request):
@@ -146,6 +151,7 @@ def profile(request):
     if request.method == 'GET':
         return render(request, 'snorlax/profile.html')
 
+
 @transaction.atomic
 def editAlarm(request):
     if request.method != 'POST':
@@ -174,6 +180,29 @@ def editAlarm(request):
 
     return render(request, 'snorlax/alarm.html', context)
 
+
+def storeOnOffData(request):
+    if request.method != 'POST':
+        raise Http404
+
+    velostatValsStr = request.POST['velostatVals']
+    onOffLbl = request.POST['label']
+
+    if not os.path.isfile(ON_OFF_BED_TRAIN_FILE):
+        #create file
+        trainFile = open(ON_OFF_BED_TRAIN_FILE, 'w+')
+    else:
+        #append to file
+        trainFile = open(ON_OFF_BED_TRAIN_FILE, 'a')
+
+    trainDataStr = onOffLbl + ":" + velostatValsStr.strip()
+    trainFile.write(trainDataStr)
+    trainFile.close()
+    print "Wrote to file: " + trainDataStr
+    return HttpResponse("Success", status=200)
+
+
+#Store position data
 @transaction.atomic
 def storeData(request):
     if request.method != 'POST':
@@ -223,7 +252,7 @@ def trainPosition(request):
     if request.method != 'POST':
         raise Http404
 
-
+    velostatValsRaw = request.POST['velostatVals']
     velostatValsStr = request.POST['velostatVals'].split(',')
 
     print "velo values: " + str(velostatValsStr)
@@ -243,6 +272,16 @@ def trainPosition(request):
         reading.save()
 
 
+    #write information to file
+    if not os.path.isfile(ON_OFF_BED_TRAIN_FILE):
+        #create file
+        trainFile = open(POSITION_TRAIN_FILE, 'w+')
+    else:
+        #append to file
+        trainFile = open(POSITION_TRAIN_FILE, 'a')
+
+    trainFile.write(request.POST['label'] + ":" + velostatValsRaw.strip())
+    trainFileclose()
     return HttpResponse("Success", status=200)
 
 
