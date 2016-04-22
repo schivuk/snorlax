@@ -51,10 +51,10 @@ def readadc(adcnum, clockpin, mosipin, misopin, cspin):
  
 # change these as desired - they're the pins connected from the
 # SPI port on the ADC to the Cobbler
-SPICLK = 18
-SPIMISO = 23
-SPIMOSI = 24
-SPICS = 25
+SPICLK = 14
+SPIMISO = 15
+SPIMOSI = 18
+SPICS = 23
 
 # set up the SPI interface pins
 GPIO.setup(SPIMOSI, GPIO.OUT)
@@ -68,79 +68,85 @@ num_reads = 0
 
 while True:
    
-    raw_input('Press any key to record and send data:\n')
+    #raw_input('Press any key to record and send data:\n')
     velostatVals = []
-    SPICS = 25
+    SPICLK = 14
+    SPIMISO = 15
+    SPIMOSI = 18
+    SPICS = 23
+    GPIO.setup(SPIMOSI, GPIO.OUT)
+    GPIO.setup(SPIMISO, GPIO.IN)
+    GPIO.setup(SPICLK, GPIO.OUT)
     GPIO.setup(SPICS, GPIO.OUT)
     
     for i in xrange(8):
         out = readadc(i, SPICLK, SPIMOSI, SPIMISO, SPICS)
         velostatVals.append(str(out))
-    #out1 = readadc(0, SPICLK, SPIMOSI, SPIMISO, SPICS)
-    #out2 = readadc(1, SPICLK, SPIMOSI, SPIMISO, SPICS)
-    #out3 = readadc(2, SPICLK, SPIMOSI, SPIMISO, SPICS)
-    #out4 = readadc(3, SPICLK, SPIMOSI, SPIMISO, SPICS)
-    #out5 = readadc(4, SPICLK, SPIMOSI, SPIMISO, SPICS)
-    #out6 = readadc(5, SPICLK, SPIMOSI, SPIMISO, SPICS)
-    #out7 = readadc(6, SPICLK, SPIMOSI, SPIMISO, SPICS)
-    #out8 = readadc(7, SPICLK, SPIMOSI, SPIMISO, SPICS)
-	
-    SPICS = 19
+    
+    SPICLK = 24
+    SPIMISO = 25
+    SPIMOSI = 8
+    SPICS = 7
+    GPIO.setup(SPIMOSI, GPIO.OUT)
+    GPIO.setup(SPIMISO, GPIO.IN)
+    GPIO.setup(SPICLK, GPIO.OUT)
     GPIO.setup(SPICS, GPIO.OUT)
 
     for i in xrange(8):
         out = readadc(i, SPICLK, SPIMOSI, SPIMISO, SPICS)
         velostatVals.append(str(out))
-    #out9 = readadc(0, SPICLK, SPIMOSI, SPIMISO, SPICS)
-    #out10 = readadc(1, SPICLK, SPIMOSI, SPIMISO, SPICS)
-    #out11 = readadc(2, SPICLK, SPIMOSI, SPIMISO, SPICS)
-    #out12 = readadc(3, SPICLK, SPIMOSI, SPIMISO, SPICS)
-    #out13 = readadc(4, SPICLK, SPIMOSI, SPIMISO, SPICS)
-    #out14 = readadc(5, SPICLK, SPIMOSI, SPIMISO, SPICS)
-    #out15 = readadc(6, SPICLK, SPIMOSI, SPIMISO, SPICS)
-    #out16 = readadc(7, SPICLK, SPIMOSI, SPIMISO, SPICS)
 
-    SPICS = 26
+    SPICLK = 12
+    SPIMISO = 16
+    SPIMOSI = 20
+    SPICS = 21
+    GPIO.setup(SPIMOSI, GPIO.OUT)
+    GPIO.setup(SPIMISO, GPIO.IN)
+    GPIO.setup(SPICLK, GPIO.OUT)
     GPIO.setup(SPICS, GPIO.OUT)
 
-    for i in xrange(8):
+    for i in xrange(4):
         out = readadc(i, SPICLK, SPIMOSI, SPIMISO, SPICS)
         velostatVals.append(str(out))
-    #out17 = readadc(0, SPICLK, SPIMOSI, SPIMISO, SPICS)
-    #out18 = readadc(1, SPICLK, SPIMOSI, SPIMISO, SPICS)
-    #out19 = readadc(2, SPICLK, SPIMOSI, SPIMISO, SPICS)
-    #out20 = readadc(3, SPICLK, SPIMOSI, SPIMISO, SPICS)
-    #out21 = readadc(4, SPICLK, SPIMOSI, SPIMISO, SPICS)
-    #out22 = readadc(5, SPICLK, SPIMOSI, SPIMISO, SPICS)
-    #out23 = readadc(6, SPICLK, SPIMOSI, SPIMISO, SPICS)
-    #out24 = readadc(7, SPICLK, SPIMOSI, SPIMISO, SPICS)
+    
+    microphoneVals = str(readadc(4, SPICLK, SPIMOSI, SPIMISO, SPICS))
+    accelerometerX = str(readadc(5, SPICLK, SPIMOSI, SPIMISO, SPICS))
+    accelerometerY = str(readadc(6, SPICLK, SPIMOSI, SPIMISO, SPICS))
+    accelerometerZ = str(readadc(7, SPICLK, SPIMOSI, SPIMISO, SPICS))
+    accelerometerVals = accelerometerX + ',' + accelerometerY + ',' + accelerometerZ
 
     num_reads += 1
 
     #print num_reads,out0,out1,out2,out3,out4,out5,out6,out7,time.time()
 
     #out_data = '{0},{1},{2},{3},{4},{5},{6},{7}.{8}\n'.format(
-#	out0,out1,out2,out3,out4,out5,out6,out7,time.time()
+#   out0,out1,out2,out3,out4,out5,out6,out7,time.time()
  #   )
-    out_data = ','.join(velostatVals) + ',' + str(time.time()) + '\n'
+    out_data = ','.join(velostatVals) + ',' + microphoneVals + ',' + accelerometerVals + ',' + str(time.time()) + '\n'
 
+    print out_data
     out_file.write(out_data)
     if num_reads % 100 == 0:
-	out_file.close()
-	out_file = open(filename, 'a')
+    out_file.close()
+    out_file = open(filename, 'a')
 
-    url = "http://128.237.186.149:8000/storeData"
+    url = "http://128.237.164.20:8000/storeData"
     payload = {
-        'velostatIDs': '1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20',
+        'velostatIDs': '1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24',
         'velostatVals': ','.join(velostatVals),
+        'accelerometerIDs': '1',
+        'accelerometerVals': accelerometerVals,
+        'microphoneIDs': '1',
+        'microphoneVals': microphoneVals,
         'time': time.time()
-	#'value': "{0},{1},{2},{3}".format(out0,out1,out2,time.time()),
+    #'value': "{0},{1},{2},{3}".format(out0,out1,out2,time.time()),
     }
-    try:
-	requests.post(url=url, data=payload)
-    except:
-        continue
+    
+    #try:
+    #requests.post(url=url, data=payload)
+    #except:
+    #    continue
 
-    time.sleep(50.0/1000.0)
+    time.sleep(75.0/1000.0)
     #time.sleep(75.0/1000.0)
-	
+    
