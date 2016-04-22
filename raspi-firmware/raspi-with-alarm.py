@@ -172,5 +172,5 @@ class DataServer(SocketServer.BaseRequestHandler):
 
 server = SocketServer.TCPServer(("localhost", DATA_SERVER_PORT), DataServer)
 
-thread.Thread(target=logSensorData).start()
-thread.Thread(target=server.serve_forever).start()
+threading.Thread(target=logSensorData).start()
+threading.Thread(target=server.serve_forever).start()
