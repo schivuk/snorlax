@@ -11,9 +11,6 @@ class SensorData(models.Model):
 
 #####  Next 2 classes for ML Data storage  ######
 
-class LogGroup(models.Model):
-	time = models.DateTimeField(auto_now=True)
-	estLabel = models.CharField(max_length=30, null=True, default=None)
 
 #multiple sensor readings per group (one-to-many)
 class ReadingGroup(models.Model):
@@ -25,7 +22,6 @@ class ReadingGroup(models.Model):
 class SensorReading(models.Model):
 	value = models.IntegerField()
 	rgroup = models.ForeignKey(ReadingGroup, null=True, default=None)
-	logGroup = models.ForeignKey(LogGroup, null=True, default=None)
 	index = models.IntegerField()
 	sensorType = models.CharField(max_length=30, null=True, default=None)
 

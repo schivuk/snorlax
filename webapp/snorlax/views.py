@@ -151,6 +151,23 @@ def profile(request):
     if request.method == 'GET':
         return render(request, 'snorlax/profile.html')
 
+def isAlarmReady(request):
+    if request.method == 'GET':
+        context = {}
+        #Check whether alarm has been set previously
+        alarms = Alarm.objects.all()
+        if len(alarms) > 0:
+            alarm = alarms[0]
+            currTime = timezone.now() - timezone.timedelta(hours=4)
+            if currTime >= alarm.time:
+                context['ready'] = True
+            else:
+                context['ready'] = False
+        else:
+            context['ready'] = False
+
+        #return HttpResponse("Success", status=200)
+        return JsonResponse(context)
 
 @transaction.atomic
 def editAlarm(request):
@@ -162,6 +179,8 @@ def editAlarm(request):
     ampm = request.POST['ampm']
     hour = int(request.POST['hour'])
     minute = int(request.POST['min'])
+    if ampm == 'PM':
+        hour = hour + 12
 
     time = timezone.now()
     time = time.replace(hour=hour, minute=minute)
