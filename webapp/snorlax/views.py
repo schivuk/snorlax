@@ -153,21 +153,22 @@ def profile(request):
 
 def isAlarmReady(request):
     if request.method == 'GET':
-        context = {}
         #Check whether alarm has been set previously
         alarms = Alarm.objects.all()
         if len(alarms) > 0:
             alarm = alarms[0]
             currTime = timezone.now() - timezone.timedelta(hours=4)
             if currTime >= alarm.time:
-                context['ready'] = True
+                isReady = True
             else:
-                context['ready'] = False
+                isReady = False
         else:
-            context['ready'] = False
+            isReady=False
 
         #return HttpResponse("Success", status=200)
-        return JsonResponse(context)
+        return HttpResponse(str(isReady))
+    else:
+        raise Http404
 
 @transaction.atomic
 def editAlarm(request):

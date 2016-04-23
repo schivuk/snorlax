@@ -9,6 +9,7 @@ import requests
 import RPi.GPIO as GPIO
 import threading
 import SocketServer
+import json
 
 GPIO.setmode(GPIO.BCM)
 
@@ -19,10 +20,11 @@ LOG_INTERVAL_SECS = 75.0/1000.0
 
 #Period between alarm queries
 ALARM_QUERY_INTERVAL_SECS = 30.
-TARGET_HOST = "128.237.168.133:8000"
+TARGET_HOST = "128.237.160.128:8000"
 
-
+STORE_DATA_URL = "http://" + TARGET_HOST + "/storeData"
 ONOFF_STORE_URL = "http://" + TARGET_HOST + "/storeOnOffData"
+CHECK_ALARM_URL = "http://" + TARGET_HOST + "/isAlarmReady"
 
 filename = '/home/pi/accOutput.txt'
  
@@ -130,20 +132,17 @@ def getSensorData():
 
 
 def logSensorData():
-    num_reads += 1
-    
     velostatVals, microphoneVals, accelerometerVals = getSensorData()
     
     out_data = ','.join(velostatVals) + ',' + microphoneVals + ',' +\
                         accelerometerVals + ',' + str(time.time()) + '\n'
 
     print out_data
-        out_file.write(out_data)
-    if num_reads % 100 == 0:
-        out_file.close()
-    out_file = open(filename, 'a')
+    #out_file.write(out_data)
+    #if num_reads % 100 == 0:
+    #    out_file.close()
+    #out_file = open(filename, 'a')
 
-    url = "http://128.237.164.20:8000/storeData"
     payload = {
         'velostatIDs': '1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24',
         'velostatVals': ','.join(velostatVals),
@@ -156,21 +155,38 @@ def logSensorData():
     }
     
     try:
-        requests.post(url=url, data=payload)
+        requests.post(url=STORE_DATA_URL, data=payload)
     except:
-        continue
+        print "Exception occured during store data request"
 
     threading.Timer(LOG_INTERVAL_SECS, logSensorData).start()
 
+def checkAlarmStatus():
+    googleReq = requests.get("http://google.com")
+    print "Google req'd. resp: ", googleReq.status_code
+    alarmReq = requests.get(CHECK_ALARM_URL)
+
+    print "alarm req'd"
+    if alarmReq.status_code==200 and alarmReq.text=='True':
+        #Start alarm
+        print "ALARM!"
+
+    threading.Timer(ALARM_QUERY_INTERVAL_SECS, checkAlarmStatus).start()
 
 #Configured so that on GET request, it returns a JSON containing sensor data
 class DataServer(SocketServer.BaseRequestHandler):
     def handle(self):
         data=self.request.recv(1024)
         print "req:  ",data
-        self.request.send("This is my data, right here")
+        velostatVals, microphoneVals, accelerometerVals = getSensorData()
+        sensorData = {"velostats": ','.join(velostatVals),\
+                    "mic":microphoneVals,\
+                    "acc":accelerometerVals}
 
-server = SocketServer.TCPServer(("localhost", DATA_SERVER_PORT), DataServer)
+        self.request.send(json.dumps(sensorData))
+
+server = SocketServer.TCPServer(("0.0.0.0", DATA_SERVER_PORT), DataServer)
 
 threading.Thread(target=logSensorData).start()
 threading.Thread(target=server.serve_forever).start()
+threading.Thread(target=checkAlarmStatus).start()
