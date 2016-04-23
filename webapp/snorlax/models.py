@@ -11,6 +11,8 @@ class SensorData(models.Model):
 
 #####  Next 2 classes for ML Data storage  ######
 
+class LogGroup(models.Model):
+	time = models.DateTimeField(auto_now=True)
 
 #multiple sensor readings per group (one-to-many)
 class ReadingGroup(models.Model):
@@ -24,7 +26,7 @@ class SensorReading(models.Model):
 	rgroup = models.ForeignKey(ReadingGroup, null=True, default=None)
 	index = models.IntegerField()
 	sensorType = models.CharField(max_length=30, null=True, default=None)
-
+	logGroup=models.ForeignKey(LogGroup, null=True, default=None)
 ###############################################
 
 
@@ -52,11 +54,12 @@ class Alarm(models.Model):
 	time = models.DateTimeField()
 	switch = models.BooleanField(default=True)
 
+
 class LogSleep(models.Model):
 	#day = models.DateField()
-	day = models.IntegerField(max_length=2)
-	year = models.IntegerField(max_length=4)
-	month = models.IntegerField(max_length=2)
+	day = models.IntegerField() #max_length=2
+	year = models.IntegerField() #max_length=4
+	month = models.IntegerField() #max_length=2
 	quality = models.CharField(max_length=15)
 	description = models.CharField(max_length=500)
 	dreams = models.BooleanField(default=False)

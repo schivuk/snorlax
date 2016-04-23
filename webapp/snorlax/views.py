@@ -21,6 +21,7 @@ from algorithm import *
 import time
 import os
 import requests
+import urllib
 
 clf = SVC(C=10, kernel='poly', degree=1, probability=True)
 onBedClf = SVC(C=10, kernel='poly', degree=1, probability=True)
@@ -275,14 +276,18 @@ def resetTraining(request):
     ReadingGroup.objects.all().delete()
     return HttpResponse("Success", status=200)
 
+#render the page with training options
+def trainOptions(request):
+    return render(request, 'snorlax/train.html', {} )
 
 #query RPi for current position, then train for the specified label
 def trainCurrentPosition(request,label=''):
-    dataReq = requests.get(RPI_GET_URL)
-    if dataReq.status_code != 200:
-        raise Http404
+    try:
+        dataResp = urllib.urlopen(RPI_GET_URL)
+    except requests.exceptions.ConnectionError:
+        return HttpResponse("Failure", status=200)
 
-    sensorData = json.loads(dataReq.text)
+    sensorData = json.loads(dataResp.read())
     print "Got response: ",sensorData
 
     veloVals = map(int,sensorData['velostats'].split(","))
@@ -294,6 +299,7 @@ def trainCurrentPosition(request,label=''):
 
     logGroup = LogGroup()
     logGroup.save()
+
     index=0
     for veloVal in veloVals:
         index += 1

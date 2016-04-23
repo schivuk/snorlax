@@ -18,7 +18,10 @@ urlpatterns = patterns('',
     url(r'^analyzeSleepCycle$', 'snorlax.views.analyzeSleepCycle', name='analyzeSleepCycle'),
     url(r'^logSleepForm$', 'snorlax.views.logSleepForm', name='logSleepForm'),
     url(r'^isAlarmReady$', 'snorlax.views.isAlarmReady', name='isAlarmReady'),
-    url(r'^trainCurrentPosition/(?P<label>\w+$)/', \
-                      'snorlax.views.trainCurrentPosition', name='trainCurrentPosition'
+    url(r'^trainCurrentPosition/(?P<label>\w+$)', \
+                      'snorlax.views.trainCurrentPosition', name='trainCurrentPosition'),
     #url(r'^getData$', 'snorlax.views.getData', name='getData'),
+    url(r'^trainOptions$', 'snorlax.views.trainOptions', name='trainOptions'),
+    
+  
 )
