@@ -282,13 +282,16 @@ def trainOptions(request):
 
 #query RPi for current position, then train for the specified label
 def trainCurrentPosition(request,label=''):
+    
+    print "Sending request to RPI_URL"
     try:
-        dataResp = urllib.urlopen(RPI_GET_URL)
+        dataResp = urllib.urlopen(RPI_GET_URL, timeout=7)
     except requests.exceptions.ConnectionError:
+        print "Exception occurred"
         return HttpResponse("Failure", status=200)
 
     sensorData = json.loads(dataResp.read())
-    print "Got response: ",sensorData
+    print "Success. Got response: ",sensorData
 
     veloVals = map(int,sensorData['velostats'].split(","))
     print "velovals: ",veloVals

@@ -2,21 +2,23 @@
 
 
 {% block content %}
-	<button type="button" style="margin: 50px 50px 20px 50px;" class="btn btn-primary btn-lg">
+	<button id="train-back" type="button" style="margin: 50px 50px 20px 50px;" class="btn btn-primary btn-lg">
 		Sample for back
 	</button>
 	</br>
-	<button type="button" style="margin: 20px 50px 20px 50px;" class="btn btn-primary btn-lg">
+	<button id="train-front" type="button" style="margin: 20px 50px 20px 50px;" class="btn btn-primary btn-lg">
 		Sample for front
 	</button>
 	</br>
-	<button type="button" style="margin: 20px 50px 20px 50px;" class="btn btn-primary btn-lg">
+	<button id="train-left" type="button" style="margin: 20px 50px 20px 50px;" class="btn btn-primary btn-lg">
 		Sample for facing-left
 	</button>
 	</br>
-	<button type="button" style="margin: 20px 50px 20px 50px;" class="btn btn-primary btn-lg">
+	<button id="train-right" type="button" style="margin: 20px 50px 20px 50px;" class="btn btn-primary btn-lg">
 		Sample for facing-right
 	</button>
 
+	{% load staticfiles %}
+	<script src="{% static 'snorlax/js/train.js' %}"></script>
 {% endblock %}
 
