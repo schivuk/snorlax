@@ -20,12 +20,15 @@ from sklearn.svm import SVC
 from algorithm import *
 import time
 import os
+import requests
 
 clf = SVC(C=10, kernel='poly', degree=1, probability=True)
 onBedClf = SVC(C=10, kernel='poly', degree=1, probability=True)
 
 colors = []
 
+RPI_SERVER_HOST = "http://128.237.233.205:9999"
+RPI_GET_URL = RPI_SERVER_HOST + "/getdata"
 ON_OFF_BED_TRAIN_FILE = 'on-off-train.txt'
 POSITION_TRAIN_FILE = 'train-position-data.txt'
 MAX_VALUES = 50
@@ -265,6 +268,40 @@ def storeData(request):
     # timestamp.save()
 
     return HttpResponse("Success", status=200)
+
+#resets classifier
+def resetTraining(request):
+    clf = SVC(C=10, kernel='poly', degree=1, probability=True)
+    ReadingGroup.objects.all().delete()
+    return HttpResponse("Success", status=200)
+
+
+#query RPi for current position, then train for the specified label
+def trainCurrentPosition(request,label=''):
+    dataReq = requests.get(RPI_GET_URL)
+    if dataReq.status_code != 200:
+        raise Http404
+
+    sensorData = json.loads(dataReq.text)
+    print "Got response: ",sensorData
+
+    veloVals = map(int,sensorData['velostats'].split(","))
+    print "velovals: ",veloVals
+
+    #save data to DB
+    rgroup = ReadingGroup(label=label)
+    rgroup.save()
+
+    logGroup = LogGroup()
+    logGroup.save()
+    index=0
+    for veloVal in veloVals:
+        index += 1
+        reading = SensorReading(value=veloVal, rgroup=rgroup,\
+                                logGroup=logGroup, index=index)
+        reading.save()
+
+    return HttpResponse("Success",status=200)
 
 
 def trainPosition(request):
