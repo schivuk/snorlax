@@ -397,6 +397,40 @@ def getNumReadingGroups(request):
     numGroups = len(ReadingGroup.objects.all())
     return HttpResponse(str(numGroups), status=200)
 
+def getCurrentPosition(request):
+    try:
+        dataResp = urllib2.urlopen(RPI_GET_URL, timeout=7)
+    except requests.exceptions.ConnectionError:
+        print "Exception occurred"
+        return HttpResponse("Failure", status=200)
+    except urllib2.URLError:
+        print "URLError"
+        return HttpResponse("URL Error", status=200)
+    except socket.timeout:
+        print "Timeout occurred"
+        return HttpResponse("Timeout", status=200)
+
+    sensorData = json.loads(dataResp.read())
+    print "Success. Got response: ",sensorData
+
+    veloVals = map(int,sensorData['velostats'].split(","))
+    print "velovals: ",veloVals
+    logGroup = LogGroup()
+    logGroup.save()
+    index=0
+    for veloVal in veloVals:
+        index+=1
+        reading = SensorReading(value=veloVal, rgroup=None,\
+                                logGroup=logGroup, index=index)
+        reading.save()
+ 
+    print "estimating values..."
+    estimateArr = clf.predict([veloVals])
+    print "Estimate: " + str(estimateArr[0])
+    return HttpResponse(estimateArr[0])
+
+
+
 def getPosition(request):
     if request.method != 'POST':
         raise Http404
@@ -418,8 +452,8 @@ def getPosition(request):
     print "estimating values..."
     estimateArr = clf.predict([veloVals])
     print "Estimate: " + str(estimateArr[0])
-
-    return render(request, 'snorlax/position.html', {'position': estimateArr[0]} )
+    return HttpResponse(estimateArr[0])
+    #return render(request, 'snorlax/position.html', {'position': estimateArr[0]} )
 
 #delete all training data (to start a new session)
 def clearAll(request):
@@ -551,3 +585,8 @@ def analyzeSleepCycle(request):
     context['total_rem_time'] = '%.2f'%(float(total_rem_time) / len(timestamps))
 
     return JsonResponse(context)
+
+
+def showCurrentPosition(request):
+
+    return render(request, 'snorlax/showposition.html', {})
