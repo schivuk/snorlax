@@ -4,23 +4,28 @@
 {% block content %}
 
 	{% load staticfiles %}
-	<button id="get-position" type="button" class="btn btn-primary btn-lg btn-block" style="margin: 60px 60px 60px 60px; width: 70%">
-		Get current position
-	</button>
-
-	<div>
-		<div id="position-status"></div>
+	<div style="width: 70%">
+		<button id="get-position-btn" type="button" class="btn btn-primary btn-lg btn-block" style="margin: 60px 60px 60px 60px;">
+			Get current position
+		</button>
 
 		<div>
-			<img src="{% static 'snorlax/img/back.png' %}" style="display:block; margin-left: auto; margin-right: auto;">
-			</br>
-			<img src="{% static 'snorlax/img/belly.png' %}" style="display:block; margin-left: auto; margin-right: auto;">
-			</br>
-			<img src="{% static 'snorlax/img/facing-left.png' %}" style="display:block; margin-left: auto; margin-right: auto;">
-			</br>
-			<img src="{% static 'snorlax/img/facing-right.png' %}" style="display:block; margin-left: auto; margin-right: auto;">
+			<h1 id="position-status" style="text-align: center;"></h1>
+
+			<div>
+				<img id="position-img" src="{% static 'snorlax/img/back.png' %}" style="display:block; margin-left: auto; margin-right: auto;">
+				<!--/br>
+				<img src="{% static 'snorlax/img/belly.png' %}" style="display:block; margin-left: auto; margin-right: auto;">
+				</br>
+				<img src="{% static 'snorlax/img/facing-left.png' %}" style="display:block; margin-left: auto; margin-right: auto;">
+				</br>
+				<img src="{% static 'snorlax/img/facing-right.png' %}" style="display:block; margin-left: auto; margin-right: auto;"-->
+			</div>
 		</div>
+		<span class="h4" id="back-status-elem"></span>
 	</div>
-	<span class="h4" id="back-status-elem"></span>
+
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
+	<script src="{% static 'snorlax/js/currposition.js' %}"></script>
 
 {% endblock %}
