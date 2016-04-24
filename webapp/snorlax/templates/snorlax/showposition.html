@@ -3,12 +3,24 @@
 
 {% block content %}
 
-	
-	<span>
-		<button id="get-position" type="button" style="margin: 50px 50px 20px 50px;" class="btn btn-primary btn-lg">
-			Sample for back
-		</button>
-	</span>
+	{% load staticfiles %}
+	<button id="get-position" type="button" class="btn btn-primary btn-lg btn-block" style="margin: 60px 60px 60px 60px; width: 70%">
+		Get current position
+	</button>
+
+	<div>
+		<div id="position-status"></div>
+
+		<div>
+			<img src="{% static 'snorlax/img/back.png' %}" style="display:block; margin-left: auto; margin-right: auto;">
+			</br>
+			<img src="{% static 'snorlax/img/belly.png' %}" style="display:block; margin-left: auto; margin-right: auto;">
+			</br>
+			<img src="{% static 'snorlax/img/facing-left.png' %}" style="display:block; margin-left: auto; margin-right: auto;">
+			</br>
+			<img src="{% static 'snorlax/img/facing-right.png' %}" style="display:block; margin-left: auto; margin-right: auto;">
+		</div>
+	</div>
 	<span class="h4" id="back-status-elem"></span>
 
 {% endblock %}
