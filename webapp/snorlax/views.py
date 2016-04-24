@@ -424,7 +424,8 @@ def clearAll(request):
     #SensorReading.objects.all().delete()
     ReadingGroup.objects.all().delete()
     print "All objects (not really) deleted"
-    return redirect('home')
+    return HttpResponse("Success", status=200)
+    
 
 #show a template with a chart with data
 def showRawData(request):

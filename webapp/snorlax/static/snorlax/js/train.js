@@ -16,12 +16,15 @@ var frontBtn = document.getElementById("train-front");
 var leftBtn = document.getElementById("train-left");
 var rightBtn = document.getElementById("train-right");
 var updatePredBtn = document.getElementById("update-predictor-btn");
+var numSamplesBadge = document.getElementById("num-samples-badge");
+var removeAllBtn = document.getElementById("remove-all-btn");
 
 var backStatusElem = document.getElementById("back-status-elem");
 var frontStatusElem = document.getElementById("front-status-elem");
 var leftStatusElem = document.getElementById("left-status-elem");
 var rightStatusElem = document.getElementById("right-status-elem");
 var predictorStatus = document.getElementById("update-predictor-status");
+var removeAllStatus = document.getElementById("remove-all-status");
 
 backBtn.addEventListener("click", function() {
 	logPosition(backBtn, backStatusElem, BACK_LABEL);
@@ -38,6 +41,8 @@ leftBtn.addEventListener("click", function() {
 rightBtn.addEventListener("click", function() {
 	logPosition(rightBtn, rightStatusElem, RIGHT_LABEL);
 });
+
+updateNumReadings();
 
 updatePredBtn.addEventListener("click", function() {
 	console.log("Learning positions..");
@@ -75,6 +80,43 @@ updatePredBtn.addEventListener("click", function() {
 	});
 })
 
+removeAllBtn.addEventListener("click", function() {
+	console.log("removeAllBtn called");
+
+	removeAllStatus.innerHTML = "Removing all samples..";
+	removeAllBtn.className = RED_BUTTON_DISABLED
+	$.ajax({
+	    url: "/clearAll",
+	    method: 'GET',
+	    dataType : "text",
+	    async: true,
+	    timeout: 5000,
+	    success: function(response) {
+	    	console.log("Got ajax response: " + response)
+
+	    	removeAllBtn.className = RED_BUTTON_ACTIVE;
+	    	if(response == 'Success') {
+	    		console.log("Success occurred.");
+	    		removeAllStatus.innerHTML = "Success: Removed all calibration examples";	
+	    		updateNumReadings();
+
+	    	} else {
+	    		console.log("Failure occurred");
+	    		removeAllStatus.innerHTML = "Failed to remove calibration examples";
+	    	}
+	        
+	    },
+
+	    error: function(jqXHR, textStatus, errorThrown) {
+	    	removeAllBtn.className = BUTTON_ACTIVE_CLASS;
+	    	console.log("AJAX Error occurred: " + errorThrown);
+	    	removeAllStatus.innerHTML = "Error occurred removing calibration examples: " + errorThrown;
+	    },
+
+
+	});
+
+})
 
 function logPosition(button, statusElem, label) {
 	console.log("got callback for " + label + ", sending AJAX");
@@ -94,6 +136,7 @@ function logPosition(button, statusElem, label) {
 	    	if(response == 'Success') {
 	    		console.log("Success occurred.");
 	    		statusElem.innerHTML = "Successful log for " + label;	
+	    		updateNumReadings();
 
 	    	} else {
 	    		console.log("Failure occurred");
@@ -110,5 +153,33 @@ function logPosition(button, statusElem, label) {
 
 
 	});
+}
+
+
+function updateNumReadings() {
+	console.log("Called updateNumReadings..");
+
+	$.ajax({
+	    url: "/numReadingGroups",
+	    method: 'GET',
+	    dataType : "text",
+	    async: true,
+	    timeout: 5000,
+	    success: function(response) {
+	    	console.log("Got ajax response: " + response)
+
+	    	numSamplesBadge.innerHTML = response + " samples taken";	
+
+	        
+	    },
+
+	    error: function(jqXHR, textStatus, errorThrown) {
+	    	console.log("AJAX Error occurred in updateNumReadings: " + errorThrown);
+	    	
+	    },
+
+
+	});
+
 }
 

@@ -7,7 +7,7 @@
 		<span>
 			<h2 style="margin: 20px 20px 20px 20px;" href="#">Calibrate sleeping positions</a>
 		</span>
-		<span style="font-size: 22px; margin-left: 10px" class="badge"></span>
+		<span id="num-samples-badge" style="font-size: 22px; margin-left: 10px" class="badge"></span>
 	</nav>
 
 	<span>
@@ -56,9 +56,10 @@
 	<span>
 		<button id="remove-all-btn" type="button" class="btn btn-danger btn-lg" style="margin: 20px 50px 20px 50px;">Reset all data</button>
 	</span>
-	<span class="h4"></span>
+	<span id="remove-all-status" class="h4"></span>
 
 	{% load staticfiles %}
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
 	<script src="{% static 'snorlax/js/train.js' %}"></script>
 {% endblock %}
 
