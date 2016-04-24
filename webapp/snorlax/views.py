@@ -290,6 +290,9 @@ def trainCurrentPosition(request,label=''):
     except requests.exceptions.ConnectionError:
         print "Exception occurred"
         return HttpResponse("Failure", status=200)
+    except urllib2.URLError:
+        print "URLError"
+        return HttpResponse("URL Error", status=200)
     except socket.timeout:
         print "Timeout occurred"
         return HttpResponse("Timeout", status=200)
@@ -425,7 +428,7 @@ def clearAll(request):
     ReadingGroup.objects.all().delete()
     print "All objects (not really) deleted"
     return HttpResponse("Success", status=200)
-    
+
 
 #show a template with a chart with data
 def showRawData(request):

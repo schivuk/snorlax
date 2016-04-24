@@ -71,7 +71,7 @@ updatePredBtn.addEventListener("click", function() {
 	    },
 
 	    error: function(jqXHR, textStatus, errorThrown) {
-	    	button.className = BUTTON_ACTIVE_CLASS;
+	    	updatePredBtn.className = ORANGE_BUTTON_ACTIVE;
 	    	console.log("AJAX Error occurred: " + errorThrown);
 	    	predictorStatus.innerHTML = "Error occurred: " + errorThrown;
 	    },
