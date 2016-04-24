@@ -390,6 +390,9 @@ def getPositionRatios(request):
     return json.dumps(labelCounts)
 
 
+def getNumReadingGroups(request):
+    numGroups = len(ReadingGroup.objects.all())
+    return HttpResponse(str(numGroups), status=200)
 
 def getPosition(request):
     if request.method != 'POST':
