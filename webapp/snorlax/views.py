@@ -16,6 +16,7 @@ from django.utils import timezone
 #for classification
 import numpy as np
 from sklearn.svm import SVC
+from sklearn.utils.validation import NotFittedError
 
 from algorithm import *
 import time
@@ -374,7 +375,11 @@ def learnPositions(request):
     print "training for labels: " + str(labelVector)
     print "len(labelVector): " + str(len(labelVector))
     #learn
-    clf.fit(np.array(xVector), np.array(labelVector))
+
+    try:
+        clf.fit(np.array(xVector), np.array(labelVector))
+    except ValueError:
+        return HttpResponse("Need at least one sample of each position for calibration.")
     print "done."
     return HttpResponse("Success", status=200)
 
@@ -425,7 +430,13 @@ def getCurrentPosition(request):
         reading.save()
  
     print "estimating values..."
-    estimateArr = clf.predict([veloVals])
+
+    try:
+        estimateArr = clf.predict([veloVals])
+    except NotFittedError:
+        print "NotFittedError occurred!"
+        return HttpResponse("Position tracker needs to be calibrated at least once!")
+
     print "Estimate: " + str(estimateArr[0])
     return HttpResponse(estimateArr[0])
 
@@ -460,6 +471,8 @@ def clearAll(request):
 
     #SensorReading.objects.all().delete()
     ReadingGroup.objects.all().delete()
+    #reset classifier
+    clf = SVC(C=10, kernel='poly', degree=1, probability=True)
     print "All objects (not really) deleted"
     return HttpResponse("Success", status=200)
 

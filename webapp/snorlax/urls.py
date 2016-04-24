@@ -24,6 +24,7 @@ urlpatterns = patterns('',
     url(r'^trainOptions$', 'snorlax.views.trainOptions', name='trainOptions'),
     url(r'^numReadingGroups$', 'snorlax.views.getNumReadingGroups', name='numReadingGroups'),
     url(r'^showCurrentPosition$', 'snorlax.views.showCurrentPosition', name='showCurrentPosition'),
+    url(r'^getCurrentPosition$', 'snorlax.views.getCurrentPosition', name='getCurrentPosition'),
     
   
 )

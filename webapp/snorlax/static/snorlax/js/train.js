@@ -65,7 +65,7 @@ updatePredBtn.addEventListener("click", function() {
 
 	    	} else {
 	    		console.log("Failure occurred");
-	    		predictorStatus.innerHTML = "Failed to update predictor";
+	    		predictorStatus.innerHTML = "Update failed: " + response;
 	    	}
 	        
 	    },
@@ -104,16 +104,13 @@ removeAllBtn.addEventListener("click", function() {
 	    		console.log("Failure occurred");
 	    		removeAllStatus.innerHTML = "Failed to remove calibration examples";
 	    	}
-	        
 	    },
 
 	    error: function(jqXHR, textStatus, errorThrown) {
-	    	removeAllBtn.className = BUTTON_ACTIVE_CLASS;
+	    	removeAllBtn.className = RED_BUTTON_ACTIVE;
 	    	console.log("AJAX Error occurred: " + errorThrown);
 	    	removeAllStatus.innerHTML = "Error occurred removing calibration examples: " + errorThrown;
 	    },
-
-
 	});
 
 })
