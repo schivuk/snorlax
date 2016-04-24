@@ -21,7 +21,8 @@ from algorithm import *
 import time
 import os
 import requests
-import urllib
+import urllib2
+import socket
 
 clf = SVC(C=10, kernel='poly', degree=1, probability=True)
 onBedClf = SVC(C=10, kernel='poly', degree=1, probability=True)
@@ -285,10 +286,13 @@ def trainCurrentPosition(request,label=''):
     
     print "Sending request to RPI_URL"
     try:
-        dataResp = urllib.urlopen(RPI_GET_URL, timeout=7)
+        dataResp = urllib2.urlopen(RPI_GET_URL, timeout=7)
     except requests.exceptions.ConnectionError:
         print "Exception occurred"
         return HttpResponse("Failure", status=200)
+    except socket.timeout:
+        print "Timeout occurred"
+        return HttpResponse("Timeout", status=200)
 
     sensorData = json.loads(dataResp.read())
     print "Success. Got response: ",sensorData

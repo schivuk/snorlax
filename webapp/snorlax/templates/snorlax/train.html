@@ -2,21 +2,58 @@
 
 
 {% block content %}
-	<button id="train-back" type="button" style="margin: 50px 50px 20px 50px;" class="btn btn-primary btn-lg">
-		Sample for back
-	</button>
+
+	<nav class="navbar navbar-light bg-faded" >
+		<h2 href="#">Navbar</a>
+	</nav>
+
+	<span>
+		<button id="train-back" type="button" style="margin: 50px 50px 20px 50px;" class="btn btn-primary btn-lg">
+			Sample for back
+		</button>
+	</span>
+	<span class="h4" id="back-status-elem"></span>
+
 	</br>
-	<button id="train-front" type="button" style="margin: 20px 50px 20px 50px;" class="btn btn-primary btn-lg">
-		Sample for front
-	</button>
+
+	<span>
+		<button id="train-front" type="button" style="margin: 20px 50px 20px 50px;" class="btn btn-primary btn-lg">
+			Sample for front
+		</button>
+	</span>
+	<span class="h4" id="front-status-elem"></span>
+
 	</br>
-	<button id="train-left" type="button" style="margin: 20px 50px 20px 50px;" class="btn btn-primary btn-lg">
-		Sample for facing-left
-	</button>
+
+	<span>
+		<button id="train-left" type="button" style="margin: 20px 50px 20px 50px;" class="btn btn-primary btn-lg">
+			Sample for facing-left
+		</button>
+	</span>
+	<span class="h4" id="left-status-elem"></span>
+
 	</br>
-	<button id="train-right" type="button" style="margin: 20px 50px 20px 50px;" class="btn btn-primary btn-lg">
-		Sample for facing-right
-	</button>
+
+	<span>
+		<button id="train-right" type="button" style="margin: 20px 50px 20px 50px;" class="btn btn-primary btn-lg">
+			Sample for facing-right
+		</button>
+	</span>
+	<span class="h4" id="right-status-elem"></span>
+
+	</br>
+
+	<span>
+		<button id="update-predictor-btn" type="button" style="margin: 20px 50px 20px 50px;" class="btn btn-warning btn-lg">Update predictor</button>
+	</span>
+	<span class="h4" id="update-predictor-status"></span>
+
+	</br>
+
+	<span>
+		<button id="remove-all-btn" type="button" class="btn btn-danger btn-lg" style="margin: 20px 50px 20px 50px;">Reset all data</button>
+	</span>
+	<span class="h4"></span>
 
 	{% load staticfiles %}
 	<script src="{% static 'snorlax/js/train.js' %}"></script>
