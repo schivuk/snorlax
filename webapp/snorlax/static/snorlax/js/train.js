@@ -100,6 +100,7 @@ removeAllBtn.addEventListener("click", function() {
 	    		removeAllStatus.innerHTML = "Success: Removed all calibration examples";	
 	    		updateNumReadings();
 
+
 	    	} else {
 	    		console.log("Failure occurred");
 	    		removeAllStatus.innerHTML = "Failed to remove calibration examples";
@@ -134,6 +135,7 @@ function logPosition(button, statusElem, label) {
 	    		console.log("Success occurred.");
 	    		statusElem.innerHTML = "Successful log for " + label;	
 	    		updateNumReadings();
+	    		fetchNewData();
 
 	    	} else {
 	    		console.log("Failure occurred");
