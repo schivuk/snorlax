@@ -77,7 +77,7 @@ GPIO.setup(SPICLK, GPIO.OUT)
 GPIO.setup(SPICS, GPIO.OUT)
  
 
-out_file = open(filename, 'a')
+#out_file = open(filename, 'a')
 num_reads = 0
 
 #use SPI to get ADC data. Return value is a tuple of data strings
