@@ -58,7 +58,7 @@ def alarm(request):
         context = {}
 
         #Get the last alarm set
-        alarms =Alarm.objects.all()
+        alarms = Alarm.objects.all()
         if len(alarms) > 0:
             alarm = alarms[0]
             alarm.switch = not alarm.switch
@@ -298,6 +298,7 @@ def trainCurrentPosition(request,label=''):
         print "Timeout occurred"
         return HttpResponse("Timeout", status=200)
 
+    #read response as JSON
     sensorData = json.loads(dataResp.read())
     print "Success. Got response: ",sensorData
 
@@ -305,6 +306,7 @@ def trainCurrentPosition(request,label=''):
     print "velovals: ",veloVals
 
     #save data to DB
+
     rgroup = ReadingGroup(label=label)
     rgroup.save()
 
@@ -317,6 +319,18 @@ def trainCurrentPosition(request,label=''):
         reading = SensorReading(value=veloVal, rgroup=rgroup,\
                                 logGroup=logGroup, index=index)
         reading.save()
+
+    #Save data to CSV file
+
+    if not os.path.isfile(POSITION_TRAIN_FILE):
+        #create file
+        trainFile = open(POSITION_TRAIN_FILE, 'w+')
+    else:
+        #append to file
+        trainFile = open(POSITION_TRAIN_FILE, 'a')
+
+    trainFile.write(label + ":" + sensorData['velostats'] + "\n")
+    trainFile.close()
 
     return HttpResponse("Success",status=200)
 
@@ -347,7 +361,7 @@ def trainPosition(request):
 
 
     #write information to file
-    if not os.path.isfile(ON_OFF_BED_TRAIN_FILE):
+    if not os.path.isfile(POSITION_TRAIN_FILE):
         #create file
         trainFile = open(POSITION_TRAIN_FILE, 'w+')
     else:
@@ -355,7 +369,7 @@ def trainPosition(request):
         trainFile = open(POSITION_TRAIN_FILE, 'a')
 
     trainFile.write(request.POST['label'] + ":" + velostatValsRaw.strip())
-    trainFileclose()
+    trainFile.close()
     return HttpResponse("Success", status=200)
 
 
@@ -601,5 +615,4 @@ def analyzeSleepCycle(request):
 
 
 def showCurrentPosition(request):
-
     return render(request, 'snorlax/showposition.html', {})

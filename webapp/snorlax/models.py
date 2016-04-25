@@ -53,7 +53,7 @@ class MicrophoneData(models.Model):
 class Alarm(models.Model):
 	time = models.DateTimeField()
 	switch = models.BooleanField(default=True)
-
+	
 
 class LogSleep(models.Model):
 	#day = models.DateField()
