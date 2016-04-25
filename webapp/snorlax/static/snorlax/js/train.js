@@ -134,6 +134,8 @@ function logPosition(button, statusElem, label) {
 	    	if(response == 'Success') {
 	    		console.log("Success occurred.");
 	    		statusElem.innerHTML = "Successful log for " + label;	
+	    		predictorStatus.innerHTML = "";
+	    		removeAllStatus.innerHTML = "";
 	    		updateNumReadings();
 	    		fetchNewData();
 
