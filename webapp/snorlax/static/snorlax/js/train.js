@@ -20,7 +20,8 @@ var rightBtn = document.getElementById("train-right");
 var onBtn = document.getElementById("train-on");
 var offBtn = document.getElementById("train-off");
 var updatePredBtn = document.getElementById("update-predictor-btn");
-var numSamplesBadge = document.getElementById("num-samples-badge");
+var numPositionsBadge = document.getElementById("num-samples-badge");
+var numOnOffBadge = document.getElementById("num-onoff-badge");
 var removeAllBtn = document.getElementById("remove-all-btn");
 
 var backStatusElem = document.getElementById("back-status-elem");
@@ -152,8 +153,7 @@ function logPosition(button, statusElem, label) {
 	    		predictorStatus.innerHTML = "";
 	    		removeAllStatus.innerHTML = "";
 	    		updateNumReadings();
-	    		fetchNewData();
-
+	    		
 	    	} else {
 	    		console.log("Failure occurred");
 	    		statusElem.innerHTML = "Failed to log for " + label;
@@ -175,7 +175,7 @@ function logPosition(button, statusElem, label) {
 function logOnOff(btn, statusElem, label) {
 	statusElem.innerHTML = "Logging this position...";
     btn.className = BUTTON_DISABLED_CLASS;
-    
+
 	$.ajax({
 	    url: "/trainOnOff/" + label,
 	    method: 'GET',
@@ -188,6 +188,7 @@ function logOnOff(btn, statusElem, label) {
 
 	    	btn.className = BUTTON_ACTIVE_CLASS;
 	    	statusElem.innerHTML = "Successful train: " + label;
+	    	updateNumReadings();
 	    },
 
 	    error: function(jqXHR, textStatus, errorThrown) {
@@ -200,7 +201,7 @@ function logOnOff(btn, statusElem, label) {
 }
 
 
-
+//update both: num readings for positions as well as on/off
 function updateNumReadings() {
 	console.log("Called updateNumReadings..");
 
@@ -213,14 +214,30 @@ function updateNumReadings() {
 	    success: function(response) {
 	    	console.log("Got ajax response: " + response);
 
-	    	numSamplesBadge.innerHTML = response + " samples taken";	
-
-	        
+	    	numPositionsBadge.innerHTML = response + " samples taken";	
 	    },
 
 	    error: function(jqXHR, textStatus, errorThrown) {
 	    	console.log("AJAX Error occurred in updateNumReadings: " + errorThrown);
 	    	
+	    },
+	});
+
+	$.ajax({
+	    url: "/numOnOffSamples",
+	    method: 'GET',
+	    dataType : "text",
+	    async: true,
+	    timeout: 5000,
+	    success: function(response) {
+	    	console.log("Got ajax response: " + response);
+
+	    	numOnOffBadge.innerHTML = response + " samples taken";	
+	    },
+
+	    error: function(jqXHR, textStatus, errorThrown) {
+	    	console.log("AJAX Error occurred in updateNumReadings: " + errorThrown);
+	    	numOnOffBadge.innerHTML = "?";
 	    },
 	});
 }
