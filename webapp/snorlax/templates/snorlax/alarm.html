@@ -16,8 +16,11 @@
     <h4 class="numbers">{{alarm.time.date}}</h4>
     <h1 class="numbers">{{alarm.time.time}}</h1>
 
-    <form id="set" method="post" action="{% url 'alarm' %}">
-      <input type="checkbox" id="toggle-two" name="setAlarm" onchange="$('#set').submit();">
+    {% if alarm.switch %}
+    <input type="checkbox" id="toggle-two" name="setAlarm" checked onchange="toggleAlarm()">
+    {% else %}
+    <input type="checkbox" id="toggle-two" name="setAlarm" onchange="toggleAlarm()">
+    {% endif %} 
     {% csrf_token %}
     </form>
   </div>
@@ -32,7 +35,7 @@
           <tr>
             <td class="hour">
               <div class="input-group">
-                <input type="text" class="form-control number" maxlength="2"  id="hour" name="hour">
+                <input type="text" class="form-control number" maxlength="2"  id="hour" name="hour" value="6">
                 <div onClick="increment('hour')" class="input-group-addon"><span class="glyphicon glyphicon-chevron-up"></span></div>
                 <div onClick="decrement('hour')" class="input-group-addon"><span class="glyphicon glyphicon-chevron-down"></span></div>
               </div>
@@ -40,9 +43,9 @@
             <td class="separator">:</td>
             <td class="minute">
               <div class="input-group">
-                <input type="text" class="form-control number" maxlength="2" id="minute" name="min">
-                <div class="input-group-addon"><span class="glyphicon glyphicon-chevron-up"></span></div>
-                <div class="input-group-addon"><span class="glyphicon glyphicon-chevron-down"></span></div>
+                <input type="text" class="form-control number" maxlength="2" id="minute" name="min" value="30">
+                <div onClick="increment('minute')" lick="" class="input-group-addon"><span class="glyphicon glyphicon-chevron-up"></span></div>
+                <div onClick="decrement('minute')" class="input-group-addon"><span class="glyphicon glyphicon-chevron-down"></span></div>
               </div>
             </td>
             <td>

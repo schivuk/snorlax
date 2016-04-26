@@ -6,6 +6,32 @@ $(function() {
     });    
 });
 
+
+ function toggleAlarm() {
+    var isOn = $('#toggle-two').prop('checked');
+    console.log(isOn);
+
+    $.ajax({
+        url : '/alarm',
+        dataType : "html",
+        type: 'POST',
+        data : {
+            isOn: isOn
+        },
+        success: function( comments ) {
+            console.log('success toggling alarm backend');
+        },
+
+        //If an error occurred, we alert user, and log errors
+        error: function(xhr, status, errorThrown) {
+            alert("Encountered a Problem.");
+            console.log("Error: " + errorThrown);
+            console.log("Status" + status);
+            console.dir(xhr);
+        }
+    });
+ }
+
  function increment(field) {
     if(field === 'hour') {
         var div = $('#hour');

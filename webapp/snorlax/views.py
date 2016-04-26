@@ -61,12 +61,16 @@ def alarm(request):
         alarms = Alarm.objects.all()
         if len(alarms) > 0:
             alarm = alarms[0]
-            alarm.switch = not alarm.switch
+            if request.POST['isOn'] == 'true':
+                alarm.switch = True
+            elif request.POST['isOn'] =='false':
+                alarm.switch = False
             print alarm.switch
             alarm.save()
             context['alarm'] = alarm
 
-        return render(request, 'snorlax/alarm.html', context)
+        # return render(request, 'snorlax/alarm.html', context)
+        return HttpResponse("Success", status=200)
 
 def logSleepForm(request):
     if request.method == 'GET':

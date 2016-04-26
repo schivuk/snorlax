@@ -7,6 +7,13 @@ div.wrap {
 	
 }
 
+div.input-group-addon:active {
+	background-color: #bbb;
+}
+/*div.input-group-addon:hover {
+	background-color: #ddd;
+}*/
+
 div.time {
 	max-width: 500px;
 	margin: 0 auto;
