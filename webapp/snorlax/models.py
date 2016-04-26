@@ -14,6 +14,13 @@ class SensorData(models.Model):
 class LogGroup(models.Model):
 	time = models.DateTimeField(auto_now=True)
 
+#Group to store on-off data
+class OnOffGroup(models.Model):
+	time = models.DateTimeField(auto_now=True)
+	#optional label (used for training). Eg. "position_back", "position_front"
+	label = models.CharField(max_length=50, null=True, default=None)
+
+
 #multiple sensor readings per group (one-to-many)
 class ReadingGroup(models.Model):
 	time = models.DateTimeField(auto_now=True)
@@ -27,6 +34,7 @@ class SensorReading(models.Model):
 	index = models.IntegerField()
 	sensorType = models.CharField(max_length=30, null=True, default=None)
 	logGroup=models.ForeignKey(LogGroup, null=True, default=None)
+	onOffGroup = models.ForeignKey(OnOffGroup, null=True, default=None)
 ###############################################
 
 

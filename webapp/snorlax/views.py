@@ -32,7 +32,7 @@ colors = []
 
 RPI_SERVER_HOST = "http://128.237.233.205:9999"
 RPI_GET_URL = RPI_SERVER_HOST + "/getdata"
-ON_OFF_BED_TRAIN_FILE = 'on-off-train.txt'
+ON_OFF_TRAIN_FILE = 'on-off-train.txt'
 POSITION_TRAIN_FILE = 'train-position-data.txt'
 MAX_VALUES = 50
 
@@ -213,7 +213,57 @@ def editAlarm(request):
 
     return render(request, 'snorlax/alarm.html', context)
 
+#get current sensor values from bed
+def logCurrOnOffData(request, label=''):
+    try:
+        dataResp = urllib2.urlopen(RPI_GET_URL, timeout=7)
+    except requests.exceptions.ConnectionError:
+        print "Exception occurred"
+        return HttpResponse("Failure", status=200)
+    except urllib2.URLError:
+        print "URLError"
+        return HttpResponse("URL Error", status=200)
+    except socket.timeout:
+        print "Timeout occurred"
+        return HttpResponse("Timeout", status=200)
 
+    sensorData = json.loads(dataResp.read())
+    print "Success. Got response: ",sensorData
+
+    veloVals = map(int,sensorData['velostats'].split(","))
+    print "velovals: ",veloVals
+
+    #save data to DB
+
+    onOffGroup = OnOffGroup(label=label)
+    onOffGroup.save()
+
+    logGroup = LogGroup()
+    logGroup.save()
+
+    index=0
+    for veloVal in veloVals:
+        index += 1
+        reading = SensorReading(value=veloVal, rgroup=None, onOffGroup=onOffGroup,\
+                                logGroup=logGroup, index=index)
+        reading.save()
+
+    #Save data to CSV file
+
+    if not os.path.isfile(ON_OFF_TRAIN_FILE):
+        #create file
+        trainFile = open(ON_OFF_TRAIN_FILE, 'w+')
+    else:
+        #append to file
+        trainFile = open(ON_OFF_TRAIN_FILE, 'a')
+
+    trainFile.write(label + ":" + sensorData['velostats'] + "\n")
+    trainFile.close()
+
+    return HttpResponse("Success",status=200)
+
+
+#gets the sensor data from the RPi, and logs it as on/off
 def storeOnOffData(request):
     if request.method != 'POST':
         raise Http404
@@ -221,12 +271,12 @@ def storeOnOffData(request):
     velostatValsStr = request.POST['velostatVals']
     onOffLbl = request.POST['label']
 
-    if not os.path.isfile(ON_OFF_BED_TRAIN_FILE):
+    if not os.path.isfile(ON_OFF_TRAIN_FILE):
         #create file
-        trainFile = open(ON_OFF_BED_TRAIN_FILE, 'w+')
+        trainFile = open(ON_OFF_TRAIN_FILE, 'w+')
     else:
         #append to file
-        trainFile = open(ON_OFF_BED_TRAIN_FILE, 'a')
+        trainFile = open(ON_OFF_TRAIN_FILE, 'a')
 
     trainDataStr = onOffLbl + ":" + velostatValsStr.strip()
     trainFile.write(trainDataStr)
@@ -323,7 +373,7 @@ def trainCurrentPosition(request,label=''):
     index=0
     for veloVal in veloVals:
         index += 1
-        reading = SensorReading(value=veloVal, rgroup=rgroup,\
+        reading = SensorReading(value=veloVal, onOffGroup=None, rgroup=rgroup,\
                                 logGroup=logGroup, index=index)
         reading.save()
 
@@ -362,7 +412,7 @@ def trainPosition(request):
     index=0
     for veloVal in veloVals:
         index += 1
-        reading = SensorReading(value=veloVal, rgroup=rgroup,\
+        reading = SensorReading(value=veloVal, onOffGroup=None, rgroup=rgroup,\
                                 logGroup=logGroup, index=index)
         reading.save()
 
@@ -446,7 +496,7 @@ def getCurrentPosition(request):
     index=0
     for veloVal in veloVals:
         index+=1
-        reading = SensorReading(value=veloVal, rgroup=None,\
+        reading = SensorReading(value=veloVal, onOffGroup=None, rgroup=None,\
                                 logGroup=logGroup, index=index)
         reading.save()
  
@@ -477,7 +527,7 @@ def getPosition(request):
     index=0
     for veloVal in veloVals:
         index+=1
-        reading = SensorReading(value=veloVal, rgroup=None,\
+        reading = SensorReading(value=veloVal, onOffGroup=None, rgroup=None,\
                                 logGroup=logGroup, index=index)
         reading.save()
  
