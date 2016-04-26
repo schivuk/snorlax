@@ -10,6 +10,7 @@ import RPi.GPIO as GPIO
 import threading
 import SocketServer
 import json
+import pygame
 
 GPIO.setmode(GPIO.BCM)
 
@@ -25,6 +26,9 @@ TARGET_HOST = "128.237.160.128:8000"
 STORE_DATA_URL = "http://" + TARGET_HOST + "/storeData"
 ONOFF_STORE_URL = "http://" + TARGET_HOST + "/storeOnOffData"
 CHECK_ALARM_URL = "http://" + TARGET_HOST + "/isAlarmReady"
+
+#Alarm sound file path
+SOUND_FILE_PATH = 'alarm.wav'
 
 filename = '/home/pi/accOutput.txt'
  
@@ -168,10 +172,20 @@ def checkAlarmStatus():
 
     print "alarm req'd"
     if alarmReq.status_code==200 and alarmReq.text=='True':
-        #Start alarm
-        print "ALARM!"
+        #Start alarm. Play the alarm sound file
+        pygame.mixer.init()
+        pygame.mixer.music.load(SOUND_FILE_PATH)
+        pygame.mixer.music.play(-1) #Play indefinitely, until user gets off bed
+        
+        '''while True:
+            #Check if person is off the bed
+            if blah:
+                pygame.mixer.music.stop()
+                break    
+                '''
 
     threading.Timer(ALARM_QUERY_INTERVAL_SECS, checkAlarmStatus).start()
+
 
 #Configured so that on GET request, it returns a JSON containing sensor data
 class DataServer(SocketServer.BaseRequestHandler):

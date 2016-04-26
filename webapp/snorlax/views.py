@@ -164,10 +164,13 @@ def isAlarmReady(request):
         if len(alarms) > 0:
             alarm = alarms[0]
             currTime = timezone.now() - timezone.timedelta(hours=4)
-            if currTime >= alarm.time:
-                isReady = True
-            else:
-                isReady = False
+            #Check if alarm was switched on
+            if alarm.switch:
+                #Check if alarm time has been reached
+                if currTime >= alarm.time:
+                    isReady = True
+                else:
+                    isReady = False
         else:
             isReady=False
 
