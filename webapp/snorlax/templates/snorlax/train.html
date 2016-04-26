@@ -6,9 +6,8 @@
 	<nav class="navbar navbar-light bg-faded">
 		<div style="display: inline-block;">
 			<span>
-				<h2 style="margin: 20px 20px 20px 20px; display: inline-block" href="#">Calibrate sleeping positions</h2>
+				<h2 style="margin: 20px 20px 20px 20px; display: inline-block" href="#">Calibrate bed</h2>
 			</span>
-			<span id="num-samples-badge" style="display: inline-block; font-size: 22px; margin-left: 10px;" class="badge"></span>
 		</div>
 	</nav>
 
@@ -16,7 +15,10 @@
 
 		<div class="panel panel-default" style="background-color: transparent; margin: 1% 1% 1% 1%;">
 			<div class="panel-heading">
-				<h3 class="panel-title">Most recent reading</h3>
+				<span style="display: inline-block;">
+					<h3 class="panel-title">Calibrate Positions</h3>
+				</span>
+				<span id="num-samples-badge" style="display: inline-block; font-size: 15px; margin-left: 10px;" class="badge"></span>
 			</div>
 
 		 	<div class="panel-body">
@@ -69,6 +71,33 @@
 				</span>
 				<span id="remove-all-status" class="h4"></span>
 			</div>
+		</div>
+	</span>
+
+
+	<span style="display: inline-block; width: 400px; float: top;">
+		<div class="panel panel-default" style="background-color: transparent; margin: 1% 1% 1% 1%;">
+			<div class="panel-heading">
+				<h3 class="panel-title">Calibrate On/Off</h3>
+			</div>
+
+		 	<div class="panel-body">
+				<span>
+					<button id="train-on" type="button" style="margin: 50px 5px 20px 5px;" class="btn btn-primary btn-lg">
+						Sample for on
+					</button>
+				</span>
+				<span class="h4" id="on-status-elem"></span>
+
+				</br>
+
+				<span>
+					<button id="train-off" type="button" style="margin: 20px 5px 20px 5px;" class="btn btn-primary btn-lg">
+						Sample for off
+					</button>
+				</span>
+				<span class="h4" id="off-status-elem"></span>	
+		  	</div>
 		</div>
 	</span>
 

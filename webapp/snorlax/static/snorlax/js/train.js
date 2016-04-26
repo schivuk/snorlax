@@ -4,6 +4,8 @@ const BACK_LABEL = "back";
 const FRONT_LABEL = "front";
 const LEFT_LABEL = "left";
 const RIGHT_LABEL = "right";
+const ON = "on";
+const OFF = "off";
 const BUTTON_ACTIVE_CLASS = "btn btn-primary btn-lg";
 const BUTTON_DISABLED_CLASS = "btn btn-primary btn-lg disabled";
 const ORANGE_BUTTON_ACTIVE = "btn btn-warning btn-lg";
@@ -15,6 +17,8 @@ var backBtn = document.getElementById("train-back");
 var frontBtn = document.getElementById("train-front");
 var leftBtn = document.getElementById("train-left");
 var rightBtn = document.getElementById("train-right");
+var onBtn = document.getElementById("train-on");
+var offBtn = document.getElementById("train-off");
 var updatePredBtn = document.getElementById("update-predictor-btn");
 var numSamplesBadge = document.getElementById("num-samples-badge");
 var removeAllBtn = document.getElementById("remove-all-btn");
@@ -25,6 +29,9 @@ var leftStatusElem = document.getElementById("left-status-elem");
 var rightStatusElem = document.getElementById("right-status-elem");
 var predictorStatus = document.getElementById("update-predictor-status");
 var removeAllStatus = document.getElementById("remove-all-status");
+
+var onStatusElem = document.getElementById("on-status-elem");
+var offStatusElem = document.getElementById("off-status-elem");
 
 backBtn.addEventListener("click", function() {
 	logPosition(backBtn, backStatusElem, BACK_LABEL);
@@ -43,6 +50,14 @@ rightBtn.addEventListener("click", function() {
 });
 
 updateNumReadings();
+
+onBtn.addEventListener("click", function() {
+	logOnOff(onBtn, onStatusElem, ON);
+});
+
+offBtn.addEventListener("click", function() {
+	logOnOff(offBtn, offStatusElem, OFF);
+})
 
 updatePredBtn.addEventListener("click", function() {
 	console.log("Learning positions..");
@@ -114,7 +129,7 @@ removeAllBtn.addEventListener("click", function() {
 	    },
 	});
 
-})
+});
 
 function logPosition(button, statusElem, label) {
 	console.log("got callback for " + label + ", sending AJAX");
@@ -157,6 +172,35 @@ function logPosition(button, statusElem, label) {
 }
 
 
+function logOnOff(btn, statusElem, label) {
+	statusElem.innerHTML = "Logging this position...";
+    btn.className = BUTTON_DISABLED_CLASS;
+    
+	$.ajax({
+	    url: "/trainOnOff/" + label,
+	    method: 'GET',
+	    dataType : "text",
+	    async: true,
+	    timeout: 5000,
+	    //temporarily disable button
+	    success: function(response) {
+	    	console.log("Got ajax response: " + response);
+
+	    	btn.className = BUTTON_ACTIVE_CLASS;
+	    	statusElem.innerHTML = "Successful train: " + label;
+	    },
+
+	    error: function(jqXHR, textStatus, errorThrown) {
+	    	console.log("AJAX Error occurred in updateNumReadings: " + errorThrown);
+	    	btn.className = BUTTON_ACTIVE_CLASS;
+	    	statusElem.innerHTML = "Error occurred: " + errorThrown;
+	    },
+	});
+
+}
+
+
+
 function updateNumReadings() {
 	console.log("Called updateNumReadings..");
 
@@ -167,7 +211,7 @@ function updateNumReadings() {
 	    async: true,
 	    timeout: 5000,
 	    success: function(response) {
-	    	console.log("Got ajax response: " + response)
+	    	console.log("Got ajax response: " + response);
 
 	    	numSamplesBadge.innerHTML = response + " samples taken";	
 
@@ -178,9 +222,6 @@ function updateNumReadings() {
 	    	console.log("AJAX Error occurred in updateNumReadings: " + errorThrown);
 	    	
 	    },
-
-
 	});
-
 }
 
