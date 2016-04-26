@@ -235,7 +235,9 @@ def logCurrOnOffData(request, label=''):
 
     #save data to DB
 
+
     onOffGroup = OnOffGroup(label=label)
+    print "saving onOffGroup obj: ",onOffGroup
     onOffGroup.save()
 
     logGroup = LogGroup()
@@ -542,6 +544,17 @@ def getPosition(request):
     return HttpResponse(estimateArr[0])
     #return render(request, 'snorlax/position.html', {'position': estimateArr[0]} )
 
+def clearAllOnOff(request):
+    #delete all records
+
+    for oog in OnOffGroup.objects.all():
+        SensorReading.objects.filter(onOffGroup=oog).delete()
+
+    OnOffGroup.objects.all().delete();
+    #reset classifier
+    onBedClf = SVC(C=10, kernel='poly', degree=1, probability=True)
+    return HttpResponse("Success", status=200)
+
 #delete all training data (to start a new session)
 def clearAll(request):
 
@@ -675,6 +688,27 @@ def analyzeSleepCycle(request):
 
     return JsonResponse(context)
 
+#train the onBedClf using all on-off samples
+def learnOnOffClf():
+    xVector = []
+    labelVector = []
+
+    for oogroup in OnOff.objects.all():
+        veloVals = SensorReading.objects.filter(onOffGroup=oogroup).order_by('index')
+        xVector.append(map(lambda obj : obj.value , veloVals))
+        labelVector.append(rgroup.label)
+
+    print "xvector: " + str(xVector)
+    print "len(xVector): " + str(len(xVector))
+    print "training for labels: " + str(labelVector)
+    print "len(labelVector): " + str(len(labelVector))
+    #learn
+
+    try:
+        onBedClf.fit(np.array(xVector), np.array(labelVector))
+    except ValueError:
+        return False
+    return True
 
 def showCurrentPosition(request):
     return render(request, 'snorlax/showposition.html', {})

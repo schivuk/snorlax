@@ -23,6 +23,7 @@ var updatePredBtn = document.getElementById("update-predictor-btn");
 var numPositionsBadge = document.getElementById("num-samples-badge");
 var numOnOffBadge = document.getElementById("num-onoff-badge");
 var removeAllBtn = document.getElementById("remove-all-btn");
+var resetOnOffBtn = document.getElementById("reset-onoff-btn");
 
 var backStatusElem = document.getElementById("back-status-elem");
 var frontStatusElem = document.getElementById("front-status-elem");
@@ -33,6 +34,7 @@ var removeAllStatus = document.getElementById("remove-all-status");
 
 var onStatusElem = document.getElementById("on-status-elem");
 var offStatusElem = document.getElementById("off-status-elem");
+var resetOnOffStatus = document.getElementById("reset-onoff-status");
 
 backBtn.addEventListener("click", function() {
 	logPosition(backBtn, backStatusElem, BACK_LABEL);
@@ -58,6 +60,42 @@ onBtn.addEventListener("click", function() {
 
 offBtn.addEventListener("click", function() {
 	logOnOff(offBtn, offStatusElem, OFF);
+});
+
+
+resetOnOffBtn.addEventListener("click", function() {
+	console.log("Resetting on/off..");
+	resetOnOffStatus.innerHTML = "Resetting on/off training..";
+	resetOnOffBtn.className = RED_BUTTON_DISABLED;
+
+	$.ajax({
+	    url: "/resetOnOff",
+	    method: 'GET',
+	    dataType : "text",
+	    async: true,
+	    timeout: 5000,
+	    success: function(response) {
+	    	resetOnOffBtn.className = RED_BUTTON_ACTIVE;
+	    	if(response == 'Success') {
+	    		console.log("Success occurred.");
+	    		resetOnOffStatus.innerHTML = "Success: reset on/off training";	
+	    		updateNumReadings();
+
+	    	} else {
+	    		console.log("Failure occurred");
+	    		resetOnOffStatus.innerHTML = "Reset failed: " + response;
+	    	}
+	        
+	    },
+
+	    error: function(jqXHR, textStatus, errorThrown) {
+	    	resetOnOffBtn.className = RED_BUTTON_ACTIVE;
+	    	console.log("AJAX Error occurred: " + errorThrown);
+	    	resetOnOffStatus.innerHTML = "Error occurred: " + errorThrown;
+	    },
+
+
+	});
 })
 
 updatePredBtn.addEventListener("click", function() {
@@ -95,6 +133,8 @@ updatePredBtn.addEventListener("click", function() {
 
 	});
 })
+
+
 
 removeAllBtn.addEventListener("click", function() {
 	console.log("removeAllBtn called");
@@ -187,8 +227,16 @@ function logOnOff(btn, statusElem, label) {
 	    	console.log("Got ajax response: " + response);
 
 	    	btn.className = BUTTON_ACTIVE_CLASS;
-	    	statusElem.innerHTML = "Successful train: " + label;
-	    	updateNumReadings();
+
+	    	if(response == 'Success') {
+	    		console.log("Success occurred.");
+	    		statusElem.innerHTML = "Successful train for " + label;	
+	    		updateNumReadings();
+	    		
+	    	} else {
+	    		console.log("Failure occurred");
+	    		statusElem.innerHTML = "Failed to log for " + label;
+	    	}
 	    },
 
 	    error: function(jqXHR, textStatus, errorThrown) {
