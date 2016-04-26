@@ -26,4 +26,6 @@ urlpatterns = patterns('',
     url(r'^showCurrentPosition$', 'snorlax.views.showCurrentPosition', name='showCurrentPosition'),
     url(r'^getCurrentPosition$', 'snorlax.views.getCurrentPosition', name='getCurrentPosition'),
     url(r'^trainOnOff/(?P<label>\w+$)', 'snorlax.views.logCurrOnOffData', name='trainOnOff'),    
+    url(r'^numOnOffSamples$', 'snorlax.views.getNumOnOffGroups', name='numOnOffSamples'),
+    
 )

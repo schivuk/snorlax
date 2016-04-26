@@ -473,6 +473,11 @@ def getNumReadingGroups(request):
     numGroups = len(ReadingGroup.objects.all())
     return HttpResponse(str(numGroups), status=200)
 
+
+def getNumOnOffGroups(request):
+    numGroups = len(OnOffGroup.objects.all())
+    return HttpResponse(str(numGroups), status=200)
+
 def getCurrentPosition(request):
     try:
         dataResp = urllib2.urlopen(RPI_GET_URL, timeout=7)
