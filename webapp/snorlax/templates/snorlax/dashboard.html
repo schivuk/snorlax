@@ -1,68 +1,88 @@
 {% extends "snorlax/base.html" %}
-{% block content %}
-	<h3><i class="fa fa-angle-right"></i> Chartjs Charts</h3>
-	<!-- page start-->
-	<div class="tab-pane" id="chartjs">
-		<div class="row mt">
-			<div class="col-lg-6">
-				<div class="content-panel">
-					<h4><i class="fa fa-angle-right"></i> Percent of time in each cycle</h4>
-					<div class="panel-body text-center">
-						<canvas id="doughnut" height="300" width="400"></canvas>
-					</div>
-					<div id="js-legend" class="chart-legend"></div>
-				</div>
-			</div>
-			<div class="col-lg-6">
-				<div class="content-panel">
-					<h4><i class="fa fa-angle-right"></i> Sleep Cycle Analysis</h4>
-					<div class="panel-body text-center">
-						<canvas id="line" height="300" width="400"></canvas>
-					</div>
-				</div>
-			</div>
-		</div>
-		<div class="row mt">
-			<div class="col-lg-6">
-				<div class="content-panel">
-					<h4><i class="fa fa-angle-right"></i> Radar</h4>
-					<div class="panel-body text-center">
-						<canvas id="radar" height="300" width="400"></canvas>
-					</div>
-				</div>
-			</div>
-			<div class="col-lg-6">
-				<div class="content-panel">
-					<h4><i class="fa fa-angle-right"></i> Polar Area</h4>
-					<div class="panel-body text-center">
-						<canvas id="polarArea" height="300" width="400"></canvas>
-					</div>
-				</div>
-			</div>
-		</div>
-		<div class="row mt">
-			<div class="col-lg-6">
-				<div class="content-panel">
-					<h4><i class="fa fa-angle-right"></i> Bar</h4>
-					<div class="panel-body text-center">
-						<canvas id="bar" height="300" width="400"></canvas>
-					</div>
-				</div>
-			</div>
-			<div class="col-lg-6">
-				<div class="content-panel">
-					<h4><i class="fa fa-angle-right"></i> Pie</h4>
-					<div class="panel-body text-center">
-						<canvas id="pie" height="300" width="400"></canvas>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-	<!-- Load JS files for this page -->
+{% block static-files %}
 	{% load staticfiles %}
+	<!-- Custom styles for this template -->
+	<link href="{% static 'snorlax/css/dashboard.css' %}" rel="stylesheet" type="text/css">
+{% endblock %}
+{% block content %}
+	<div class="container">
+		<!-- BEGIN CALENDAR -->
+		<div class="cal-container">
+			<div class="calendar clearfix"></div>
+		</div>
+		<!-- END CALENDAR -->
+
+		<hr>
+
+		<!-- BEGIN CHARTS -->
+		<div class="tab-pane" id="chartjs">
+			<div class="row mt">
+				<div class="col-lg-6">
+					<div class="content-panel">
+						<h4 class="chart-title">Percent of time in each cycle</h4>
+						<div class="panel-body text-center">
+							<canvas id="doughnut" height="300" width="400"></canvas>
+						</div>
+						<div id="js-legend" class="chart-legend"></div>
+					</div>
+				</div>
+				<div class="col-lg-6">
+					<div class="content-panel">
+						<h4 class="chart-title">Sleep Cycle Analysis</h4>
+						<div class="panel-body text-center">
+							<canvas id="line" height="300" width="400"></canvas>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row mt">
+				<div class="col-lg-6">
+					<div class="content-panel">
+						<h4 class="chart-title">Radar</h4>
+						<div class="panel-body text-center">
+							<canvas id="radar" height="300" width="400"></canvas>
+						</div>
+					</div>
+				</div>
+				<div class="col-lg-6">
+					<div class="content-panel">
+						<h4 class="chart-title">Polar Area</h4>
+						<div class="panel-body text-center">
+							<canvas id="polarArea" height="300" width="400"></canvas>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- END CHARTS -->
+	</div>
+{% endblock %}
+<!-- Load JS files for this page -->
+{% block loadJS %}
 	<script src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
 	<script src="{% static 'snorlax/js/Chart.js' %}"></script>
-	<script src="{% static 'snorlax/js/chartjs-conf.js' %}"></script>
-
+	<script src="{% static 'snorlax/js/chart-configurations.js' %}"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.6/moment.min.js"></script>
+	<script type="text/javascript" src="{% static 'snorlax/js/clndr.min.js' %}"></script>
+	<script type="text/template" id="template-calendar">
+	<div class="clndr-controls">
+			<div class="clndr-previous-button">‹</div>
+			<div class="clndr-next-button">›</div>
+			<div class="month"><%= days[extras.currentWeek * 7].date.format('MMMM Do, YYYY') %> - <%= days[extras.currentWeek * 7 + 6].date.format('MMMM Do, YYYY') %></div>
+	</div>
+	<div class="clndr-grid">
+			<div class="days-of-the-week clearfix">
+					<% _.each(daysOfTheWeek, function(day) { %>
+					<div class="header-day"><%= day %></div>
+					<% }); %>
+			</div>
+			<div class="days clearfix">
+					<% for(var i = extras.currentWeek * 7; i < extras.currentWeek * 7 + 7; i++) { %>
+			<div class="<%= days[i].classes %>" id="<%= days[i].id %>"><%= days[i].day %></div>
+			<% } %>
+			</div>
+	</div>
+	</script>
+	<script src="{% static 'snorlax/js/dashboard.js' %}"></script>
 {% endblock %}

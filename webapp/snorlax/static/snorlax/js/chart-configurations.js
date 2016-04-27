@@ -1,28 +1,13 @@
+/**
+* Dashboard chart configurations
+*/
+
+
 var Script = function () {
-var doughnutData = [
-    {
-    value: 30,
-    color:"#1abc9c"
-    },
-    {
-    value : 50,
-    color : "#2ecc71"
-    },
-    {
-    value : 100,
-    color : "#3498db"
-    },
-    {
-    value : 40,
-    color : "#9b59b6"
-    },
-    {
-    value : 120,
-    color : "#34495e"
-    }
-];
 
-
+/*****************
+* LINE CHART
+******************/
 var lineChartData = {
 labels: ["January", "February", "March", "April", "May", "June", "July"],
 datasets: [
@@ -105,6 +90,9 @@ var lineChartOptions = {
     }
 };
 
+/*****************
+* PIE CHART
+******************/
 var pieData = [{
         value : 30,
         color : "#F38630",
@@ -198,6 +186,14 @@ data : [28,48,40,19,96,27,100]
 ]
 };
 
+/*****************
+* DOUGHNUT CHART
+******************/
+var doughnutData = [];
+
+/*****************
+* SLEEP ANALYSIS 
+*******************/
 $.ajax({
     url: "/analyzeSleepCycle",
     dataType : "json",
@@ -220,23 +216,27 @@ $.ajax({
         doughnutData = [
         {
             value: response['total_light_time'],
-            color: '#0000FF',
+            color: '#9b59b6',
             label: 'Light Sleep'
         },
         {
             value: response['total_deep_time'],
-            color: '#00FF00',
+            color: '#1abc9c',
             label: 'Deep Sleep'
         },
         {
             value: response['total_rem_time'],
-            color: '#FF0000',
+            color: '#3498db',
             label: 'REM Sleep'
         }
         ]
     }
 });
 
+
+/*****************
+* CHART CREATION 
+*******************/
 var doughnut = new Chart(document.getElementById("doughnut").getContext("2d")).Doughnut(doughnutData);
 document.getElementById('js-legend').innerHTML = doughnut.generateLegend();
 new Chart(document.getElementById("line").getContext("2d")).Line(lineChartData, lineChartOptions);

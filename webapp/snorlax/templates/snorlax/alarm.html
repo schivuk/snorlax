@@ -1,34 +1,50 @@
 {% extends "snorlax/base.html" %}
-
 {% block static-files %}
-{% load staticfiles %}
-<!-- Custom styles for this template -->
-<link href="{% static 'snorlax/css/alarm.css' %}" rel="stylesheet" type="text/css">
-<link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
+  {% load staticfiles %}
+  <!-- Custom styles for this template -->
+  <link href="{% static 'snorlax/css/alarm.css' %}" rel="stylesheet" type="text/css">
+  <link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
 {% endblock %}
-
-
 {% block content %}
   <!--- ALARM TIME -->
   <div class="time">
-    <h1>Set Alarm</h1>
+    <h1 class="title">Set Alarm</h1>
     <!-- Make this dynamic -->
-    <h4 class="numbers">{{alarm.time.date}}</h4>
+    <h4 class="numbers title">{{alarm.time.date}}</h4>
     <h1 class="numbers">{{alarm.time.time}}</h1>
-
-    {% if alarm.switch %}
-    <input type="checkbox" id="toggle-two" name="setAlarm" checked onchange="toggleAlarm()">
+    <!-- {% if alarm.switch %}
+      <input type="checkbox" id="toggle-two" name="setAlarm" checked onchange="toggleAlarm()">
     {% else %}
-    <input type="checkbox" id="toggle-two" name="setAlarm" onchange="toggleAlarm()">
-    {% endif %} 
+      <input type="checkbox" id="toggle-two" name="setAlarm" onchange="toggleAlarm()">
+    {% endif %} -->
+    <input type="checkbox" id="toggle-two" name="setAlarm" {% if alarm.switch %} checked {% else %} {% endif %} onchange="toggleAlarm()">
     {% csrf_token %}
-    </form>
   </div>
   
   <hr>
+
+
+  <div class="alarm-row">
+    <h1 class="title">Set Sleeping Position Buzzer</h1>
+    <label class="checkbox-inline">
+      <input name="front" type="checkbox" data-toggle="toggle"> Front
+    </label>
+    <label class="checkbox-inline">
+      <input name="back" type="checkbox" data-toggle="toggle"> Back
+    </label>
+    <label class="checkbox-inline">
+      <input name="right" type="checkbox" data-toggle="toggle"> Right
+    </label>
+    <label class="checkbox-inline">
+      <input name="left" type="checkbox" data-toggle="toggle"> Left
+    </label>
+  </div>
+
+  <hr> 
+
   <!-- EDIT ALARM -->
   <div class="time">
-    <h1>Edit Alarm</h1>
+    <h1 class="title">Edit Alarm</h1>
     <form enctype="multipart/form-data" class="form col-md-12 center-block" method="post" action="{% url 'editAlarm' %}">
       <div class="form-group">
         <table>
@@ -51,8 +67,8 @@
             <td>
               <div class="dropdown">
                 <select class="form-control" id="ampm" name="ampm">
-                    <option>  AM   </option>
-                    <option>  PM   </option>
+                  <option>  AM   </option>
+                  <option>  PM   </option>
                 </select>
               </div>
             </td>
@@ -65,9 +81,10 @@
       {% csrf_token %}
     </form>
   </div>
-{% endblock %}
 
+
+{% endblock %}
 {% block loadJS %}
-    <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
-    <script src="{% static 'snorlax/js/alarm.js' %}"></script>
+  <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
+  <script src="{% static 'snorlax/js/alarm.js' %}"></script>
 {% endblock %}

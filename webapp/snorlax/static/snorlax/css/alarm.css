@@ -1,20 +1,15 @@
+@import url(https://fonts.googleapis.com/css?family=Josefin+Sans);
+
 @font-face {
     font-family: alarmFont;
     src: url(../fonts/DS-DIGII.TTF);
 }
 
-div.wrap {
-	
-}
-
 div.input-group-addon:active {
 	background-color: #bbb;
 }
-/*div.input-group-addon:hover {
-	background-color: #ddd;
-}*/
 
-div.time {
+div.time, div.alarm-row{
 	max-width: 500px;
 	margin: 0 auto;
 	text-align: center;
@@ -25,8 +20,9 @@ hr {
 	margin-bottom: 50px;
 }
 
-h1.header {
-
+.title {
+	color: #ccc;
+ 	font-family: 'Josefin Sans', sans-serif;
 }
 
 h1.numbers {
