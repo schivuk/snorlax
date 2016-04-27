@@ -193,6 +193,7 @@ function logPosition(button, statusElem, label) {
 	    		predictorStatus.innerHTML = "";
 	    		removeAllStatus.innerHTML = "";
 	    		updateNumReadings();
+	    		fetchNewData();
 	    		
 	    	} else {
 	    		console.log("Failure occurred");
@@ -232,6 +233,7 @@ function logOnOff(btn, statusElem, label) {
 	    		console.log("Success occurred.");
 	    		statusElem.innerHTML = "Successful train for " + label;	
 	    		updateNumReadings();
+	    		fetchNewData();
 	    		
 	    	} else {
 	    		console.log("Failure occurred");

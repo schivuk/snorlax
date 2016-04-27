@@ -29,6 +29,7 @@ urlpatterns = patterns('',
     url(r'^numOnOffSamples$', 'snorlax.views.getNumOnOffGroups', name='numOnOffSamples'),    
     url(r'^resetOnOff$', 'snorlax.views.clearAllOnOff', name='resetOnOff'),
     url(r'^checkOnOff$', 'snorlax.views.checkOnOff', name='checkOnOff'),
+    url(r'^logThreshold$', 'snorlax.views.logCurrentAsThreshold', name='logThreshold'),
     
     
 )

@@ -233,7 +233,8 @@ def logCurrOnOffData(request, label=''):
     print "Success. Got response: ",sensorData
 
     storeVelostatInfo(veloStr=sensorData['velostats'].strip(), label=label,\
-        newOnOffGroup=True, newRGroup=False, fileName=ON_OFF_TRAIN_FILE)
+        newOnOffGroup=True, newRGroup=False, fileName=ON_OFF_TRAIN_FILE,\
+        logThreshold=False)
 
     learnOnOffClf()
 
@@ -337,7 +338,8 @@ def trainCurrentPosition(request,label=''):
     print "Success. Got response: ",sensorData
 
     storeVelostatInfo(veloStr=sensorData['velostats'].strip(), label=label,\
-        newOnOffGroup=False, newRGroup=True, fileName=POSITION_TRAIN_FILE)
+        newOnOffGroup=False, newRGroup=True, fileName=POSITION_TRAIN_FILE,\
+        logThreshold=False)
 
     return HttpResponse("Success",status=200)
 
@@ -347,7 +349,10 @@ def trainCurrentPosition(request,label=''):
 #returning an array of raw integer values
 #newOnOffGroup: boolean specifying whether new OnOffGroup needs to be created
 #newRGroup: boolean specifying whether new ReadingGroup needs to be created
-def storeVelostatInfo(veloStr, label, newOnOffGroup, newRGroup, fileName=''):
+#logThreshold: boolean specifying if current dataset should be logged as the 
+#              threshold value
+def storeVelostatInfo(veloStr, label='', newOnOffGroup=False, newRGroup=False, \
+            fileName='', logThreshold=False):
     velostatValsStr = veloStr.split(',')
 
     print "velo values: " + str(velostatValsStr)
@@ -377,6 +382,11 @@ def storeVelostatInfo(veloStr, label, newOnOffGroup, newRGroup, fileName=''):
         reading = SensorReading(value=veloVal, onOffGroup=onOffGroup, rgroup=rgroup,\
                                 logGroup=logGroup, index=index)
         reading.save()
+
+    #If specified, log as threshold
+    if logThreshold:
+        thresholdRef = ThresholdRef(logGroup=logGroup)
+        thresholdRef.save()
 
     if fileName:
         #write information to file
@@ -417,8 +427,9 @@ def trainPosition(request):
     if request.method != 'POST':
         raise Http404
 
-    storeVelostatInfo(request.POST['velostatVals'], \
-        request.POST['label'], False, True, POSITION_TRAIN_FILE)
+    storeVelostatInfo(veloStr=request.POST['velostatVals'], \
+        label=request.POST['label'],newOnOffGroup=False, newRGroup=True, \
+            fileName=POSITION_TRAIN_FILE, logThreshold=False)
 
     return HttpResponse("Success", status=200)
 
@@ -471,6 +482,32 @@ def getNumOnOffGroups(request):
     numGroups = len(OnOffGroup.objects.all())
     return HttpResponse(str(numGroups), status=200)
 
+#get current velostat data from RPi, log it as threshold (base values)
+def logCurrentAsThreshold(request):
+    try:
+        dataResp = urllib2.urlopen(RPI_GET_URL, timeout=7)
+    except requests.exceptions.ConnectionError:
+        print "Exception occurred"
+        return HttpResponse("Failure", status=200)
+    except urllib2.URLError:
+        print "URLError"
+        return HttpResponse("URL Error", status=200)
+    except socket.timeout:
+        print "Timeout occurred"
+        return HttpResponse("Timeout", status=200)
+
+    sensorData = json.loads(dataResp.read())
+    print "Success. Got response: ",sensorData
+
+    veloVals = map(int,sensorData['velostats'].split(","))
+
+    storeVelostatInfo(veloStr=sensorData['velostats'].strip(),\
+        label='', newOnOffGroup=False, newRGroup=False, fileName='',\
+        logThreshold=True)
+
+    return HttpResponse("Success", status=200)
+
+
 def getCurrentPosition(request):
     try:
         dataResp = urllib2.urlopen(RPI_GET_URL, timeout=7)
@@ -490,7 +527,8 @@ def getCurrentPosition(request):
     veloVals = map(int,sensorData['velostats'].split(","))
 
     storeVelostatInfo(veloStr=sensorData['velostats'].strip(),\
-        label='', newOnOffGroup=False, newRGroup=False, fileName='')
+        label='', newOnOffGroup=False, newRGroup=False, fileName='',\
+        logThreshold=False)
 
     print "estimating on/off..."
 
@@ -531,7 +569,8 @@ def getPosition(request):
     print "velo values: " + str(veloVals)
 
     storeVelostatInfo(veloStr=request.POST['velostatVals'].strip(),\
-        label='', newOnOffGroup=False, newRGroup=False, fileName='')
+        label='', newOnOffGroup=False, newRGroup=False, fileName='',\
+        logThreshold=False)
  
     print "estimating values..."
     estimateArr = clf.predict([veloVals])

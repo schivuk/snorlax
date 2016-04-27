@@ -213,10 +213,13 @@ function fetchNewData() {
 		    	var veloVals = String(response).split(","); //JSON.parse(response);	
 
 		    	for(var i=0; i<veloVals.length; i++) {
-		    		data.datasets[0].data[i].value = parseInt(veloVals[i]);
-
+		    		//data.datasets[0].data[i] = parseInt(veloVals[i]);
+                    //newChart.data.datasets[0].data[i] = parseInt(veloVals[i]);
+                    newChart.datasets[0].bars[i].value = parseInt(veloVals[i]);
+                    console.log("Set value: " + newChart.datasets[0].bars[i].value);
 		    	}
-		    	newChart.update(); //= new Chart(ctx).Bar(data, options);
+		    	newChart.update(); 
+                //newChart = new Chart(ctx).Bar(data, options);
 		    },
 
 		    error: function(jqXHR, textStatus, errorThrown) {

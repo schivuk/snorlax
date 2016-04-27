@@ -19,7 +19,11 @@ class OnOffGroup(models.Model):
 	time = models.DateTimeField(auto_now=True)
 	#optional label (used for training). Eg. "position_back", "position_front"
 	label = models.CharField(max_length=50, null=True, default=None)
+	
 
+#points to a LogGroup of readings that represents a threshold
+class ThresholdRef(models.Model):
+	logGroup = models.ForeignKey(LogGroup)
 
 #multiple sensor readings per group (one-to-many)
 class ReadingGroup(models.Model):
