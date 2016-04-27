@@ -396,11 +396,21 @@ def checkOnOff(request):
     print "Called checkOnOff"
     if request.method != 'POST':
         raise Http404
+    
+    veloVals = map(int,request.POST['velostatVals'].split(","))
 
-    storeVelostatInfo(veloStr=request.POST['velostatVals'], \
-        label='', newOnOffGroup=False, newRGroup=False, fileName='')
+    print "estimating on/off..."
 
-    #TODO finish
+    try:
+        onOffEstArr = onBedClf.predict([veloVals])
+        print "Estimated onoff: ",onOffEstArr[0]
+        return HttpResponse(onOffEstArr[0], status=200)
+
+    except NotFittedError:
+        #on off has not yet been calibrated
+        print "got NotFittedError at onBedClf"
+        return HttpResponse("Error: Classifier not updated.",status=200)
+
 
 def trainPosition(request):
     print "Called trainPosition"
@@ -519,15 +529,9 @@ def getPosition(request):
 
     veloVals = map(int, velostatValsStr)
     print "velo values: " + str(veloVals)
-    #log current position for analysis without ReadingGroup
-    logGroup = LogGroup()
-    logGroup.save()
-    index=0
-    for veloVal in veloVals:
-        index+=1
-        reading = SensorReading(value=veloVal, onOffGroup=None, rgroup=None,\
-                                logGroup=logGroup, index=index)
-        reading.save()
+
+    storeVelostatInfo(veloStr=request.POST['velostatVals'].strip(),\
+        label='', newOnOffGroup=False, newRGroup=False, fileName='')
  
     print "estimating values..."
     estimateArr = clf.predict([veloVals])
