@@ -390,6 +390,17 @@ def storeVelostatInfo(veloStr, label, newOnOffGroup, newRGroup, fileName=''):
         trainFile.write(label + ":" + veloStr.strip())
         trainFile.close()
 
+#check if the current position (IE request.POST['velostatVals']) classifies as
+#ON or OFF
+def checkOnOff(request):
+    print "Called checkOnOff"
+    if request.method != 'POST':
+        raise Http404
+
+    storeVelostatInfo(veloStr=request.POST['velostatVals'], \
+        label='', newOnOffGroup=False, newRGroup=False, fileName='')
+
+    #TODO finish
 
 def trainPosition(request):
     print "Called trainPosition"
@@ -467,16 +478,10 @@ def getCurrentPosition(request):
     print "Success. Got response: ",sensorData
 
     veloVals = map(int,sensorData['velostats'].split(","))
-    print "velovals: ",veloVals
-    logGroup = LogGroup()
-    logGroup.save()
-    index=0
-    for veloVal in veloVals:
-        index+=1
-        reading = SensorReading(value=veloVal, onOffGroup=None, rgroup=None,\
-                                logGroup=logGroup, index=index)
-        reading.save()
- 
+
+    storeVelostatInfo(veloStr=sensorData['velostats'].strip(),\
+        label='', newOnOffGroup=False, newRGroup=False, fileName='')
+
     print "estimating on/off..."
 
     try:
