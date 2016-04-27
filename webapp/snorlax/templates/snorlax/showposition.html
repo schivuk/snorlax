@@ -5,9 +5,19 @@
 
 	{% load staticfiles %}
 	<div style="width: 70%">
-		<button id="get-position-btn" type="button" class="btn btn-primary btn-lg btn-block" style="margin: 60px 60px 60px 60px;">
+		<button id="get-position-btn" type="button" class="btn btn-primary btn-lg btn-block" style="margin: 10% 10% 5% 10%;">
 			Get current position
 		</button>
+
+
+		<ul class="list-group" style="width: 40%; margin: 1% 10% 10% 10%; font-size: 20px;">
+		  <li class="list-group-item" style="background:transparent;">
+		    <span id="on-off-status" class="badge" style="font-size: 20px;">Data not loaded</span>
+		    <div>
+			    Bed Status
+			</div>
+		  </li>
+		</ul>
 
 		<div>
 			<h1 id="position-status" style="text-align: center;"></h1>

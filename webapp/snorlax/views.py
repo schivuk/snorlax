@@ -30,6 +30,8 @@ onBedClf = SVC(C=10, kernel='poly', degree=1, probability=True)
 
 colors = []
 
+ON_LABEL = 'on'
+OFF_LABEL = 'off'
 RPI_SERVER_HOST = "http://128.237.233.205:9999"
 RPI_GET_URL = RPI_SERVER_HOST + "/getdata"
 ON_OFF_TRAIN_FILE = 'on-off-train.txt'
@@ -230,37 +232,10 @@ def logCurrOnOffData(request, label=''):
     sensorData = json.loads(dataResp.read())
     print "Success. Got response: ",sensorData
 
-    veloVals = map(int,sensorData['velostats'].split(","))
-    print "velovals: ",veloVals
+    storeVelostatInfo(veloStr=sensorData['velostats'].strip(), label=label,\
+        newOnOffGroup=True, newRGroup=False, fileName=ON_OFF_TRAIN_FILE)
 
-    #save data to DB
-
-
-    onOffGroup = OnOffGroup(label=label)
-    print "saving onOffGroup obj: ",onOffGroup
-    onOffGroup.save()
-
-    logGroup = LogGroup()
-    logGroup.save()
-
-    index=0
-    for veloVal in veloVals:
-        index += 1
-        reading = SensorReading(value=veloVal, rgroup=None, onOffGroup=onOffGroup,\
-                                logGroup=logGroup, index=index)
-        reading.save()
-
-    #Save data to CSV file
-
-    if not os.path.isfile(ON_OFF_TRAIN_FILE):
-        #create file
-        trainFile = open(ON_OFF_TRAIN_FILE, 'w+')
-    else:
-        #append to file
-        trainFile = open(ON_OFF_TRAIN_FILE, 'a')
-
-    trainFile.write(label + ":" + sensorData['velostats'] + "\n")
-    trainFile.close()
+    learnOnOffClf()
 
     return HttpResponse("Success",status=200)
 
@@ -361,37 +336,59 @@ def trainCurrentPosition(request,label=''):
     sensorData = json.loads(dataResp.read())
     print "Success. Got response: ",sensorData
 
-    veloVals = map(int,sensorData['velostats'].split(","))
-    print "velovals: ",veloVals
+    storeVelostatInfo(veloStr=sensorData['velostats'].strip(), label=label,\
+        newOnOffGroup=False, newRGroup=True, fileName=POSITION_TRAIN_FILE)
 
-    #save data to DB
+    return HttpResponse("Success",status=200)
 
-    rgroup = ReadingGroup(label=label)
-    rgroup.save()
 
+
+#helper function to store velostat information from a comma-separated string,
+#returning an array of raw integer values
+#newOnOffGroup: boolean specifying whether new OnOffGroup needs to be created
+#newRGroup: boolean specifying whether new ReadingGroup needs to be created
+def storeVelostatInfo(veloStr, label, newOnOffGroup, newRGroup, fileName=''):
+    velostatValsStr = veloStr.split(',')
+
+    print "velo values: " + str(velostatValsStr)
+    veloVals = map(int, velostatValsStr)
+
+    #create new OnOffGroup if specified
+    if newOnOffGroup:
+        onOffGroup = OnOffGroup(label=label)
+        onOffGroup.save()
+    else:
+        onOffGroup=None
+
+    #create new ReadingGroup if specified
+    if newRGroup:
+        rgroup = ReadingGroup(label=label)
+        rgroup.save()
+    else:
+        rgroup=None
+
+    #alway create new LogGroup
     logGroup = LogGroup()
     logGroup.save()
 
     index=0
     for veloVal in veloVals:
         index += 1
-        reading = SensorReading(value=veloVal, onOffGroup=None, rgroup=rgroup,\
+        reading = SensorReading(value=veloVal, onOffGroup=onOffGroup, rgroup=rgroup,\
                                 logGroup=logGroup, index=index)
         reading.save()
 
-    #Save data to CSV file
+    if fileName:
+        #write information to file
+        if not os.path.isfile(fileName):
+            #create file
+            trainFile = open(fileName, 'w+')
+        else:
+            #append to file
+            trainFile = open(fileName, 'a')
 
-    if not os.path.isfile(POSITION_TRAIN_FILE):
-        #create file
-        trainFile = open(POSITION_TRAIN_FILE, 'w+')
-    else:
-        #append to file
-        trainFile = open(POSITION_TRAIN_FILE, 'a')
-
-    trainFile.write(label + ":" + sensorData['velostats'] + "\n")
-    trainFile.close()
-
-    return HttpResponse("Success",status=200)
+        trainFile.write(label + ":" + veloStr.strip())
+        trainFile.close()
 
 
 def trainPosition(request):
@@ -399,36 +396,9 @@ def trainPosition(request):
     if request.method != 'POST':
         raise Http404
 
-    velostatValsRaw = request.POST['velostatVals']
-    velostatValsStr = request.POST['velostatVals'].split(',')
+    storeVelostatInfo(request.POST['velostatVals'], \
+        request.POST['label'], False, True, POSITION_TRAIN_FILE)
 
-    print "velo values: " + str(velostatValsStr)
-    veloVals = map(int, velostatValsStr)
-
-    rgroup = ReadingGroup(label=request.POST['label'])
-    rgroup.save()
-
-    logGroup = LogGroup()
-    logGroup.save()
-
-    index=0
-    for veloVal in veloVals:
-        index += 1
-        reading = SensorReading(value=veloVal, onOffGroup=None, rgroup=rgroup,\
-                                logGroup=logGroup, index=index)
-        reading.save()
-
-
-    #write information to file
-    if not os.path.isfile(POSITION_TRAIN_FILE):
-        #create file
-        trainFile = open(POSITION_TRAIN_FILE, 'w+')
-    else:
-        #append to file
-        trainFile = open(POSITION_TRAIN_FILE, 'a')
-
-    trainFile.write(request.POST['label'] + ":" + velostatValsRaw.strip())
-    trainFile.close()
     return HttpResponse("Success", status=200)
 
 
@@ -507,12 +477,28 @@ def getCurrentPosition(request):
                                 logGroup=logGroup, index=index)
         reading.save()
  
-    print "estimating values..."
+    print "estimating on/off..."
 
     try:
+        onOffEstArr = onBedClf.predict([veloVals])
+        #check for position only if on the bed
+        print "Estimated onoff: ",onOffEstArr[0]
+        checkPosition = onOffEstArr[0] == ON_LABEL
+
+    except NotFittedError:
+        #on off has not yet been calibrated
+        print "got NotFittedError at onBedClf"
+        checkPosition = True
+
+    if not checkPosition:
+        return HttpResponse(OFF_LABEL, status=200)
+
+    #position needs to be checked
+    try:
+        print "Checking position..."
         estimateArr = clf.predict([veloVals])
     except NotFittedError:
-        print "NotFittedError occurred!"
+        print "NotFittedError occurred on position clf"
         return HttpResponse("Position tracker needs to be calibrated at least once!")
 
     print "Estimate: " + str(estimateArr[0])
@@ -693,12 +679,12 @@ def learnOnOffClf():
     xVector = []
     labelVector = []
 
-    for oogroup in OnOff.objects.all():
+    for oogroup in OnOffGroup.objects.all():
         veloVals = SensorReading.objects.filter(onOffGroup=oogroup).order_by('index')
         xVector.append(map(lambda obj : obj.value , veloVals))
-        labelVector.append(rgroup.label)
+        labelVector.append(oogroup.label)
 
-    print "xvector: " + str(xVector)
+    print "Training onoff\nxvector: " + str(xVector)
     print "len(xVector): " + str(len(xVector))
     print "training for labels: " + str(labelVector)
     print "len(labelVector): " + str(len(labelVector))

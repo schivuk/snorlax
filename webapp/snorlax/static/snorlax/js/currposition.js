@@ -30,6 +30,7 @@ imgFileDict[OFF] = OFF_IMG;
 var getPositionBtn = document.getElementById("get-position-btn");
 var posStatusElem = document.getElementById("position-status");
 var posImg = document.getElementById("position-img");
+var onOffStatus = document.getElementById("on-off-status");
 
 
 getPositionBtn.addEventListener("click", function(){
@@ -58,6 +59,12 @@ getPositionBtn.addEventListener("click", function(){
 	    		console.log("Setting posImg src to: " + imgFileDict[response])
 	    		posImg.src = imgFileDict[response];
 	    		posImg.className = IMG_VISIBLE_CLASS;
+
+	    		if(response == OFF) {
+	    			onOffStatus.innerHTML = "Off the bed";
+	    		} else {
+	    			onOffStatus.innerHTML = "On the bed";
+	    		}
 	    	} else {
 	    		console.log("Failure occurred");
 	    		posStatusElem.innerHTML = "Error retrieving position: " + response;
