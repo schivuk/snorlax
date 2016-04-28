@@ -46,7 +46,7 @@
     text-align: center;
 }
 
-.calendar .clndr-controls .clndr-previous-button, .calendar .clndr-controls .clndr-next-button {
+.clndr-previous-but, .clndr-next-but {
     width: 30px;
     cursor: pointer;
     -webkit-user-select: none;
@@ -54,21 +54,21 @@
     -ms-user-select: none;
 }
 
-.calendar .clndr-controls .clndr-previous-button {
+.clndr-previous-but {
     float: left;
     text-align: left;
 }
 
-.calendar .clndr-controls .clndr-previous-button:hover {
+.clndr-previous-but:hover {
 	color: #000;
 }
 
-.calendar .clndr-controls .clndr-next-button {
+.clndr-next-but {
 	float: right;
     text-align: right;
 }
 
-.calendar .clndr-controls .clndr-next-button:hover {
+.clndr-next-but:hover {
 	color: #000;
 }
 
@@ -161,7 +161,7 @@ h4.chart-title {
   display: inline-block;
   font-family: 'Josefin Sans', sans-serif;
   color: #ccc;
-  width: 100px;
+  width: 50px;
   height: 30px;
   margin-right: 5px;
 }
