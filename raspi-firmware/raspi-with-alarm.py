@@ -197,7 +197,7 @@ def isOffBed():
                         accelerometerVals + ',' + str(time.time()) + '\n'
 
     print out_data
-   
+       
     payload = {
         'velostatVals': ','.join(velostatVals),
     }

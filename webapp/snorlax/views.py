@@ -408,6 +408,7 @@ def checkOnOff(request):
     if request.method != 'POST':
         raise Http404
     
+    print "checkOnOff called; velostatVals: ",request.POST['velostatVals']
     veloVals = map(int,request.POST['velostatVals'].split(","))
 
     print "estimating on/off..."
