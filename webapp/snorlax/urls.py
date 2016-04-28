@@ -31,6 +31,6 @@ urlpatterns = patterns('',
     url(r'^checkOnOff$', 'snorlax.views.checkOnOff', name='checkOnOff'),
     url(r'^logThreshold$', 'snorlax.views.logCurrentAsThreshold', name='logThreshold'),
     url(r'^storePosBuzz$', 'snorlax.views.storePosBuzz', name='storePosBuzz'),
-    
+    url(r'^getPositionBuzz$', 'snorlax.views.getPositionBuzz', name='getPositionBuzz'),
     
 )
