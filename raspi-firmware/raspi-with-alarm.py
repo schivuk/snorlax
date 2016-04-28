@@ -15,7 +15,7 @@ import pygame
 GPIO.setmode(GPIO.BCM)
 
 DATA_SERVER_PORT = 9999
-
+OFF_LABEL = 'off'
 #time between logs
 LOG_INTERVAL_SECS = 75.0/1000.0
 
@@ -24,8 +24,10 @@ ALARM_QUERY_INTERVAL_SECS = 30.
 TARGET_HOST = "128.237.160.128:8000"
 
 STORE_DATA_URL = "http://" + TARGET_HOST + "/storeData"
+
 ONOFF_STORE_URL = "http://" + TARGET_HOST + "/storeOnOffData"
 CHECK_ALARM_URL = "http://" + TARGET_HOST + "/isAlarmReady"
+CHECK_ON_OFF = "http://" + TARGET_HOST + "/checkOnOff"
 
 #Alarm sound file path
 SOUND_FILE_PATH = 'alarm.wav'
@@ -85,8 +87,14 @@ GPIO.setup(SPICS, GPIO.OUT)
 num_reads = 0
 
 #use SPI to get ADC data. Return value is a tuple of data strings
+# 0-2: Accelerometer
+# 3-6: xxxx
+# 7: Mic
+# 8 - 
 def getSensorData():
-    velostatVals = []
+    allVals = []
+    microphoneVals, accelerometerVals, velostatVals = [],[],[]
+
     SPICLK = 14
     SPIMISO = 15
     SPIMOSI = 18
@@ -98,7 +106,8 @@ def getSensorData():
     
     for i in xrange(8):
         out = readadc(i, SPICLK, SPIMOSI, SPIMISO, SPICS)
-        velostatVals.append(str(out))
+        #velostatVals.append(str(out))
+        allVals.append(str(out))
     
     SPICLK = 24
     SPIMISO = 25
@@ -111,6 +120,7 @@ def getSensorData():
 
     for i in xrange(8):
         out = readadc(i, SPICLK, SPIMOSI, SPIMISO, SPICS)
+        #velostatVals.append(str(out))
         velostatVals.append(str(out))
 
     SPICLK = 12
@@ -122,17 +132,33 @@ def getSensorData():
     GPIO.setup(SPICLK, GPIO.OUT)
     GPIO.setup(SPICS, GPIO.OUT)
 
-    for i in xrange(4):
+    for i in xrange(8):
         out = readadc(i, SPICLK, SPIMOSI, SPIMISO, SPICS)
+        #velostatVals.append(str(out))
         velostatVals.append(str(out))
     
-    microphoneVals = str(readadc(4, SPICLK, SPIMOSI, SPIMISO, SPICS))
-    accelerometerX = str(readadc(5, SPICLK, SPIMOSI, SPIMISO, SPICS))
-    accelerometerY = str(readadc(6, SPICLK, SPIMOSI, SPIMISO, SPICS))
-    accelerometerZ = str(readadc(7, SPICLK, SPIMOSI, SPIMISO, SPICS))
+    SPICLK = 6
+    SPIMISO = 13
+    SPIMOSI = 19
+    SPICS = 26
+    GPIO.setup(SPIMOSI, GPIO.OUT)
+    GPIO.setup(SPIMISO, GPIO.IN)
+    GPIO.setup(SPICLK, GPIO.OUT)
+    GPIO.setup(SPICS, GPIO.OUT)
+    
+    for i in xrange(8):
+        out = readadc(i, SPICLK, SPIMOSI, SPIMISO, SPICS)
+        #velostatVals.append(str(out))
+        velostatVals.append(str(out))
+
+    microphoneVals = str(readadc(7, SPICLK, SPIMOSI, SPIMISO, SPICS))
+    accelerometerX = str(readadc(0, SPICLK, SPIMOSI, SPIMISO, SPICS))
+    accelerometerY = str(readadc(1, SPICLK, SPIMOSI, SPIMISO, SPICS))
+    accelerometerZ = str(readadc(2, SPICLK, SPIMOSI, SPIMISO, SPICS))
     accelerometerVals = accelerometerX + ',' + accelerometerY + ',' + accelerometerZ
 
     return velostatVals, microphoneVals, accelerometerVals
+
 
 
 def logSensorData():
@@ -155,15 +181,35 @@ def logSensorData():
         'microphoneIDs': '1',
         'microphoneVals': microphoneVals,
         'time': time.time()
-    #'value': "{0},{1},{2},{3}".format(out0,out1,out2,time.time()),
+        #'value': "{0},{1},{2},{3}".format(out0,out1,out2,time.time()),
     }
     
     try:
         requests.post(url=STORE_DATA_URL, data=payload)
     except:
         print "Exception occured during store data request"
-
     threading.Timer(LOG_INTERVAL_SECS, logSensorData).start()
+
+def isOffBed():
+    velostatVals, _, _ = getSensorData()
+    
+    out_data = ','.join(velostatVals) + ',' + microphoneVals + ',' +\
+                        accelerometerVals + ',' + str(time.time()) + '\n'
+
+    print out_data
+   
+    payload = {
+        'velostatVals': ','.join(velostatVals),
+    }
+    
+    try:
+        requests.post(url=STORE_DATA_URL, data=payload)
+    except:
+        print "Exception occured during checkOnOff"
+
+    print "Got response: " + request.text
+    return request.text == OFF_LABEL
+
 
 def checkAlarmStatus():
     googleReq = requests.get("http://google.com")
@@ -177,12 +223,13 @@ def checkAlarmStatus():
         pygame.mixer.music.load(SOUND_FILE_PATH)
         pygame.mixer.music.play(-1) #Play indefinitely, until user gets off bed
         
-        '''while True:
+
+        while True:
             #Check if person is off the bed
-            if blah:
+            if isOffBed():
                 pygame.mixer.music.stop()
                 break    
-                '''
+            time.sleep(2)
 
     threading.Timer(ALARM_QUERY_INTERVAL_SECS, checkAlarmStatus).start()
 

@@ -164,6 +164,7 @@ def profile(request):
         return render(request, 'snorlax/profile.html')
 
 def isAlarmReady(request):
+    isReady = False
     if request.method == 'GET':
         #Check whether alarm has been set previously
         alarms = Alarm.objects.all()
