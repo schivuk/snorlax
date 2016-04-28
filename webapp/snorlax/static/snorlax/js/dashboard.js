@@ -173,7 +173,7 @@ data : [28,48,40,19,96,27,100]
 };
 
 /*****************
-* CHART CREATION 
+* CHART CREATION
 *******************/
 
 var donutCtx = document.getElementById("doughnut").getContext("2d");
@@ -194,8 +194,10 @@ radarCtx.canvas.height = 300;
 polarCtx.canvas.width = 400;
 polarCtx.canvas.height = 300;
 
-var doughnutChart = new Chart(donutCtx).Doughnut(doughnutData);
-var lineChart = new Chart(lineCtx).Line(lineChartData, lineChartOptions);
+// var doughnutChart = new Chart(donutCtx).Doughnut(doughnutData);
+// var lineChart = new Chart(lineCtx).Line(lineChartData, lineChartOptions);
+var doughnutChart = null;
+var lineChart = null;
 var radarChart = new Chart(radarCtx).Radar(radarChartData);
 var polarChart = new Chart(polarCtx).PolarArea(chartData);
 
@@ -257,7 +259,7 @@ var clndr = $('#cal').clndr({
 
             /* Get numbers of weeks in the month */
             var weeks_in_month = Math.floor(clndr.month.daysInMonth() / 7) - 1;
-            
+
 
             if(clndr.options.extras.currentWeek > 0) {
                 /* Decrease the week count */
@@ -278,9 +280,11 @@ var clndr = $('#cal').clndr({
 
 
 /*****************
-* SLEEP ANALYSIS 
+* SLEEP ANALYSIS
 *******************/
 function getChartDataForDay(date) {
+    counter = counter + 1;
+
     $.ajax({
     url: "/analyzeSleepCycle",
     dataType : "json",
@@ -318,11 +322,18 @@ function getChartDataForDay(date) {
         }
         ]
 
+        if (lineChart != null) {
+            lineChart.destroy();
+        }
+        if (doughnutChart != null) {
+            doughnutChart.destroy();
+        }
         //Update charts with new data
         doughnutChart = new Chart(document.getElementById("doughnut").getContext("2d")).Doughnut(doughnutData);
         document.getElementById('js-legend').innerHTML = doughnutChart.generateLegend();
         lineChart = new Chart(document.getElementById("line").getContext("2d")).Line(lineChartData, lineChartOptions);
+
     }
-});
+    });
 
 }
