@@ -65,7 +65,10 @@ class MicrophoneData(models.Model):
 class Alarm(models.Model):
 	time = models.DateTimeField()
 	switch = models.BooleanField(default=True)
-	
+	front = models.BooleanField(default=False)
+	back = models.BooleanField(default=False)
+	right = models.BooleanField(default=False)
+	left = models.BooleanField(default=False)
 
 class LogSleep(models.Model):
 	#day = models.DateField()

@@ -747,3 +747,72 @@ def learnOnOffClf():
 
 def showCurrentPosition(request):
     return render(request, 'snorlax/showposition.html', {})
+
+@transaction.atomic
+def storePosBuzz(request):
+    if request.method == 'POST':
+        context = {}
+
+        print request.POST['pos']
+        print request.POST['isOn']
+        pos = int(request.POST['pos'])
+        isOn = request.POST['isOn']
+
+        #Get the last alarm set
+        alarms = Alarm.objects.all()
+        if len(alarms) > 0:
+            alarm = alarms[0]
+            if pos == 1:
+                #Front
+                if isOn == 'true':
+                    alarm.front = True
+                else:
+                    alarm.front = False
+            elif pos == 2:
+                #Back
+                if isOn == 'true':
+                    alarm.back = True
+                else:
+                    alarm.back = False
+            elif pos == 3:
+                #Right
+                if isOn == 'true':
+                    alarm.right = True
+                else:
+                    alarm.right = False
+            elif pos == 4:
+                #Left
+                if isOn == 'true':
+                    alarm.left = True
+                else:
+                    alarm.left = False
+            alarm.save()
+            context['alarm'] = alarm
+        else:
+            if pos == 1:
+                #Front
+                if isOn == 'true':
+                    alarm = Alarm(front=True)
+                else:
+                    alarm = Alarm(front=False)
+            elif pos == 2:
+                #Back
+                if isOn == 'true':
+                    alarm = Alarm(back=True)
+                else:
+                    alarm = Alarm(back=False)
+            elif pos == 3:
+                #Right
+                if isOn == 'true':
+                    alarm = Alarm(right=True)
+                else:
+                    alarm = Alarm(right=False)
+            elif pos == 4:
+                #Left
+                if isOn == 'true':
+                    alarm = Alarm(left=True)
+                else:
+                    alarm = Alarm(left=False)
+            alarm.save()
+
+        return HttpResponse("Success", status=200)
