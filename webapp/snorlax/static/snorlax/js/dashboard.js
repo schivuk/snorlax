@@ -48,6 +48,11 @@
     //Boolean - Whether to fill the dataset with a colour
     datasetFill : true,
 
+    responsive: true,
+
+// Boolean - whether to maintain the starting aspect ratio or not when responsive, if set to false, will take up entire container
+
+    maintainAspectRatio: false,
     //String - A legend template
     legendTemplate : "<ul class=\"<%=name.toLowerCase()%>-legend\"><% for (var i=0; i<datasets.length; i++){%><li><span style=\"background-color:<%=datasets[i].strokeColor%>\"></span><%if(datasets[i].label){%><%=datasets[i].label%><%}%></li><%}%></ul>",
 
@@ -170,10 +175,29 @@ data : [28,48,40,19,96,27,100]
 /*****************
 * CHART CREATION 
 *******************/
-var doughnutChart = new Chart(document.getElementById("doughnut").getContext("2d")).Doughnut(doughnutData);
-var lineChart = new Chart(document.getElementById("line").getContext("2d")).Line(lineChartData, lineChartOptions);
-var radarChart = new Chart(document.getElementById("radar").getContext("2d")).Radar(radarChartData);
-var polarChart = new Chart(document.getElementById("polarArea").getContext("2d")).PolarArea(chartData);
+
+var donutCtx = document.getElementById("doughnut").getContext("2d");
+var lineCtx = document.getElementById("line").getContext("2d");
+var radarCtx = document.getElementById("radar").getContext("2d");
+var polarCtx = document.getElementById("polarArea").getContext("2d");
+
+donutCtx.canvas.width = 400;
+donutCtx.canvas.height = 300;
+
+lineCtx.canvas.width = 400;
+lineCtx.canvas.height = 300;
+
+
+radarCtx.canvas.width = 400;
+radarCtx.canvas.height = 300;
+
+polarCtx.canvas.width = 400;
+polarCtx.canvas.height = 300;
+
+var doughnutChart = new Chart(donutCtx).Doughnut(doughnutData);
+var lineChart = new Chart(lineCtx).Line(lineChartData, lineChartOptions);
+var radarChart = new Chart(radarCtx).Radar(radarChartData);
+var polarChart = new Chart(polarCtx).PolarArea(chartData);
 
 /**************************
  * CALENDAR CONFIGURATION
