@@ -27,16 +27,16 @@
   <div class="alarm-row">
     <h1 class="title">Set Sleeping Position Buzzer</h1>
     <label class="checkbox-inline">
-      <input name="front" type="checkbox" data-toggle="toggle"> Front
+      <input name="front" id="toggle-front" type="checkbox" data-toggle="toggle" {% if alarm.front %} checked {% else %} {% endif %} onchange="togglePosition(1)"> Front
     </label>
     <label class="checkbox-inline">
-      <input name="back" type="checkbox" data-toggle="toggle"> Back
+      <input name="back" id="toggle-back" type="checkbox" data-toggle="toggle" {% if alarm.back %} checked {% else %} {% endif %} onchange="togglePosition(2)"> Back
     </label>
     <label class="checkbox-inline">
-      <input name="right" type="checkbox" data-toggle="toggle"> Right
+      <input name="right" id="toggle-right" type="checkbox" data-toggle="toggle" {% if alarm.right %} checked {% else %} {% endif %} onchange="togglePosition(3)"> Right
     </label>
     <label class="checkbox-inline">
-      <input name="left" type="checkbox" data-toggle="toggle"> Left
+      <input name="left" id="toggle-left" type="checkbox" data-toggle="toggle" {% if alarm.left %} checked {% else %} {% endif %} onchange="togglePosition(4)"> Left
     </label>
   </div>
 

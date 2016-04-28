@@ -28,9 +28,14 @@ STORE_DATA_URL = "http://" + TARGET_HOST + "/storeData"
 ONOFF_STORE_URL = "http://" + TARGET_HOST + "/storeOnOffData"
 CHECK_ALARM_URL = "http://" + TARGET_HOST + "/isAlarmReady"
 CHECK_ON_OFF = "http://" + TARGET_HOST + "/checkOnOff"
+GET_POS_URL = "http://" + TARGET_HOST + "/getPosition"
+CHECK_POS_URL = "http://" + TARGET_HOST + "/getPositionBuzz"
 
 #Alarm sound file path
 SOUND_FILE_PATH = 'alarm.wav'
+
+#Buzzer sound file path (alert user for wrong sleeping positions)
+BUZZER_FILE_PATH = 'buzzer.wav'
 
 filename = '/home/pi/accOutput.txt'
  
@@ -203,7 +208,7 @@ def isOffBed():
     }
     
     try:
-        requests.post(url=STORE_DATA_URL, data=payload)
+        requests.post(url=CHECK_ON_OFF, data=payload)
     except:
         print "Exception occured during checkOnOff"
 
@@ -233,6 +238,38 @@ def checkAlarmStatus():
 
     threading.Timer(ALARM_QUERY_INTERVAL_SECS, checkAlarmStatus).start()
 
+def checkPositionBuzzer():
+    googleReq = requests.get("http://google.com")
+    print "Google req'd. resp: ", googleReq.status_code
+    buzzerReq = requests.get(CHECK_POS_URL)
+
+    velostatVals, _, _ = getSensorData()
+    
+    out_data = ','.join(velostatVals) + ',' + microphoneVals + ',' +\
+                        accelerometerVals + ',' + str(time.time()) + '\n'
+
+    print out_data
+   
+    payload = {
+        'velostatVals': ','.join(velostatVals),
+    }
+    
+    try:
+        requests.post(url=GET_POS_URL, data=payload)
+    except:
+        print "Exception occured during checkOnOff"
+
+    print "Got response: " + request.text
+
+    buzzPositions = request.text.split(',')
+
+    if buzzerReq.status_code==200 and buzzerReq.text in buzzPositions:
+        #Start buzzer. Play the buzzer sound file
+        pygame.mixer.init()
+        pygame.mixer.music.load(BUZZER_FILE_PATH)
+        pygame.mixer.music.play()       #Play once (Buzzer file should be 2 secs)
+
+    threading.Timer(ALARM_QUERY_INTERVAL_SECS, checkPositionBuzzer).start()
 
 #Configured so that on GET request, it returns a JSON containing sensor data
 class DataServer(SocketServer.BaseRequestHandler):
@@ -251,3 +288,4 @@ server = SocketServer.TCPServer(("0.0.0.0", DATA_SERVER_PORT), DataServer)
 threading.Thread(target=logSensorData).start()
 threading.Thread(target=server.serve_forever).start()
 threading.Thread(target=checkAlarmStatus).start()
+threading.Thread(target=checkPositionBuzzer).start()
