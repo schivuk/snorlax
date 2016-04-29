@@ -707,6 +707,30 @@ def analyzeSleepCycle(request):
     context['total_nonrestful_time'] = '%.2f'%(float(total_nonrestful_time) / len(timestamps))
     context['total_restful_time'] = '%.2f'%(float(total_restful_time) / len(timestamps))
 
+    print x_axis
+    print all_transitions
+
+    # Calculate total restful and total nonrestful time.
+    restful_time = 0
+    nonrestful_time = 0
+    for i in xrange(1, len(x_axis)):
+        if x_axis[i-1] == 1 and x_axis[i] == 2:
+            nonrestful_time += (all_transitions[i] - all_transitions[i-1])
+        elif x_axis[i-1] == 2 and x_axis[i] == 1:
+            restful_time += (all_transitions[i] - all_transitions[i-1])
+
+    context['nonrestful_time'] = nonrestful_time
+    context['restful_time'] = restful_time
+
+    # Calculate sleep efficiency
+    total_sleep_time = (timestamps[-1] - timestamps[0]) / 60
+    time_to_fall_asleep = 25
+    time_awakened = 25
+    total_time_asleep = total_sleep_time - time_to_fall_asleep - time_awakened
+    sleep_efficiency = float(total_time_asleep) / total_sleep_time
+
+    context['sleep_efficiency'] = sleep_efficiency
+
     return JsonResponse(context)
 
 #train the onBedClf using all on-off samples
