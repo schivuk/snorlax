@@ -39,6 +39,7 @@ class SensorReading(models.Model):
 	sensorType = models.CharField(max_length=30, null=True, default=None)
 	logGroup=models.ForeignKey(LogGroup, null=True, default=None)
 	onOffGroup = models.ForeignKey(OnOffGroup, null=True, default=None)
+	
 ###############################################
 
 

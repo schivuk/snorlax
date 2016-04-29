@@ -586,10 +586,13 @@ def getPosition(request):
         logThreshold=False)
 
     print "estimating values..."
-    estimateArr = clf.predict([veloVals])
+    try:
+        estimateArr = clf.predict([veloVals])
+    except NotFittedError:
+        return HttpResponse("Not yet trained", status=200)
     print "Estimate: " + str(estimateArr[0])
-    return HttpResponse(estimateArr[0])
-    #return render(request, 'snorlax/position.html', {'position': estimateArr[0]} )
+    return HttpResponse(estimateArr[0], status=200)
+    
 
 def clearAllOnOff(request):
     #delete all records
@@ -802,14 +805,15 @@ def storePosBuzz(request):
             
         elif pos == 3:
             #Right
-            alarm = Alarm(right=isOn == 'true')
+            alarm = Alarm(right = isOn=='true')
 
         elif pos == 4:
             #Left
-            alarm = Alarm(left=isOn=='true')
+            alarm = Alarm(left = isOn=='true')
         alarm.save()
 
     return HttpResponse("Success", status=200)
+
 
 def getPositionBuzz(request):
     if request.method != 'GET':
