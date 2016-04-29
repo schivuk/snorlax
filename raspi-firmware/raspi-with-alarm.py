@@ -12,6 +12,7 @@ import SocketServer
 import json
 import pygame
 
+
 GPIO.setmode(GPIO.BCM)
 
 DATA_SERVER_PORT = 9999
@@ -35,7 +36,7 @@ ADC_LOCK = threading.Lock()
 REQUEST_LOCK = threading.Lock()
 
 #Alarm sound file path
-SOUND_FILE_PATH = 'wakeup.mp3'
+SOUND_FILE_PATH = 'wakeup_4.mp3'
 
 filename = '/home/pi/accOutput.txt'
  
@@ -196,7 +197,7 @@ def logSensorData():
         REQUEST_LOCK.acquire()
         requests.post(url=STORE_DATA_URL, data=payload)
         REQUEST_LOCK.release()
-    except:
+    except requests.exceptions.ConnectionError:
         print "Exception occured during store data request"
     threading.Timer(LOG_INTERVAL_SECS, logSensorData).start()
 
@@ -217,7 +218,7 @@ def isOffBed():
         REQUEST_LOCK.acquire()
         req = requests.post(url=CHECK_ON_OFF, data=payload)
         REQUEST_LOCK.release()
-    except:
+    except requests.exceptions.ConnectionError:
         print "Exception occured during checkOnOff"
 
     print "Got response: " + req.text
@@ -227,7 +228,10 @@ def isOffBed():
 def checkAlarmStatus():
     print "Sending get request to check_alarm_url"
     REQUEST_LOCK.acquire()
-    alarmReq = requests.get(CHECK_ALARM_URL)
+    try:
+        alarmReq = requests.get(CHECK_ALARM_URL)
+    except requests.exceptions.ConnectionError:
+        print "Connection error connecting to server"
     REQUEST_LOCK.release()
 
     print "Sent alarmRed. response: ",alarmReq.text
@@ -239,14 +243,15 @@ def checkAlarmStatus():
         
         print "Setting off alarm.."
         while True:
+            time.sleep(2)
             #Check if person is off the bed
             if isOffBed():
                 print "is off bed! stopping alarm.."
                 pygame.mixer.music.stop()
                 break    
             print "is still on bed..."
-            time.sleep(2)
-
+        
+    print "Broke from checkOffBed loop"
     threading.Timer(ALARM_QUERY_INTERVAL_SECS, checkAlarmStatus).start()
 
 
