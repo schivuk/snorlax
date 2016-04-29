@@ -627,8 +627,15 @@ def getLatestReading(request):
 
 def analyzeSleepCycle(request):
 
-    # with open('allOutput04-17-2016.txt') as f:
-    with open('accOutput04-25-2016Small.txt') as f:
+    # print request.GET['date']
+    filename = str('accOutput' + request.GET['date'] + 'Small.txt')
+
+    if os.path.isfile(filename) == False:
+        context = {}
+        context['file_exists'] = False
+        return JsonResponse(context)
+
+    with open(filename) as f:
         x_vals = []
         y_vals = []
         z_vals = []
@@ -691,6 +698,7 @@ def analyzeSleepCycle(request):
             x_axis.append(2)
 
     context = {}
+    context['file_exists'] = True
     context['data'] = x_axis
     context['labels'] = all_transitions
     context['total_nonrestful_time'] = '%.2f'%(float(total_nonrestful_time) / len(timestamps))

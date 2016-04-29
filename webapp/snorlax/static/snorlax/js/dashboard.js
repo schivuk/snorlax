@@ -312,7 +312,7 @@ var clndr = $('#cal').clndr({
               var div = $(target['element']);
               div.addClass('activeDate');
 
-             getChartDataForDay(target);
+             getChartDataForDay(target.date._i);
              // console.log(doughnutData);
 
 
@@ -369,13 +369,19 @@ var clndr = $('#cal').clndr({
 * SLEEP ANALYSIS
 *******************/
 function getChartDataForDay(date) {
-    console.log('getChartDataForDay');
-
     $.ajax({
     url: "/analyzeSleepCycle",
     dataType : "json",
+    data: {
+        'date': date
+    },
     async: false,
     success: function(response) {
+        if (response['file_exists'] == false) {
+            alert('TODO: Indicate No Data Available')
+            return;
+        }
+
         lineChartData.datasets[0].data = response['data'];
         var epochLabels = response['labels'];
         var normalLabels = [];
