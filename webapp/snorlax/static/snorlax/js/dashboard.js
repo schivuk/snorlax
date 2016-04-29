@@ -3,7 +3,6 @@
  * CHART CONFIGURATION
  **********************/
  var lineChartOptions = {
-
     ///Boolean - Whether grid lines are shown across the chart
     scaleShowGridLines : false,
 
@@ -65,6 +64,7 @@
 
     // scaleLabel : "<%= value = ' + foo %>"
     scaleLabel: function (valuePayload) {
+        console.log(Number(valuePayload));
         if(Number(valuePayload.value)===0)
             return '';
         if(Number(valuePayload.value)===1)
@@ -73,7 +73,8 @@
             return 'deep sleep';
         if(Number(valuePayload.value)===3)
             return 'rem sleep';
-    }
+    },
+
 };
 
 Chart.defaults.global.defaultFontColor = "#ccc";
@@ -128,7 +129,7 @@ datasets: [
             pointHitRadius: 10,
             scaleStartValue: -5,
 
-        data: []
+        data: [1, 2, 3, 4, 3, 2, 1]
     }
 ]
 };
@@ -258,7 +259,27 @@ polarCtx.canvas.height = 300;
 var lineChart = new Chart(lineCtx, {
     type: 'line',
     data: lineChartData,
-    options: lineChartOptions
+    // options: lineChartOptions
+    options: {
+        scales: {
+            yAxes: [{
+                ticks: {
+                    beginAtZero:false
+                }
+            }]
+        },
+        scaleLabel: function (valuePayload) {
+            console.log(Number(valuePayload));
+            if(Number(valuePayload.value)===0)
+                return '';
+            if(Number(valuePayload.value)===1)
+                return 'light sleep';
+            if(Number(valuePayload.value)===2)
+                return 'deep sleep';
+            if(Number(valuePayload.value)===3)
+                return 'rem sleep';
+        }
+    }
 });
 
 var doughnutChart = new Chart(donutCtx, {
@@ -348,6 +369,7 @@ var clndr = $('#cal').clndr({
 * SLEEP ANALYSIS
 *******************/
 function getChartDataForDay(date) {
+    console.log('getChartDataForDay');
 
     $.ajax({
     url: "/analyzeSleepCycle",
@@ -370,14 +392,13 @@ function getChartDataForDay(date) {
 
         //Update charts with new data
         doughnutChart.data.labels = [
-            'Light Sleep',
-            'Deep Sleep',
-            'REM Sleep'
+            'Nonrestful Sleep',
+            'Restful Sleep'
         ];
 
         doughnutChart.data.datasets = [
         {
-            data: [response['total_light_time'], response['total_deep_time'], response['total_rem_time']],
+            data: [response['total_nonrestful_time'], response['total_restful_time']],
             backgroundColor: [
                 "#9b59b6",
                 "#1abc9c",
@@ -390,12 +411,11 @@ function getChartDataForDay(date) {
             ]
         }];
 
-        doughnutChart.update(); 
-        console.log(doughnutChart);      
+        doughnutChart.update();
+        console.log(doughnutChart);
 
         lineChart.data = lineChartData;
         lineChart.update();
-
     }
     });
 
