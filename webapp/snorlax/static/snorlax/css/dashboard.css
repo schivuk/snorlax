@@ -145,6 +145,11 @@ hr {
 /* CHART STYLES BEGIN
 /*********************/
 
+canvas{
+    width: 100% !important;
+    height: auto !important;
+}
+
 h4.chart-title {
   text-align: center;
   font-family: 'Josefin Sans', sans-serif;

@@ -15,6 +15,8 @@
 
     scaleFontColor : "#ccc",
 
+    backgroundColor: "#ccc",
+
     //Boolean - Whether to show horizontal lines (except X axis)
     scaleShowHorizontalLines: true,
 
@@ -74,6 +76,27 @@
     }
 };
 
+Chart.defaults.global.defaultFontColor = "#ccc";
+Chart.defaults.global.legend.labels.fontColor = "#ccc";
+Chart.defaults.line = {
+    showLines: true,
+    scales: {
+        xAxes: [
+            {type:"category","id":"x-axis-0"}
+        ],
+        yAxes: [
+            {
+                type:"linear",
+                "id":"y-axis-0",
+                ticks: {
+                    beginAtZero:true,
+                    max: 4
+                }
+            }
+        ],
+    }
+};
+
 /***********************
  * INITIALIZE PLOTS
  **********************/
@@ -85,14 +108,26 @@ var lineChartData = {
 labels: ["January", "February", "March", "April", "May", "June", "July"],
 datasets: [
     {
-        label: "My First dataset",
-        fillColor: "rgba(220,220,220,0.2)",
-        strokeColor: "rgba(220,220,220,1)",
-        pointColor: "rgba(220,220,220,1)",
-        pointStrokeColor: "#fff",
-        pointHighlightFill: "#fff",
-        pointHighlightStroke: "rgba(220,220,220,1)",
-        scaleStartValue: -5,
+            label: "Sleep Analysis",
+            fill: true,
+            lineTension: 0.1,
+            backgroundColor: "rgba(75,192,192,0.4)",
+            borderColor: "rgba(75,192,192,1)",
+            borderCapStyle: 'butt',
+            borderDash: [],
+            borderDashOffset: 3.0,
+            borderJoinStyle: 'miter',
+            pointBorderColor: "rgba(75,192,192,1)",
+            pointBackgroundColor: "#fff",
+            pointBorderWidth: 1,
+            pointHoverRadius: 5,
+            pointHoverBackgroundColor: "rgba(75,192,192,1)",
+            pointHoverBorderColor: "rgba(220,220,220,1)",
+            pointHoverBorderWidth: 2,
+            pointRadius: 1,
+            pointHitRadius: 10,
+            scaleStartValue: -5,
+
         data: []
     }
 ]
@@ -128,7 +163,27 @@ color: "#584A5E"
 /*****************
 * DOUGHNUT CHART
 ******************/
-var doughnutData = [];
+var doughnutData = {
+    labels: [
+        "Red",
+        "Green",
+        "Yellow"
+    ],
+    datasets: [
+        {
+            data: [300, 50, 100],
+            backgroundColor: [
+                "#FF6384",
+                "#36A2EB",
+                "#FFCE56"
+            ],
+            hoverBackgroundColor: [
+                "#FF6384",
+                "#36A2EB",
+                "#FFCE56"
+            ]
+        }]
+};
 
 /*****************
 * RADAR CHART
@@ -196,10 +251,20 @@ polarCtx.canvas.height = 300;
 
 // var doughnutChart = new Chart(donutCtx).Doughnut(doughnutData);
 // var lineChart = new Chart(lineCtx).Line(lineChartData, lineChartOptions);
-var doughnutChart = null;
-var lineChart = null;
-var radarChart = new Chart(radarCtx).Radar(radarChartData);
-var polarChart = new Chart(polarCtx).PolarArea(chartData);
+// var doughnutChart = null;
+// var lineChart = null;
+// var radarChart = new Chart(radarCtx).Radar(radarChartData);
+// var polarChart = new Chart(polarCtx).PolarArea(chartData);
+var lineChart = new Chart(lineCtx, {
+    type: 'line',
+    data: lineChartData,
+    options: lineChartOptions
+});
+
+var doughnutChart = new Chart(donutCtx, {
+    type: 'doughnut',
+    data: doughnutData
+});
 
 /**************************
  * CALENDAR CONFIGURATION
@@ -227,7 +292,7 @@ var clndr = $('#cal').clndr({
               div.addClass('activeDate');
 
              getChartDataForDay(target);
-             console.log(doughnutData);
+             // console.log(doughnutData);
 
 
         }
@@ -283,7 +348,6 @@ var clndr = $('#cal').clndr({
 * SLEEP ANALYSIS
 *******************/
 function getChartDataForDay(date) {
-    counter = counter + 1;
 
     $.ajax({
     url: "/analyzeSleepCycle",
@@ -294,7 +358,7 @@ function getChartDataForDay(date) {
         var epochLabels = response['labels'];
         var normalLabels = [];
 
-        console.log(epochLabels);
+        // console.log(epochLabels);
 
         for (var i = 0; i < epochLabels.length; i++) {
             var date = new Date(epochLabels[i]*1000);
@@ -304,34 +368,33 @@ function getChartDataForDay(date) {
 
         lineChartData.labels = normalLabels;
 
-        doughnutData = [
-        {
-            value: response['total_light_time'],
-            color: '#9b59b6',
-            label: 'Light Sleep'
-        },
-        {
-            value: response['total_deep_time'],
-            color: '#1abc9c',
-            label: 'Deep Sleep'
-        },
-        {
-            value: response['total_rem_time'],
-            color: '#3498db',
-            label: 'REM Sleep'
-        }
-        ]
-
-        if (lineChart != null) {
-            lineChart.destroy();
-        }
-        if (doughnutChart != null) {
-            doughnutChart.destroy();
-        }
         //Update charts with new data
-        doughnutChart = new Chart(document.getElementById("doughnut").getContext("2d")).Doughnut(doughnutData);
-        document.getElementById('js-legend').innerHTML = doughnutChart.generateLegend();
-        lineChart = new Chart(document.getElementById("line").getContext("2d")).Line(lineChartData, lineChartOptions);
+        doughnutChart.data.labels = [
+            'Light Sleep',
+            'Deep Sleep',
+            'REM Sleep'
+        ];
+
+        doughnutChart.data.datasets = [
+        {
+            data: [response['total_light_time'], response['total_deep_time'], response['total_rem_time']],
+            backgroundColor: [
+                "#9b59b6",
+                "#1abc9c",
+                "#3498db"
+            ],
+            hoverBackgroundColor: [
+                "#FF6384",
+                "#36CEAD",
+                "#FFCE56"
+            ]
+        }];
+
+        doughnutChart.update(); 
+        console.log(doughnutChart);      
+
+        lineChart.data = lineChartData;
+        lineChart.update();
 
     }
     });
