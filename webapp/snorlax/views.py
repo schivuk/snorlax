@@ -331,7 +331,7 @@ def trainOptions(request):
 
 #query RPi for current position, then train for the specified label
 def trainCurrentPosition(request,label=''):
-    
+
     print "Sending request to RPI_URL"
     try:
         dataResp = urllib2.urlopen(RPI_GET_URL, timeout=7)
@@ -361,7 +361,7 @@ def trainCurrentPosition(request,label=''):
 #returning an array of raw integer values
 #newOnOffGroup: boolean specifying whether new OnOffGroup needs to be created
 #newRGroup: boolean specifying whether new ReadingGroup needs to be created
-#logThreshold: boolean specifying if current dataset should be logged as the 
+#logThreshold: boolean specifying if current dataset should be logged as the
 #              threshold value
 def storeVelostatInfo(veloStr, label='', newOnOffGroup=False, newRGroup=False, \
             fileName='', logThreshold=False):
@@ -418,7 +418,7 @@ def checkOnOff(request):
     print "Called checkOnOff"
     if request.method != 'POST':
         raise Http404
-    
+
     print "checkOnOff called; velostatVals: ",request.POST['velostatVals']
     veloVals = map(int,request.POST['velostatVals'].split(","))
 
@@ -584,7 +584,7 @@ def getPosition(request):
     storeVelostatInfo(veloStr=request.POST['velostatVals'].strip(),\
         label='', newOnOffGroup=False, newRGroup=False, fileName='',\
         logThreshold=False)
- 
+
     print "estimating values..."
     estimateArr = clf.predict([veloVals])
     print "Estimate: " + str(estimateArr[0])
@@ -620,7 +620,7 @@ def showRawData(request):
 #JSON response for AJAX calls
 def getLatestReading(request):
     orderedGroups = LogGroup.objects.all().order_by('-time')
-    
+
     if len(orderedGroups) < 1:
         print "no data available for reading groups"
         #no data available
@@ -639,15 +639,20 @@ def getLatestReading(request):
 def analyzeSleepCycle(request):
 
     # with open('allOutput04-17-2016.txt') as f:
-    with open('accOutputSmall.txt') as f:
+    with open('accOutput04-25-2016Small.txt') as f:
         x_vals = []
         y_vals = []
         z_vals = []
         timestamps = []
 
         for line in f.readlines():
+            data = line.strip('\n').split(',')
+            x = data[0]
+            y = data[1]
+            z = data[2]
+            timestamp = data[32]
 
-            x,y,z,timestamp = line.strip('\n').split(',')
+            # x,y,z,timestamp = line.strip('\n').split(',')
 
             x_vals.append(int(x))
             # y_vals.append(int(y))
@@ -655,83 +660,52 @@ def analyzeSleepCycle(request):
             timestamps.append(float(timestamp))
 
         int_timestamps = range(0,len(x_vals))
-        x_peaks, x_deep_indices, x_rem_indices = acc_algorithm(x_vals,timestamps)
-        x_light_indices = set(int_timestamps).difference(x_deep_indices).difference(x_rem_indices)
+        x_peaks, x_restful_indices = acc_algorithm(x_vals,timestamps)
+        x_nonrestful_indices = set(int_timestamps).difference(x_restful_indices)
 
-        total_light_time = 0
-        total_deep_time = 0
-        total_rem_time = 0
+        total_nonrestful_time = 0
+        total_restful_time = 0
 
-        light_to_deep_transitions = []
-        light_to_rem_transitions = []
-        deep_to_light_transitions = []
-        deep_to_rem_transitions = []
-        rem_to_light_transitions = []
-        rem_to_deep_transitions = []
+        nonrestful_to_restful_transitions = []
+        restful_to_nonrestful_transitions = []
 
         all_transitions = [timestamps[0]]
         x_axis = [1]
-        curr_state = 'light'
+        curr_state = 'nonrestful'
 
-        x_deep_indices = set(x_deep_indices) # Set is faster
-        x_rem_indices = set(x_rem_indices)
-        x_light_indices = set(x_light_indices)
+        x_nonrestful_indices = set(x_nonrestful_indices)
+        x_restful_indices = set(x_restful_indices)
 
         for i in xrange(2,len(x_vals)):
-            if i-1 in x_light_indices and i in x_deep_indices:
-                light_to_deep_transitions.append(timestamps[i])
+            if i-1 in x_nonrestful_indices and i in x_restful_indices:
+                # light_to_deep_transitions.append(timestamps[i])
+                nonrestful_to_restful_transitions.append(timestamps[i])
                 all_transitions.append(timestamps[i])
                 x_axis.append(2)
-                curr_state = 'deep'
-            elif i-1 in x_light_indices and i in x_deep_indices:
-                light_to_rem_transitions.append(timestamps[i])
-                all_transitions.append(timestamps[i])
-                x_axis.append(3)
-                curr_state = 'rem'
-            elif i-1 in x_deep_indices and i in x_light_indices:
-                deep_to_light_transitions.append(timestamps[i])
+                curr_state = 'restful'
+            elif i-1 in x_restful_indices and i in x_nonrestful_indices:
+                restful_to_nonrestful_transitions.append(timestamps[i])
                 all_transitions.append(timestamps[i])
                 x_axis.append(1)
-                curr_state = 'light'
-            elif i-1 in x_deep_indices and i in x_rem_indices:
-                deep_to_rem_transitions.append(timestamps[i])
-                all_transitions.append(timestamps[i])
-                x_axis.append(3)
-                curr_state = 'rem'
-            elif i-1 in x_rem_indices and i in x_light_indices:
-                rem_to_light_transitions.append(timestamps[i])
-                all_transitions.append(timestamps[i])
-                x_axis.append(1)
-                curr_state = 'light'
-            elif i-1 in x_rem_indices and i in x_deep_indices:
-                rem_to_deep_transitions.append(timestamps[i])
-                all_transitions.append(timestamps[i])
-                x_axis.append(2)
-                curr_state = 'deep'
+                curr_state = 'nonrestful'
 
-            if curr_state == 'light':
-                total_light_time += 1
-            elif curr_state == 'deep':
-                total_deep_time += 1
-            elif curr_state == 'rem':
-                total_rem_time += 1
+            if curr_state == 'nonrestful':
+                total_nonrestful_time += 1
+            elif curr_state == 'restful':
+                total_restful_time += 1
 
         # No transition at the end of the sleep cycle but we still need to graph it
         all_transitions.append(timestamps[-1])
-        if curr_state == 'light':
+        if curr_state == 'nonrestful':
             x_axis.append(1)
-        elif curr_state == 'deep':
+        elif curr_state == 'restful':
             x_axis.append(2)
-        else:
-            x_axis.append(3)
-
 
     context = {}
     context['data'] = x_axis
     context['labels'] = all_transitions
-    context['total_light_time'] = '%.2f'%(float(total_light_time) / len(timestamps))
-    context['total_deep_time'] = '%.2f'%(float(total_deep_time) / len(timestamps))
-    context['total_rem_time'] = '%.2f'%(float(total_rem_time) / len(timestamps))
+    context['total_nonrestful_time'] = '%.2f'%(float(total_nonrestful_time) / len(timestamps))
+    context['total_restful_time'] = '%.2f'%(float(total_restful_time) / len(timestamps))
 
     return JsonResponse(context)
 

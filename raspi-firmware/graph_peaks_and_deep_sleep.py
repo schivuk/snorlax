@@ -43,7 +43,7 @@ def acc_algorithm(vals, timestamps):
 
     return peaks, set_to_list(deep_sleep_indices), set_to_list(rem_sleep_indices)
 
-filename = 'allOutput04-17-2016.txt'
+filename = 'accOutput04-28-2016Small.txt'
 
 with open(filename) as f:
     # mic_vals = []
@@ -54,10 +54,10 @@ with open(filename) as f:
 
     for line in f.readlines():
         data = line.strip('\n').split(',')
-        x = data[21]
-        y = data[22]
-        z = data[23]
-        timestamp = data[24]
+        x = data[0]
+        y = data[1]
+        z = data[2]
+        timestamp = data[32]
         # x,y,z,timestamp = line.strip('\n').split(',')
         # mic = mic.lstrip('\x00')
         x = x.lstrip('\x00')
