@@ -9,6 +9,11 @@
   color: red !important;
 }
 
+.error {
+  color: red;
+  text-align: center;
+}
+
 .month {
   font-size: 15px;
   color: #ccc;

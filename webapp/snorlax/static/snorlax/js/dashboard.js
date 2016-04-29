@@ -378,8 +378,11 @@ function getChartDataForDay(date) {
     async: false,
     success: function(response) {
         if (response['file_exists'] == false) {
-            alert('TODO: Indicate No Data Available')
+            $('.error').html('You have not logged sleep for this day');
             return;
+        }
+        else {
+             $('.error').html('');
         }
 
         lineChartData.datasets[0].data = response['data'];
