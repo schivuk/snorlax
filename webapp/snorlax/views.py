@@ -30,6 +30,8 @@ onBedClf = SVC(C=10, kernel='poly', degree=1, probability=True)
 
 colors = []
 
+#True only while debugging alarm
+DEBUG_ALARM = False
 ON_LABEL = 'on'
 OFF_LABEL = 'off'
 RPI_SERVER_HOST = "http://128.237.233.205:9999"
@@ -171,14 +173,22 @@ def isAlarmReady(request):
         if len(alarms) > 0:
             alarm = alarms[0]
             currTime = timezone.now() - timezone.timedelta(hours=4)
+
+            print "currTime, alarm.time: ",currTime,",",alarm.time
             #Check if alarm was switched on
             if alarm.switch:
-                #Check if alarm time has been reached
-                if currTime >= alarm.time:
+                #Check if alarm time has been reached and hasn't happened yet
+                print "currTime >= alarm.time, alarm.yetToHappen: ",\
+                                    currTime >= alarm.time, alarm.yetToHappen
+                if DEBUG_ALARM or (currTime >= alarm.time and alarm.yetToHappen):
                     isReady = True
+                    #set to 'happened'
+                    alarm.yetToHappen = False
+                    alarm.save()
                 else:
                     isReady = False
         else:
+            #no alarm has been set
             isReady=False
 
         #return HttpResponse("Success", status=200)
@@ -207,6 +217,7 @@ def editAlarm(request):
     if len(alarms) > 0:
         alarm = alarms[0]
         alarm.time = time
+        alarm.yetToHappen = True
         alarm.save()
     else:
         alarm = Alarm(time=time)
@@ -767,55 +778,37 @@ def storePosBuzz(request):
         alarm = alarms[0]
         if pos == 1:
             #Front
-            if isOn == 'true':
-                alarm.front = True
-            else:
-                alarm.front = False
+            alarm.front = isOn == 'true'
+            
         elif pos == 2:
             #Back
-            if isOn == 'true':
-                alarm.back = True
-            else:
-                alarm.back = False
+            alarm.back = isOn == 'true'
+
         elif pos == 3:
             #Right
-            if isOn == 'true':
-                alarm.right = True
-            else:
-                alarm.right = False
+            alarm.right = isOn == 'true'
+
         elif pos == 4:
             #Left
-            if isOn == 'true':
-                alarm.left = True
-            else:
-                alarm.left = False
+            alarm.left = isOn == 'true'
+            
         alarm.save()
         context['alarm'] = alarm
     else:
         if pos == 1:
             #Front
-            if isOn == 'true':
-                alarm = Alarm(front=True)
-            else:
-                alarm = Alarm(front=False)
+            alarm = Alarm(front = isOn=='true')
         elif pos == 2:
             #Back
-            if isOn == 'true':
-                alarm = Alarm(back=True)
-            else:
-                alarm = Alarm(back=False)
+            alarm = Alarm(back = isOn=='true')
+            
         elif pos == 3:
             #Right
-            if isOn == 'true':
-                alarm = Alarm(right=True)
-            else:
-                alarm = Alarm(right=False)
+            alarm = Alarm(right=isOn == 'true')
+
         elif pos == 4:
             #Left
-            if isOn == 'true':
-                alarm = Alarm(left=True)
-            else:
-                alarm = Alarm(left=False)
+            alarm = Alarm(left=isOn=='true')
         alarm.save()
 
     return HttpResponse("Success", status=200)
@@ -840,6 +833,7 @@ def getPositionBuzz(request):
             buzzPositions = buzzPositions + 'left,'
 
     if buzzPositions != '':
+        #everything but the trailing ','
         buzzPositions = buzzPositions[:-1]
 
-    return HttpResponse(str(buzzPositions))
+    return HttpResponse(buzzPositions)
