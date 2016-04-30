@@ -93,6 +93,7 @@ def logSleepForm(request):
         try:
             logSleep = LogSleep.objects.get(day__exact=day, month__exact=month, year__exact=year)
             context = {}
+            print logSleep.dreams
             context['quality'] = logSleep.quality
             context['dreams'] = logSleep.dreams
             context['description'] = logSleep.description
@@ -129,7 +130,15 @@ def feedback(request):
         context = {}
 
         quality = request.POST['quality']
-        dreams = bool(request.POST['dreams'])
+        dream = request.POST['dreams']
+        haveDream = False
+        if dream == 'True':
+            haveDream = True
+        elif dream == 'False':
+            haveDream = False
+        else:
+            print 'The was a problem'
+
         description = request.POST['description']
         if request.POST['date'] == 'test':
             time = timezone.now()
@@ -147,15 +156,16 @@ def feedback(request):
         try:
             logSleep = LogSleep.objects.get(day__exact=day, month__exact=month, year__exact=year)
             logSleep.quality = quality;
-            logSleep.dreams = dreams;
+            logSleep.dreams = haveDream;
             logSleep.description = description;
+            print haveDream
             logSleep.save()
             #Update context with the data
             #Populate the html page with the data
             context['log'] = logSleep
             return render(request, 'snorlax/feedback.html', context)
         except LogSleep.DoesNotExist:
-            logSleep = LogSleep(day=day, year=year, month=month, quality=quality, dreams=dreams, description=description)
+            logSleep = LogSleep(day=day, year=year, month=month, quality=quality, dreams=haveDream, description=description)
             logSleep.save()
             #Update context with the data
             #Populate the html page with the data

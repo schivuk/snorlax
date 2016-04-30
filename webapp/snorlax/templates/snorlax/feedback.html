@@ -170,13 +170,15 @@
 
             } else {
               console.log('Logging the data received');
-              console.log(log);
+              
               var month = parseInt(log.month);  //int
               var year = parseInt(log.year);  //int
               var day = parseInt(log.day);  //int
               var quality = log.quality;  //string
               var dreams = Boolean(log.dreams);  //Boolean value
               var description = log.description;  //string
+
+
 
               $('#feedback-form').clearForm();
               //Select the quality of sleep 
@@ -204,6 +206,7 @@
                   break;
               } 
 
+              console.log(log.dreams);
               //Check the dreams boolean
               if(dreams) {
                 $('#inlineRadio1').prop('checked', true);
