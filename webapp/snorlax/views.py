@@ -448,6 +448,22 @@ def trainPosition(request):
     return HttpResponse("Success", status=200)
 
 
+def normalize(veloVals):
+    allThresObjs = ThresholdRef.objects.all()
+    if len(allThresObjs) == 0:
+        return veloVals #nothing to be done
+
+    lgp = allThresObjs[0].logGroup
+
+    thresholdValsObj = SensorReading.objects.filter(logGroup=lgp).order_by('index')
+    thresVals = map(lambda obj : obj.value , thresholdValsObj)
+
+    normalizedVals = []
+    for i in xrange(len(veloVals)):
+        normalizedVals.append(veloVals[i] - thresVals[i])
+
+    return normalizedVals
+
 #train classifier based on all data
 def learnPositions(request):
     print "Called learnPositions"
@@ -455,8 +471,11 @@ def learnPositions(request):
     labelVector = []
 
     for rgroup in ReadingGroup.objects.all():
-        veloVals = SensorReading.objects.filter(rgroup=rgroup).order_by('index')
-        xVector.append(map(lambda obj : obj.value , veloVals))
+        veloValsStr = SensorReading.objects.filter(rgroup=rgroup).order_by('index')
+        rawVeloVals = map(lambda obj : obj.value , veloValsStr)
+
+        normalVeloVals = normalize(rawVeloVals)
+        xVector.append(normalVeloVals)
         labelVector.append(rgroup.label)
 
     print "xvector: " + str(xVector)
@@ -515,6 +534,8 @@ def logCurrentAsThreshold(request):
 
     veloVals = map(int,sensorData['velostats'].split(","))
 
+
+    ThresholdRef.objects.all().delete()
     storeVelostatInfo(veloStr=sensorData['velostats'].strip(),\
         label='', newOnOffGroup=False, newRGroup=False, fileName='',\
         logThreshold=True)
@@ -557,7 +578,7 @@ def getCurrentPosition(request):
 
     print "Writing to test file..."
 
-    logToFile(POSITION_TEST_FILE, sensorData['velostats'])
+    logToFile(POSITION_TEST_FILE, sensorData['velostats'] + "\n")
 
     try:
         onOffEstArr = onBedClf.predict([veloVals])

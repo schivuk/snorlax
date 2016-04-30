@@ -9,9 +9,11 @@ const OFF = "off";
 const BUTTON_ACTIVE_CLASS = "btn btn-primary btn-lg";
 const BUTTON_DISABLED_CLASS = "btn btn-primary btn-lg disabled";
 const ORANGE_BUTTON_ACTIVE = "btn btn-warning btn-lg";
-const ORANGE_BUTTON_DISABLED = "btn btn-warning btn-lg disabled"
+const ORANGE_BUTTON_DISABLED = "btn btn-warning btn-lg disabled";
 const RED_BUTTON_ACTIVE = "btn btn-danger btn-lg";
 const RED_BUTTON_DISABLED = "btn btn-danger btn-lg disabled";
+const GREEN_BUTTON_ACTIVE = "btn btn-success btn-lg";
+const GREEN_BUTTON_DISABLED = "btn btn-success btn-lg disabled";
 
 var backBtn = document.getElementById("train-back");
 var frontBtn = document.getElementById("train-front");
@@ -24,6 +26,7 @@ var numPositionsBadge = document.getElementById("num-samples-badge");
 var numOnOffBadge = document.getElementById("num-onoff-badge");
 var removeAllBtn = document.getElementById("remove-all-btn");
 var resetOnOffBtn = document.getElementById("reset-onoff-btn");
+var thresholdBtn = document.getElementById("threshold-btn");
 
 var backStatusElem = document.getElementById("back-status-elem");
 var frontStatusElem = document.getElementById("front-status-elem");
@@ -31,6 +34,7 @@ var leftStatusElem = document.getElementById("left-status-elem");
 var rightStatusElem = document.getElementById("right-status-elem");
 var predictorStatus = document.getElementById("update-predictor-status");
 var removeAllStatus = document.getElementById("remove-all-status");
+var thresStatusElem = document.getElementById("threshold-status");
 
 var onStatusElem = document.getElementById("on-status-elem");
 var offStatusElem = document.getElementById("off-status-elem");
@@ -61,6 +65,43 @@ onBtn.addEventListener("click", function() {
 offBtn.addEventListener("click", function() {
 	logOnOff(offBtn, offStatusElem, OFF);
 });
+
+
+thresholdBtn.addEventListener("click", function() {
+	console.log("Setting threshold..");
+	thresStatusElem.innerHTML = "Setting threshold...";
+	thresholdBtn.className = GREEN_BUTTON_DISABLED;
+
+	$.ajax({
+	    url: "/logThreshold",
+	    method: 'GET',
+	    dataType : "text",
+	    async: true,
+	    timeout: 5000,
+	    success: function(response) {
+	    	thresholdBtn.className = GREEN_BUTTON_ACTIVE;
+	    	if(response == 'Success') {
+	    		console.log("Success occurred.");
+	    		thresStatusElem.innerHTML = "Success: set threshold";	
+	    		fetchNewData();
+
+	    	} else {
+	    		console.log("Failure occurred");
+	    		thresStatusElem.innerHTML = "Failed to set threshold.";
+	    	}
+	        
+	    },
+
+	    error: function(jqXHR, textStatus, errorThrown) {
+	    	thresholdBtn.className = GREEN_BUTTON_ACTIVE;
+	    	console.log("AJAX Error occurred: " + errorThrown);
+	    	thresStatusElem.innerHTML = "Error occurred: " + errorThrown;
+	    },
+
+
+	});
+
+})
 
 
 resetOnOffBtn.addEventListener("click", function() {
