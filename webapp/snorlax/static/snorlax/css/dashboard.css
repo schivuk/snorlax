@@ -10,8 +10,26 @@
 }
 
 .error {
-  color: red;
+  font-size: 18px;
+  color: #C0392B;
   text-align: center;
+}
+
+p.legend {
+   color: #ccc;
+   text-align: center;
+  font-family: 'Josefin Sans', sans-serif;
+}
+
+.info-title {
+   color: #ccc;
+   font-size: 20px;
+  font-family: 'Josefin Sans', sans-serif;
+}
+
+span.info {
+  font-size: 25px;
+  color: #F5AB35;
 }
 
 .month {

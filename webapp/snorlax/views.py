@@ -738,9 +738,10 @@ def analyzeSleepCycle(request):
     time_to_fall_asleep = 25
     time_awakened = 25
     total_time_asleep = total_sleep_time - time_to_fall_asleep - time_awakened
-    sleep_efficiency = float(total_time_asleep) / total_sleep_time
+    sleep_efficiency = (round(float(total_time_asleep) / total_sleep_time, 3) * 100)
 
     context['sleep_efficiency'] = sleep_efficiency
+    context['duration'] = nonrestful_time + restful_time
 
     return JsonResponse(context)
 

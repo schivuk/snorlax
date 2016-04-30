@@ -23,7 +23,6 @@
 						<div class="panel-body text-center" height="350" width="450">
 							<canvas id="doughnut" height="300" width="400"></canvas>
 						</div>
-						<div id="js-legend" class="chart-legend"></div>
 					</div>
 				</div>
 				<div class="col-lg-6">
@@ -32,21 +31,29 @@
 						<div class="panel-body text-center">
 							<canvas id="line" height="300" width="400"></canvas>
 						</div>
+						<div><p class="legend">1 = Non-Restful</p> <p class="legend">2 = Restful</p></div>
 					</div>
 				</div>
 			</div>
 			<div class="row mt">
-				<div class="col-lg-6">
+				<div class="col-lg-7">
 					<div class="content-panel">
-						<h4 class="chart-title">Radar</h4>
+						<h4 class="chart-title">Sleep Details</h4>
 						<div class="panel-body text-center">
-							<canvas id="radar" height="300" width="400"></canvas>
+						<div class="col-sm-6">
+							<h4 class="info-title">Sleep Duration:</h4><span class="info" id="duration"></span>
+							<h4 class="info-title">Sleep Efficiency: </h4><span class="info" id="efficiency"></span>
+						</div>
+						<div class="col-sm-6">
+							<h4 class="info-title">Time in Restful: </h4><span class="info" id="restful"></span>
+							<h4 class="info-title">Time in Non-Restful: </h4><span class="info" id="non-restful"></span>
+						</div>
 						</div>
 					</div>
 				</div>
-				<div class="col-lg-6">
+				<div class="col-lg-5">
 					<div class="content-panel">
-						<h4 class="chart-title">Polar Area</h4>
+						<h4 class="chart-title">Percentage of time in Sleeping Position</h4>
 						<div class="panel-body text-center">
 							<canvas id="polarArea" height="300" width="400"></canvas>
 						</div>
@@ -60,10 +67,10 @@
 {% block loadJS %}
 	<script src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
 	<!-- <script src="{% static 'snorlax/js/Chart.js' %}"></script> -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.6/moment.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.0.1/Chart.js"></script>
 	<!-- <script src="{% static 'snorlax/js/chart-configurations.js' %}"></script> -->
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.6/moment.min.js"></script>
 	<script type="text/javascript" src="{% static 'snorlax/js/clndr.min.js' %}"></script>
 	<script type="text/template" id="template-calendar">
 	<div class="clndr-controls">
