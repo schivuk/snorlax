@@ -655,7 +655,6 @@ def getLatestReading(request):
 
 def analyzeSleepCycle(request):
 
-    # print request.GET['date']
     filename = str('accOutput' + request.GET['date'] + 'Small.txt')
 
     if os.path.isfile(filename) == False:
@@ -676,8 +675,6 @@ def analyzeSleepCycle(request):
             z = data[2]
             timestamp = data[32]
 
-            # x,y,z,timestamp = line.strip('\n').split(',')
-
             x_vals.append(int(x))
             # y_vals.append(int(y))
             # z_vals.append(int(z))
@@ -694,7 +691,7 @@ def analyzeSleepCycle(request):
         restful_to_nonrestful_transitions = []
 
         all_transitions = [timestamps[0]]
-        x_axis = [1]
+        y_axis = [1]
         curr_state = 'nonrestful'
 
         x_nonrestful_indices = set(x_nonrestful_indices)
@@ -705,12 +702,12 @@ def analyzeSleepCycle(request):
                 # light_to_deep_transitions.append(timestamps[i])
                 nonrestful_to_restful_transitions.append(timestamps[i])
                 all_transitions.append(timestamps[i])
-                x_axis.append(2)
+                y_axis.append(2)
                 curr_state = 'restful'
             elif i-1 in x_restful_indices and i in x_nonrestful_indices:
                 restful_to_nonrestful_transitions.append(timestamps[i])
                 all_transitions.append(timestamps[i])
-                x_axis.append(1)
+                y_axis.append(1)
                 curr_state = 'nonrestful'
 
             if curr_state == 'nonrestful':
@@ -721,27 +718,33 @@ def analyzeSleepCycle(request):
         # No transition at the end of the sleep cycle but we still need to graph it
         all_transitions.append(timestamps[-1])
         if curr_state == 'nonrestful':
-            x_axis.append(1)
+            y_axis.append(1)
         elif curr_state == 'restful':
-            x_axis.append(2)
+            y_axis.append(2)
+
+    even_y_axis = []
+    even_transitions = []
+
+    for i in xrange(1, len(all_transitions)):
+        for j in xrange(int(all_transitions[i-1]),int(all_transitions[i])):
+            if j % 50 == 0:
+                even_y_axis.append(y_axis[i-1])
+                even_transitions.append(j)
 
     context = {}
     context['file_exists'] = True
-    context['data'] = x_axis
-    context['labels'] = all_transitions
+    context['data'] = even_y_axis
+    context['labels'] = even_transitions
     context['total_nonrestful_time'] = '%.2f'%(float(total_nonrestful_time) / len(timestamps))
     context['total_restful_time'] = '%.2f'%(float(total_restful_time) / len(timestamps))
-
-    print x_axis
-    print all_transitions
 
     # Calculate total restful and total nonrestful time.
     restful_time = 0
     nonrestful_time = 0
-    for i in xrange(1, len(x_axis)):
-        if x_axis[i-1] == 1 and x_axis[i] == 2:
+    for i in xrange(1, len(y_axis)):
+        if y_axis[i-1] == 1 and y_axis[i] == 2:
             nonrestful_time += (all_transitions[i] - all_transitions[i-1])
-        elif x_axis[i-1] == 2 and x_axis[i] == 1:
+        elif y_axis[i-1] == 2 and y_axis[i] == 1:
             restful_time += (all_transitions[i] - all_transitions[i-1])
 
     context['nonrestful_time'] = nonrestful_time
@@ -752,9 +755,10 @@ def analyzeSleepCycle(request):
     time_to_fall_asleep = 25
     time_awakened = 25
     total_time_asleep = total_sleep_time - time_to_fall_asleep - time_awakened
-    sleep_efficiency = float(total_time_asleep) / total_sleep_time
+    sleep_efficiency = (round(float(total_time_asleep) / total_sleep_time, 3) * 100)
 
     context['sleep_efficiency'] = sleep_efficiency
+    context['duration'] = nonrestful_time + restful_time
 
     return JsonResponse(context)
 
@@ -802,7 +806,7 @@ def storePosBuzz(request):
         if pos == 1:
             #Front
             alarm.front = isOn == 'true'
-            
+
         elif pos == 2:
             #Back
             alarm.back = isOn == 'true'
@@ -814,7 +818,7 @@ def storePosBuzz(request):
         elif pos == 4:
             #Left
             alarm.left = isOn == 'true'
-            
+
         alarm.save()
         context['alarm'] = alarm
     else:
@@ -824,7 +828,7 @@ def storePosBuzz(request):
         elif pos == 2:
             #Back
             alarm = Alarm(back = isOn=='true')
-            
+
         elif pos == 3:
             #Right
             alarm = Alarm(right = isOn=='true')
