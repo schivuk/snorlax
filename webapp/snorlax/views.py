@@ -703,6 +703,7 @@ def analyzeSleepCycle(request):
         logSleep = LogSleep.objects.get(day__exact=day, month__exact=month, year__exact=year)
     except LogSleep.DoesNotExist:
         #Do nothing
+        print 'Do nothing'
 
     if os.path.isfile(filename) == False:
         context = {}
