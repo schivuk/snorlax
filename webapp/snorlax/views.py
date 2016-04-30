@@ -279,6 +279,8 @@ def storeOnOffData(request):
 #Store position data
 @transaction.atomic
 def storeData(request):
+    filename = 'accOutput2016-04-30Small.txt'
+
     if request.method != 'POST':
         raise Http404
 
@@ -286,15 +288,16 @@ def storeData(request):
     velostatIDs = str(request.POST['velostatIDs']).split(',')
     accelerometerVals = str(request.POST['accelerometerVals']).split(',')
     accelerometerIDs = str(request.POST['accelerometerIDs']).split(',')
-    microphoneVals = str(request.POST['microphoneVals']).split(',')
-    microphoneIDs = str(request.POST['microphoneIDs']).split(',')
+    # microphoneVals = str(request.POST['microphoneVals']).split(',')
+    # microphoneIDs = str(request.POST['microphoneIDs']).split(',')
     time = float(request.POST['time'])
 
     timestamp = Time(time=datetime.datetime.fromtimestamp(time))
 
-    print velostatVals
-    print microphoneVals
-    print accelerometerVals
+    out_data = str(request.POST['accelerometerVals']) + ',' + str(request.POST['velostatVals']) + ',' + str(time) + '\n'
+    out_file = open(filename, 'a')
+    out_file.write(out_data)
+    out_file.close()
 
     # timestamp.save()
 
@@ -627,7 +630,7 @@ def getPosition(request):
         return HttpResponse("Not yet trained", status=200)
     print "Estimate: " + str(estimateArr[0])
     return HttpResponse(estimateArr[0], status=200)
-    
+
 
 def clearAllOnOff(request):
     #delete all records
