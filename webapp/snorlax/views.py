@@ -698,7 +698,7 @@ def analyzeSleepCycle(request):
         context['file_exists'] = False
         return JsonResponse(context)
 
-    if filename in context_cache:
+    if filename in context_cache and filename != 'accOutput2016-04-30Small.txt':
         return JsonResponse(context_cache[filename])
 
     posDict = {}
