@@ -7,7 +7,7 @@ Chart.defaults.line = {
             {
                 type:"category","id":"x-axis-0",
             }
-                
+
         ],
         yAxes: [
             {
@@ -17,7 +17,7 @@ Chart.defaults.line = {
                     min: 0,
                     max: 3
                 }
-                
+
             }
         ],
     }
@@ -229,7 +229,7 @@ function getChartDataForDay(date) {
 
         for (var i = 0; i < epochLabels.length; i++) {
             var date = moment(epochLabels[i]*1000);
-            // var time_only = date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();            
+            // var time_only = date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
              normalLabels.push(date.format('h:mm'));
         }
 
@@ -248,11 +248,6 @@ function getChartDataForDay(date) {
                 "#9b59b6",
                 "#1abc9c",
                 "#3498db"
-            ],
-            hoverBackgroundColor: [
-                "#FF6384",
-                "#36CEAD",
-                "#FFCE56"
             ]
         }];
 
