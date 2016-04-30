@@ -693,6 +693,17 @@ def analyzeSleepCycle(request):
 
     filename = str('accOutput' + request.GET['date'] + 'Small.txt')
 
+    dateSplit = request.GET['date'].split('-')
+    year = int(dateSplit[0])
+    month = int(dateSplit[1])
+    day = int(dateSplit[2])
+
+    logSleep = None
+    try:
+        logSleep = LogSleep.objects.get(day__exact=day, month__exact=month, year__exact=year)
+    except LogSleep.DoesNotExist:
+        #Do nothing
+
     if os.path.isfile(filename) == False:
         context = {}
         context['file_exists'] = False
@@ -709,6 +720,7 @@ def analyzeSleepCycle(request):
         timestamps = []
 
         context = {}
+        context['logSleep'] = logSleep
 
         for line in f.readlines():
             data = line.strip('\n').split(',')
