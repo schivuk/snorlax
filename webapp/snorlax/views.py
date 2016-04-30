@@ -223,7 +223,7 @@ def editAlarm(request):
         hour = hour + 12
 
     time = timezone.now()
-    time = time.replace(hour=hour, minute=minute)
+    time = time.replace(hour=hour, minute=minute, second=0)
 
     #Check whether alarm has been set previously
     alarms = Alarm.objects.all()
