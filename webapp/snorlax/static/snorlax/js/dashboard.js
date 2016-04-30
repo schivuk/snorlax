@@ -81,13 +81,31 @@ var doughnutData = {
         }]
 };
 
+var positionData = {
+    labels: [],
+    datasets: [
+        {
+            data: [],
+            backgroundColor: [
+                "#FF6384",
+                "#36A2EB",
+                "#FFCE56"
+            ],
+            hoverBackgroundColor: [
+                "#FF6384",
+                "#36A2EB",
+                "#FFCE56"
+            ]
+        }]
+};
+
 /*****************
 * CHART CREATION
 *******************/
 
 var donutCtx = document.getElementById("doughnut").getContext("2d");
+var donut_posCtx = document.getElementById("doughnut-pos").getContext("2d");
 var lineCtx = document.getElementById("line").getContext("2d");
-var polarCtx = document.getElementById("polarArea").getContext("2d");
 
 donutCtx.canvas.width = 400;
 donutCtx.canvas.height = 350;
@@ -100,12 +118,14 @@ var lineChart = new Chart.Line(lineCtx, {
 });
 
 
-
-
-
 var doughnutChart = new Chart(donutCtx, {
     type: 'doughnut',
     data: doughnutData
+});
+
+var positionChart = new Chart(donut_posCtx, {
+    type: 'doughnut',
+    data: positionData
 });
 
 /**************************
@@ -271,6 +291,28 @@ function getChartDataForDay(date) {
         tempTime = moment.duration(dur, 'seconds');
          var y = tempTime.hours() + ' hr ' + tempTime.minutes() + ' min';
         $('#non-restful').html(y);
+
+        //Sleeping Position
+        //Update charts with new data
+        positionChart.data.labels = [
+            'Front',
+            'Back',
+            'Right',
+            'Left'
+        ];
+
+        positionChart.data.datasets = [
+        {
+            data: [response['position_front'], response['position_back'], response['position_right'], response['position_left']],
+            backgroundColor: [
+                "#9b59b6",
+                "#1abc9c",
+                "#3498db"
+            ]
+        }];
+
+        console.log(positionChart.data.datasets);
+        positionChart.update();
     }
     });
 

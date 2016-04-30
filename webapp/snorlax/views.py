@@ -41,6 +41,8 @@ POSITION_TRAIN_FILE = 'train-position-data.txt'
 POSITION_TEST_FILE = 'test-position-data.txt'
 MAX_VALUES = 50
 
+context_cache = {}
+
 def home(request):
     return render(request, 'snorlax/dashboard.html')
 
@@ -696,14 +698,35 @@ def analyzeSleepCycle(request):
         context['file_exists'] = False
         return JsonResponse(context)
 
+    if filename in context_cache:
+        return JsonResponse(context_cache[filename])
+
+    posDict = {}
     with open(filename) as f:
         x_vals = []
         y_vals = []
         z_vals = []
         timestamps = []
 
+        context = {}
+
         for line in f.readlines():
             data = line.strip('\n').split(',')
+            veloVals = map(int, data[8:32])
+
+            try:
+                estimateArr = clf.predict([veloVals])
+                lbl = estimateArr[0]
+                if lbl in posDict:
+
+                    posDict[lbl] +=1
+                else:
+                    posDict[lbl] = 1
+
+            except NotFittedError:
+                #return HttpResponse("Not yet trained", status=200)
+                1+1
+
             x = data[0]
             y = data[1]
             z = data[2]
@@ -713,6 +736,12 @@ def analyzeSleepCycle(request):
             # y_vals.append(int(y))
             # z_vals.append(int(z))
             timestamps.append(float(timestamp))
+
+        total_count = sum(posDict.values())
+        context['position_front'] = float(posDict.get('front',0)) / total_count
+        context['position_back'] = float(posDict.get('back',0)) / total_count
+        context['position_right'] = float(posDict.get('right',0)) / total_count
+        context['position_left'] = float(posDict.get('left',0)) / total_count
 
         int_timestamps = range(0,len(x_vals))
         x_peaks, x_restful_indices = acc_algorithm(x_vals,timestamps)
@@ -765,7 +794,6 @@ def analyzeSleepCycle(request):
                 even_y_axis.append(y_axis[i-1])
                 even_transitions.append(j)
 
-    context = {}
     context['file_exists'] = True
     context['data'] = even_y_axis
     context['labels'] = even_transitions
@@ -793,6 +821,9 @@ def analyzeSleepCycle(request):
 
     context['sleep_efficiency'] = sleep_efficiency
     context['duration'] = nonrestful_time + restful_time
+
+    # Store in cache
+    context_cache[filename] = context
 
     return JsonResponse(context)
 
