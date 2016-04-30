@@ -1,6 +1,6 @@
 #!/usr/bin/env python
  
-# Written by Limor "Ladyada" Fried for Adafruit Industries, (c) 2015
+# Written by Pratik "The Pramasta" Prakash for Snorlax, (c) 2016
 # This code is released into the public domain
  
 import time
@@ -22,13 +22,15 @@ LOG_INTERVAL_SECS = 75.0/1000.0
 
 #Period between alarm queries
 ALARM_QUERY_INTERVAL_SECS = 3.
-TARGET_HOST = "128.237.207.126:8000"
+TARGET_HOST = "128.237.203.8:8000"
 
 STORE_DATA_URL = "http://" + TARGET_HOST + "/storeData"
 
 ONOFF_STORE_URL = "http://" + TARGET_HOST + "/storeOnOffData"
 CHECK_ALARM_URL = "http://" + TARGET_HOST + "/isAlarmReady"
 CHECK_ON_OFF = "http://" + TARGET_HOST + "/checkOnOff"
+GET_POS_URL = "http://" + TARGET_HOST + "/getPosition"
+CHECK_POS_URL = "http://" + TARGET_HOST + "/getPositionBuzz"
 
 #Ensures that only one thread is writing to the ADC at a given time
 ADC_LOCK = threading.Lock()
@@ -192,13 +194,13 @@ def logSensorData():
         'time': time.time()
         #'value': "{0},{1},{2},{3}".format(out0,out1,out2,time.time()),
     }
-    
+
+    REQUEST_LOCK.acquire()
     try:
-        REQUEST_LOCK.acquire()
         requests.post(url=STORE_DATA_URL, data=payload)
-        REQUEST_LOCK.release()
     except requests.exceptions.ConnectionError:
         print "Exception occured during store data request"
+    REQUEST_LOCK.release()
     threading.Timer(LOG_INTERVAL_SECS, logSensorData).start()
 
 def isOffBed():
@@ -214,18 +216,20 @@ def isOffBed():
     
     print "isOffBed(): ",velostatVals
 
+    REQUEST_LOCK.acquire()
     try:
-        REQUEST_LOCK.acquire()
         req = requests.post(url=CHECK_ON_OFF, data=payload)
-        REQUEST_LOCK.release()
     except requests.exceptions.ConnectionError:
         print "Exception occured during checkOnOff"
+        return False
+    REQUEST_LOCK.release()
 
     print "Got response: " + req.text
     return req.text == OFF_LABEL
 
 
 def checkAlarmStatus():
+    alarmReq = None
     print "Sending get request to check_alarm_url"
     REQUEST_LOCK.acquire()
     try:
@@ -234,26 +238,67 @@ def checkAlarmStatus():
         print "Connection error connecting to server"
     REQUEST_LOCK.release()
 
-    print "Sent alarmRed. response: ",alarmReq.text
-    if alarmReq.status_code==200 and alarmReq.text=='True':
-        #Start alarm. Play the alarm sound file
-        pygame.mixer.init()
-        pygame.mixer.music.load(SOUND_FILE_PATH)
-        pygame.mixer.music.play(-1) #Play indefinitely, until user gets off bed
+    if alarmReq != None:
+        print "Sent alarmRed. response: ",alarmReq.text
+        if alarmReq.status_code==200 and alarmReq.text=='True':
+            #Start alarm. Play the alarm sound file
+            pygame.mixer.init()
+            pygame.mixer.music.load(SOUND_FILE_PATH)
+            pygame.mixer.music.play(-1) #Play indefinitely, until user gets off bed
         
-        print "Setting off alarm.."
-        while True:
-            time.sleep(2)
-            #Check if person is off the bed
-            if isOffBed():
-                print "is off bed! stopping alarm.."
-                pygame.mixer.music.stop()
-                break    
-            print "is still on bed..."
+            print "Setting off alarm.."
+            while True:
+                time.sleep(2)
+                #Check if person is off the bed
+                if isOffBed():
+                    print "is off bed! stopping alarm.."
+                    pygame.mixer.music.stop()
+                    break    
+                print "is still on bed..."
         
-    print "Broke from checkOffBed loop"
+        print "Broke from checkOffBed loop"
+    
     threading.Timer(ALARM_QUERY_INTERVAL_SECS, checkAlarmStatus).start()
 
+def checkPositionBuzzer():
+    REQUEST_LOCK.acquire()
+    buzzerReq = None
+    try:
+        buzzerReq = requests.get(CHECK_POS_URL)
+    except requests.exceptions.ConnectionError:
+        print "ConnectionError during checkPositionBuzzer"
+    REQUEST_LOCK.release()    
+
+    velostatVals, _, _ = getSensorData()
+    
+    out_data = ','.join(velostatVals)
+
+    print "checkPositionBuzzer, sending request with: ",out_data
+   
+    payload = {
+        'velostatVals': out_data,
+    }
+    
+    getPosReq = None
+    REQUEST_LOCK.acquire()
+    try:
+        getPosReq = requests.post(url=GET_POS_URL, data=payload)
+    except requests.exceptions.ConnectionError:
+        print "ConnectionError occured during checkPositionBuzzer"
+    REQUEST_LOCK.release()
+
+    if getPosReq and buzzerReq:
+        print "Got response for checkPositionBuzzer: " + getPosReq.text
+
+        buzzPositions = getPosReq.text.split(',')
+
+        if buzzerReq.status_code==200 and buzzerReq.text in buzzPositions:
+            #Start buzzer. Play the buzzer sound file
+            pygame.mixer.init()
+            pygame.mixer.music.load(BUZZER_FILE_PATH)
+            pygame.mixer.music.play()       #Play once (Buzzer file should be 2 secs)
+
+    threading.Timer(ALARM_QUERY_INTERVAL_SECS, checkPositionBuzzer).start()
 
 #Configured so that on GET request, it returns a JSON containing sensor data
 class DataServer(SocketServer.BaseRequestHandler):
@@ -272,3 +317,4 @@ server = SocketServer.TCPServer(("0.0.0.0", DATA_SERVER_PORT), DataServer)
 #threading.Thread(target=logSensorData).start()
 threading.Thread(target=server.serve_forever).start()
 threading.Thread(target=checkAlarmStatus).start()
+threading.Thread(target=checkPositionBuzzer).start()
