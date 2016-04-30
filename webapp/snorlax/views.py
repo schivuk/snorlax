@@ -38,6 +38,7 @@ RPI_SERVER_HOST = "http://128.237.233.205:9999"
 RPI_GET_URL = RPI_SERVER_HOST + "/getdata"
 ON_OFF_TRAIN_FILE = 'on-off-train.txt'
 POSITION_TRAIN_FILE = 'train-position-data.txt'
+POSITION_TEST_FILE = 'test-position-data.txt'
 MAX_VALUES = 50
 
 def home(request):
@@ -521,6 +522,17 @@ def logCurrentAsThreshold(request):
     return HttpResponse("Success", status=200)
 
 
+def logToFile(fileName, text):
+    if not os.path.isfile(fileName):
+        #create file
+        testFile = open(fileName, 'w+')
+    else:
+        #append to file
+        testFile = open(fileName, 'a')
+
+    testFile.write(text)
+    testFile.close()
+
 def getCurrentPosition(request):
     try:
         dataResp = urllib2.urlopen(RPI_GET_URL, timeout=7)
@@ -543,7 +555,9 @@ def getCurrentPosition(request):
         label='', newOnOffGroup=False, newRGroup=False, fileName='',\
         logThreshold=False)
 
-    print "estimating on/off..."
+    print "Writing to test file..."
+
+    logToFile(POSITION_TEST_FILE, sensorData['velostats'])
 
     try:
         onOffEstArr = onBedClf.predict([veloVals])
