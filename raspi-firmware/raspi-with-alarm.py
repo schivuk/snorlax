@@ -38,8 +38,8 @@ ADC_LOCK = threading.Lock()
 REQUEST_LOCK = threading.Lock()
 
 #Alarm sound file path
-SOUND_FILE_PATH = 'wakeup_4.mp3'
-
+SOUND_FILE_PATH = '/home/pi/wakeup_4.mp3'
+BUZZER_FILE_PATH = '/home/pi/buzz.mp3'
 filename = '/home/pi/accOutput.txt'
  
 # read SPI data from MCP3008 chip, 8 possible adc's (0 thru 7)
@@ -99,7 +99,7 @@ num_reads = 0
 # 3-6: xxxx
 # 7: Mic
 # 8 - 
-def getSensorData():
+def getSensorData(sendData=False):
 
     ADC_LOCK.acquire()
 
@@ -118,8 +118,9 @@ def getSensorData():
     for i in xrange(8):
         out = readadc(i, SPICLK, SPIMOSI, SPIMISO, SPICS)
         #velostatVals.append(str(out))
-        allVals.append(str(out))
-    
+        #allVals.append(str(out))
+        accelerometerVals.append(str(out))
+
     SPICLK = 24
     SPIMISO = 25
     SPIMOSI = 8
@@ -162,45 +163,70 @@ def getSensorData():
         #velostatVals.append(str(out))
         velostatVals.append(str(out))
 
-    microphoneVals = str(readadc(7, SPICLK, SPIMOSI, SPIMISO, SPICS))
-    accelerometerX = str(readadc(0, SPICLK, SPIMOSI, SPIMISO, SPICS))
-    accelerometerY = str(readadc(1, SPICLK, SPIMOSI, SPIMISO, SPICS))
-    accelerometerZ = str(readadc(2, SPICLK, SPIMOSI, SPIMISO, SPICS))
-    accelerometerVals = accelerometerX + ',' + accelerometerY + ',' + accelerometerZ
     ADC_LOCK.release()
+
+    if sendData == True:
+        url = "http://128.237.140.51:8000/storeData"
+        payload = {
+            'velostatIDs': '1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24',
+            'velostatVals': ','.join(velostatVals),
+            'accelerometerIDs': '1',
+            'accelerometerVals': ','.join(accelerometerVals),
+            'time': time.time()
+        }
+
+        try:
+            requests.post(url=url, data=payload)
+        except:
+            1+1
+
+        time.sleep(75.0, 1000.0)
+
     return velostatVals, microphoneVals, accelerometerVals
-
-
 
 def logSensorData():
     velostatVals, microphoneVals, accelerometerVals = getSensorData()
     
-    out_data = ','.join(velostatVals) + ',' + microphoneVals + ',' +\
-                        accelerometerVals + ',' + str(time.time()) + '\n'
+    #out_data = ','.join(velostatVals) + ',' + microphoneVals + ',' +\
+    #                    accelerometerVals + ',' + str(time.time()) + '\n'
 
-    print out_data
+    #print out_data
     #out_file.write(out_data)
     #if num_reads % 100 == 0:
     #    out_file.close()
     #out_file = open(filename, 'a')
 
+    #payload = {
+    #    'velostatIDs': '1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24',
+    #    'velostatVals': ','.join(velostatVals),
+    #    'accelerometerIDs': '1',
+    #    'accelerometerVals': accelerometerVals,
+    #    'microphoneIDs': '1',
+    #    'microphoneVals': microphoneVals,
+    #    'time': time.time()
+        #'value': "{0},{1},{2},{3}".format(out0,out1,out2,time.time()),
+    #}
+
+    url = "http://128.237.140.51:8000/storeData"
     payload = {
         'velostatIDs': '1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24',
         'velostatVals': ','.join(velostatVals),
         'accelerometerIDs': '1',
-        'accelerometerVals': accelerometerVals,
-        'microphoneIDs': '1',
-        'microphoneVals': microphoneVals,
+        'accelerometerVals': ','.join(accelerometerVals),
         'time': time.time()
-        #'value': "{0},{1},{2},{3}".format(out0,out1,out2,time.time()),
     }
 
-    REQUEST_LOCK.acquire()
     try:
-        requests.post(url=STORE_DATA_URL, data=payload)
-    except requests.exceptions.ConnectionError:
-        print "Exception occured during store data request"
-    REQUEST_LOCK.release()
+        requests.post(url=url, data=payload)
+    except:
+        1+1
+
+    #REQUEST_LOCK.acquire()
+    #try:
+        #requests.post(url=STORE_DATA_URL, data=payload)
+    #except requests.exceptions.ConnectionError:
+    #    print "Exception occured during store data request"
+    #REQUEST_LOCK.release()
     threading.Timer(LOG_INTERVAL_SECS, logSensorData).start()
 
 def isOffBed():
@@ -246,18 +272,19 @@ def checkAlarmStatus():
             pygame.mixer.music.load(SOUND_FILE_PATH)
             pygame.mixer.music.play(-1) #Play indefinitely, until user gets off bed
         
+            #os.system('mpg123 -q --headphones ' + SOUND_FILE_PATH + ' &')
             print "Setting off alarm.."
             while True:
-                time.sleep(2)
+                time.sleep(5)
                 #Check if person is off the bed
                 if isOffBed():
                     print "is off bed! stopping alarm.."
+                    time.sleep(4)
+                    #os.system('killall -9 mpg123')
                     pygame.mixer.music.stop()
                     break    
                 print "is still on bed..."
         
-        print "Broke from checkOffBed loop"
-    
     threading.Timer(ALARM_QUERY_INTERVAL_SECS, checkAlarmStatus).start()
 
 def checkPositionBuzzer():
@@ -289,11 +316,14 @@ def checkPositionBuzzer():
 
     if getPosReq and buzzerReq:
         print "Got response for checkPositionBuzzer: " + getPosReq.text
-
-        buzzPositions = getPosReq.text.split(',')
-
-        if buzzerReq.status_code==200 and buzzerReq.text in buzzPositions:
+    
+        buzzPositions = buzzerReq.text.split(',')
+        
+        print "buzzPositions: ", buzzPositions, "text in positions: ", getPosReq.text in buzzPositions
+        if buzzerReq.status_code==200 and getPosReq.text in buzzPositions:
             #Start buzzer. Play the buzzer sound file
+            print "Playing buzzer file"
+            #os.system('mpg123 -q --headphones ' + BUZZER_FILE_PATH + ' &')
             pygame.mixer.init()
             pygame.mixer.music.load(BUZZER_FILE_PATH)
             pygame.mixer.music.play()       #Play once (Buzzer file should be 2 secs)
@@ -314,7 +344,7 @@ class DataServer(SocketServer.BaseRequestHandler):
 
 server = SocketServer.TCPServer(("0.0.0.0", DATA_SERVER_PORT), DataServer)
 
-#threading.Thread(target=logSensorData).start()
+threading.Thread(target=logSensorData).start()
 threading.Thread(target=server.serve_forever).start()
 threading.Thread(target=checkAlarmStatus).start()
 threading.Thread(target=checkPositionBuzzer).start()
