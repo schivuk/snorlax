@@ -313,6 +313,11 @@ function getChartDataForDay(date) {
 
         console.log(positionChart.data.datasets);
         positionChart.update();
+
+        //Sleep Log
+        $('#quality').html(response['quality']);
+        $('#description').html(response['description']);
+
     }
     });
 

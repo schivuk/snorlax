@@ -703,7 +703,7 @@ def analyzeSleepCycle(request):
         logSleep = LogSleep.objects.get(day__exact=day, month__exact=month, year__exact=year)
     except LogSleep.DoesNotExist:
         #Do nothing
-        print 'Do nothing'
+        pass
 
     if os.path.isfile(filename) == False:
         context = {}
@@ -721,7 +721,14 @@ def analyzeSleepCycle(request):
         timestamps = []
 
         context = {}
-        context['logSleep'] = logSleep
+        if logSleep != None:
+            context['quality'] = logSleep.quality
+            context['dreams'] = logSleep.dreams
+            context['description'] = logSleep.description
+        else:
+            context['quality'] = ''
+            context['dreams'] = ''
+            context['description'] = ''
 
         for line in f.readlines():
             data = line.strip('\n').split(',')
