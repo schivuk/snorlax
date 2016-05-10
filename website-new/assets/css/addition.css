@@ -1,0 +1,49 @@
+span.subtitle {
+	font-size: 20px;
+	margin-top: 0px;
+	padding-top: 0px;
+}
+
+.alternate {
+	text-align: center;
+}
+
+.right {
+	float: right;
+}
+
+.row {
+	margin: 50px;
+	width: 90%;
+}
+
+.text {
+	padding-left: 15px;
+	padding-right: 15px;
+}
+
+.image {
+			width: 40%;
+	
+}
+
+.image img {
+				width: 100%;
+				display: block;
+}
+
+div.inner {
+	border: 30px;
+}
+
+h4 {
+	padding: 10px;
+}
+
+.subhead {
+	color: #16a085 !important;
+}
+
+p.just {
+	text-align: justify;
+}
